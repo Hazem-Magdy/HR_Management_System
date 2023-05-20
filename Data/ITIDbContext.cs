@@ -15,6 +15,29 @@ namespace HR_Management_System.Data
         public virtual DbSet<Tasks> Tasks { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public ITIDbContext(DbContextOptions<ITIDbContext> options) : base(options) { }
-        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<EmployeeProject>()
+            .HasKey(ep => new { ep.EmployeeId, ep.ProjectId, ep.ProjectPhaseId });
+
+            modelBuilder.Entity<EmployeeProject>()
+                .HasOne(ep => ep.Employee)
+                .WithMany(e => e.EmployeeProjects)
+                .HasForeignKey(ep => ep.EmployeeId);
+
+            modelBuilder.Entity<EmployeeProject>()
+                .HasOne(ep => ep.Project)
+                .WithMany(p => p.EmployeeProjects)
+                .HasForeignKey(ep => ep.ProjectId);
+
+            modelBuilder.Entity<EmployeeProject>()
+                .HasOne(ep => ep.ProjectPhase)
+                .WithMany(pp => pp.EmployeeProjects)
+                .HasForeignKey(ep => ep.ProjectPhaseId);
+        }
+
     }
 }

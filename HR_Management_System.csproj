@@ -2,9 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Static\**" />
+    <Compile Remove="DTO\**" />
+    <Content Remove="Data\Static\**" />
+    <Content Remove="DTO\**" />
+    <EmbeddedResource Remove="Data\Static\**" />
+    <EmbeddedResource Remove="DTO\**" />
+    <None Remove="Data\Static\**" />
+    <None Remove="DTO\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.16" />
@@ -19,12 +30,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.13" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Enums\" />
-    <Folder Include="Data\Static\" />
-    <Folder Include="DTO\" />
   </ItemGroup>
 
 </Project>

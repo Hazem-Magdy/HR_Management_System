@@ -29,10 +29,10 @@ namespace HR_Management_System
             }
 
                         if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-};
+                    {
+                        app.UseSwagger();
+                        app.UseSwaggerUI();
+                    };
 
             app.UseHttpsRedirection();
 
@@ -41,7 +41,7 @@ namespace HR_Management_System
 
             app.MapControllers();
 
-                        app.MapDepartmentEndpoints();
+            
 
             app.Run();
         }
