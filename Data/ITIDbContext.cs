@@ -1,11 +1,10 @@
 ﻿using HR_Management_System.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Numerics;
 
 namespace HR_Management_System.Data
 {
-    public class ITIDbContext: DbContext
+    public class ITIDbContext: IdentityDbContext<User>
     {
         public virtual DbSet<Attendance> Attendances { get; set; }
         public virtual DbSet<Department> Departments { get; set; }

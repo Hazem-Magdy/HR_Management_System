@@ -1,6 +1,7 @@
 ﻿using HR_Management_System.Data;
 using Microsoft.EntityFrameworkCore;
-using HR_Management_System.Controllers;
+using HR_Management_System.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace HR_Management_System
 {
@@ -15,6 +16,7 @@ namespace HR_Management_System
             builder.Services.AddControllers();
             builder.Services.AddDbContext<ITIDbContext>(
                 op => op.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
+            builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<ITIDbContext>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -28,11 +30,11 @@ namespace HR_Management_System
                 app.UseSwaggerUI();
             }
 
-                        if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-};
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            };
 
             app.UseHttpsRedirection();
 
@@ -41,7 +43,6 @@ namespace HR_Management_System
 
             app.MapControllers();
 
-                        app.MapDepartmentEndpoints();
 
             app.Run();
         }

@@ -1,9 +1,10 @@
 ﻿using HR_Management_System.Data.Base;
+using Microsoft.AspNetCore.Identity;
 
 namespace HR_Management_System.Models
 {
-    public class User : IEntityBase
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
+        
     }
 }
