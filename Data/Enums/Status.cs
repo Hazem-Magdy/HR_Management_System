@@ -2,7 +2,7 @@
 {
     public enum Status
     {
-        FullTime=0,
-        PartTime=1
+        FullTime = 0,
+        PartTime = 1
     }
 }
