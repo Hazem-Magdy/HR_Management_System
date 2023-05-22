@@ -1,5 +1,6 @@
 ﻿using HR_Management_System.DTO;
 using HR_Management_System.Models;
+using HR_Management_System.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -14,47 +15,71 @@ namespace HR_Management_System.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userManager;
+        private readonly IEmployeeService _employeeService;
 
-        public AccountController(UserManager<User> userManager)
+        public AccountController(UserManager<User> userManager,IEmployeeService employeeService)
         {
             _userManager = userManager;
+            _employeeService = employeeService;
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<CustomResultDTO>> Register(RegisterUserDTO userDTO)
+        public async Task<ActionResult<CustomResultDTO>> Register(RegisterEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
 
 
             if (ModelState.IsValid)
             {
-                // create
+                // create Employee
+                Models.Employee newEmployee = new Models.Employee()
+                {
+                    FirstName = employeeDTO.FirstName,
+                    LastName = employeeDTO.LastName,
+                    Salary= employeeDTO.Salary,
+                    Phone = employeeDTO.Phone,
+                    Email = employeeDTO.Email,
+                    Password = employeeDTO.Password,
+                    Position = employeeDTO.Position,
+                    HiringDate = employeeDTO.HiringDate,
+                    Status = employeeDTO.Status
+                };
+                if(employeeDTO.ProfileUrl != null )
+                {
+                    newEmployee.ProfileUrl = employeeDTO.ProfileUrl;
+                }
+
+                // add employee to database
+                await _employeeService.AddAsync(newEmployee);
+
+
+                // create user
                 User user = new User();
 
                 Random random = new Random();
 
                 int randomNumber = random.Next(1, 1000);
 
-                user.UserName = string.Concat(userDTO.FirstName, userDTO.LastName, randomNumber.ToString());
-                user.Email = userDTO.Email;
-                user.PhoneNumber = userDTO.ContactNumber;
-                //user.Role= userDTO.Role;
-                //if(userDTO.UserPhoto != null)
-                //{
-                //    user.UserPhoto = userDTO.UserPhoto;
-                //}
+                
+                user.UserName = string.Concat(employeeDTO.FirstName, employeeDTO.LastName, randomNumber.ToString());
+              
+                user.Email = employeeDTO.Email;
+                user.PhoneNumber = employeeDTO.Phone;
                 try
                 {
-                    User dublicatedUser = await _userManager.FindByEmailAsync(userDTO.Email);
+                    
+                    User dublicatedUser = await _userManager.FindByEmailAsync(employeeDTO.Email);
                 }
-                catch (Exception)
+                catch(Exception)
                 {
                     result.IsPass = false;
                     result.Message = "user with the same email already exist.";
                     return result;
                 }
 
-                IdentityResult createResult = await _userManager.CreateAsync(user, userDTO.Password);
+                
+                IdentityResult createResult = await _userManager.CreateAsync(user, newEmployee.Password);
+
                 if (createResult.Succeeded)
                 {
                     result.IsPass = true;

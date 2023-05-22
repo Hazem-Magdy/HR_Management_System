@@ -1,12 +1,10 @@
-﻿using HR_Management_System.Data.Base;
-using HR_Management_System.Data.Enums;
+﻿using HR_Management_System.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace HR_Management_System.Models
+namespace HR_Management_System.DTO
 {
-    public class Employee : IEntityBase
+    public class RegisterEmployeeDTO
     {
-        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -14,16 +12,13 @@ namespace HR_Management_System.Models
         public string? ProfileUrl { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
         public string Position { get; set; }
-        
-        [DataType(DataType.Date)] 
+
+        public string Password { get; set; }
+
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime HiringDate { get; set; }
         public Status Status { get; set; }
-
-        public ICollection<Attendance> Attendances = new HashSet<Attendance>();
-
-        public ICollection<EmployeeProject> EmployeeProjects { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Models;
 using Microsoft.AspNetCore.Identity;
+using HR_Management_System.Services;
 
 namespace HR_Management_System
 {
@@ -17,6 +18,8 @@ namespace HR_Management_System
             builder.Services.AddDbContext<ITIDbContext>(
                 op => op.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
             builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<ITIDbContext>();
+            builder.Services.AddScoped<IEmployeeService,EmployeeService>();
+            builder.Services.AddScoped<IAttendanceService, AttendanceService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

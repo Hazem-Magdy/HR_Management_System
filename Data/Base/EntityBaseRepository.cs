@@ -64,5 +64,7 @@ namespace HR_Management_System.Data.Base
             query = includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
             return await query.FirstOrDefaultAsync(n => n.Id == id);
         }
+
+
     }
 }

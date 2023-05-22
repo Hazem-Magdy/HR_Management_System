@@ -1,4 +1,6 @@
 ﻿using HR_Management_System.Data.Base;
+using HR_Management_System.Data.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.Models
 {

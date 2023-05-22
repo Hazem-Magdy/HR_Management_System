@@ -1,4 +1,5 @@
 ﻿using HR_Management_System.Data.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.Models
 {
@@ -18,6 +19,6 @@ namespace HR_Management_System.Models
         public int ProjectId { get; set; }
         public Project Project { get; set; }
         public ICollection<EmployeeProject> EmployeeProjects { get; set; }
-        public ICollection<Task> Tasks { get; set; } = new HashSet<Task>();
+        public ICollection<Tasks> Tasks { get; set; } = new HashSet<Tasks>();
     }
 }
