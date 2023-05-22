@@ -23,10 +23,10 @@ namespace HR_Management_System.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost("Attend")]
+        [HttpPost]
         public async Task<ActionResult<CustomResultDTO>> Attend(AttendanceDTO attendanceDTO)
         {
-            // response layer
+            // response DTO
             CustomResultDTO result = new CustomResultDTO();
             try
             {
@@ -43,49 +43,72 @@ namespace HR_Management_System.Controllers
                     Models.Employee employee = await _employeeService.GetByEmailAsync(existUser.Email);
                     int employeeId = employee.Id;
 
-                    // attend the employee to the system
-                    TimeSpan onTime = new TimeSpan(8, 0, 0);
-                    TimeSpan lateTime = new TimeSpan(8, 30, 0);
-                    TimeSpan leaveTime = new TimeSpan(18, 0, 0);
-
-                    TimeSpan attendTime = DateTime.Now.TimeOfDay;
-
-                    AttendanceStatus attendStatus = AttendanceStatus.Absent;
-                    // <=8
-                    if (attendTime <= onTime)
-                        attendStatus = AttendanceStatus.OnTime;
-                    //>8 && <8.30 
-                    else if (attendTime > onTime && attendTime <= lateTime)
-                        attendStatus = AttendanceStatus.Late;
-
-                    else if (attendTime > lateTime || attendTime > leaveTime)
-                        attendStatus = AttendanceStatus.Absent;
-
-                    Models.Attendance attendance = new Models.Attendance()
+                    Models.Attendance attendToday =_attendanceService.IsAttendInSpecificDay(DateTime.Today, employeeId);
+                    if (attendToday!= null)
                     {
-                        Date = DateTime.Today,
-                        TimeIn = attendTime,
-                        TimeOut = leaveTime,
-                        AttendanceStatus = attendStatus,
-                        EmployeeId = employeeId,
-
-                    };
-                    Models.Attendance addedAttendance = await _attendanceService.AddAsync(attendance);
-                    if (addedAttendance != null)
-                    {
-                        // return data
+                        Models.Attendance  attendEmployee = await _attendanceService.GetByIDAsync(attendToday.Id);
+                        attendEmployee.TimeOut = DateTime.Now.TimeOfDay;
                         result.IsPass = true;
-                        result.Message = "user attend successfully to the system.";
                         result.Data = new
                         {
-                            UserName = attendanceDTO.UserName,
-                            Date = attendance.Date.ToString("yyyy-MM-dd"),
-                            AttendaceStatues = attendStatus.ToString(),
-                            TimeIn = attendance.TimeIn,
-                            Timeout = attendance.TimeOut
-                        };
 
+                            Date = attendEmployee.Date.ToString("yyyy-MM-dd"),
+                            AttendaceStatues = attendEmployee.AttendanceStatus.ToString(),
+                            TimeIn = attendEmployee.TimeIn,
+                            Timeout = attendEmployee.TimeOut
+                        };
+                        result.Message = "user leave successfully from the system.";
                     }
+                    else
+                    {
+                        // attend the employee to the system
+                        TimeSpan onTime = new TimeSpan(8, 0, 0);
+                        TimeSpan lateTime = new TimeSpan(8, 30, 0);
+                        TimeSpan leaveTime = new TimeSpan(18, 0, 0);
+
+                        TimeSpan attendTime = DateTime.Now.TimeOfDay;
+
+                        AttendanceStatus attendStatus = AttendanceStatus.Absent;
+                        // <=8
+                        if (attendTime <= onTime)
+                            attendStatus = AttendanceStatus.OnTime;
+                        //>8 && <8.30 
+                        else if (attendTime > onTime && attendTime <= lateTime)
+                        {
+                            attendStatus = AttendanceStatus.Late;
+                        }
+
+                        else if (attendTime > lateTime || attendTime > leaveTime)
+                            attendStatus = AttendanceStatus.Absent;
+
+                        Models.Attendance attendance = new Models.Attendance()
+                        {
+                            Date = DateTime.Today,
+                            TimeIn = attendTime,
+                            TimeOut = leaveTime,
+                            AttendanceStatus = attendStatus,
+                            EmployeeId = employeeId,
+
+                        };
+                        Models.Attendance addedAttendance = await _attendanceService.AddAsync(attendance);
+                        if (addedAttendance != null)
+                        {
+                            // return data 
+                            result.IsPass = true;
+                            result.Message = "user attend successfully to the system.";
+                            result.Data = new
+                            {
+                                UserName = attendanceDTO.UserName,
+                                Date = attendance.Date.ToString("yyyy-MM-dd"),
+                                AttendaceStatues = attendStatus.ToString(),
+                                TimeIn = attendance.TimeIn,
+                                Timeout = attendance.TimeOut
+                            };
+
+                        }
+                    }
+                    
+                    
                 }
             }
             catch (Exception ex)
