@@ -2,5 +2,8 @@
 {
     public enum ProjectStatus
     {
+        Open = 0,
+        OnHold = 1,
+        Close = 2,
     }
 }

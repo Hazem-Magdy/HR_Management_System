@@ -15,10 +15,11 @@ namespace HR_Management_System
             // Add services to the container.
 
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<ITIDbContext>(
+            builder.Services.AddDbContext<AppDbContext>(
                 op => op.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
-            builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<ITIDbContext>();
+            builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             builder.Services.AddScoped<IEmployeeService,EmployeeService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

@@ -6,6 +6,6 @@ namespace HR_Management_System.Services
 {
     public class DepartmentService : EntityBaseRepository<Department>, IDepartmentService
     {
-        public DepartmentService(ITIDbContext _db) : base(_db) { }
+        public DepartmentService(AppDbContext _db) : base(_db) { }
     }
 }

@@ -1,5 +1,4 @@
-﻿using HR_Management_System.Data.Enums;
-using HR_Management_System.DTO;
+﻿using HR_Management_System.DTO;
 using HR_Management_System.Models;
 using HR_Management_System.Services;
 using Microsoft.AspNetCore.Identity;
@@ -39,55 +38,26 @@ namespace HR_Management_System.Controllers
                 }
                 else
                 {
+                    // user is existing in the system
                     // get employee id
                     Models.Employee employee = await _employeeService.GetByEmailAsync(existUser.Email);
                     int employeeId = employee.Id;
 
                     Models.Attendance attendToday =_attendanceService.IsAttendInSpecificDay(DateTime.Today, employeeId);
-                    if (attendToday!= null)
-                    {
-                        Models.Attendance  attendEmployee = await _attendanceService.GetByIDAsync(attendToday.Id);
-                        attendEmployee.TimeOut = DateTime.Now.TimeOfDay;
-                        result.IsPass = true;
-                        result.Data = new
-                        {
 
-                            Date = attendEmployee.Date.ToString("yyyy-MM-dd"),
-                            AttendaceStatues = attendEmployee.AttendanceStatus.ToString(),
-                            TimeIn = attendEmployee.TimeIn,
-                            Timeout = attendEmployee.TimeOut
-                        };
-                        result.Message = "user leave successfully from the system.";
-                    }
-                    else
+                    if (attendToday == null)
                     {
                         // attend the employee to the system
-                        TimeSpan onTime = new TimeSpan(8, 0, 0);
-                        TimeSpan lateTime = new TimeSpan(8, 30, 0);
-                        TimeSpan leaveTime = new TimeSpan(18, 0, 0);
-
-                        TimeSpan attendTime = DateTime.Now.TimeOfDay;
-
-                        AttendanceStatus attendStatus = AttendanceStatus.Absent;
-                        // <=8
-                        if (attendTime <= onTime)
-                            attendStatus = AttendanceStatus.OnTime;
-                        //>8 && <8.30 
-                        else if (attendTime > onTime && attendTime <= lateTime)
-                        {
-                            attendStatus = AttendanceStatus.Late;
-                        }
-
-                        else if (attendTime > lateTime || attendTime > leaveTime)
-                            attendStatus = AttendanceStatus.Absent;
 
                         Models.Attendance attendance = new Models.Attendance()
                         {
-                            Date = DateTime.Today,
-                            TimeIn = attendTime,
-                            TimeOut = leaveTime,
-                            AttendanceStatus = attendStatus,
+                            
                             EmployeeId = employeeId,
+                            ProjectId = attendanceDTO.ProjectId,
+                            ProjectPhaseId= attendanceDTO.ProjectPhaseId,
+                            ProjectTaskId= attendanceDTO.ProjectTaskId,
+                            Date = DateTime.Today,
+                            HoursSpent = attendanceDTO.HoursSpent,
 
                         };
                         Models.Attendance addedAttendance = await _attendanceService.AddAsync(attendance);
@@ -99,16 +69,16 @@ namespace HR_Management_System.Controllers
                             result.Data = new
                             {
                                 UserName = attendanceDTO.UserName,
-                                Date = attendance.Date.ToString("yyyy-MM-dd"),
-                                AttendaceStatues = attendStatus.ToString(),
-                                TimeIn = attendance.TimeIn,
-                                Timeout = attendance.TimeOut
+                                Date = attendance.Date.ToString("yyyy-MM-dd")
                             };
 
                         }
                     }
-                    
-                    
+                    else
+                    {
+                        result.IsPass = false;
+                        result.Message = "user attend to the system before.";
+                    }
                 }
             }
             catch (Exception ex)

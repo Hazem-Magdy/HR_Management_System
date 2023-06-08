@@ -34,6 +34,9 @@ namespace HR_Management_System.Models
 
         public ICollection<Attendance> Attendances = new HashSet<Attendance>();
 
-        public ICollection<EmployeeProject> EmployeeProjects { get; set; }
+        //public ICollection<Project> associatedProjects = new HashSet<Project>();
+
+        public ICollection<EmployeeProject> employeeProjects = new HashSet<EmployeeProject>();
+
     }
 }

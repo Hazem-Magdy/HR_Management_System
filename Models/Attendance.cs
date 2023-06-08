@@ -11,13 +11,23 @@ namespace HR_Management_System.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
         [Range(typeof(TimeSpan),"08:00","17:00", ErrorMessage ="Invalid time to login to the system.")]
-        public TimeSpan TimeIn { get; set; }
-        [Range(typeof(TimeSpan), "09:00", "22:00", ErrorMessage = "Invalid time value.")]
-        public TimeSpan TimeOut { get; set; }
-        [EnumDataType(typeof(AttendanceStatus))]
-        public AttendanceStatus AttendanceStatus { get; set; }
+
+        public int HoursSpent { get; set; }
+
         public int EmployeeId { get; set; }
-        public Employee Employee { get; set; }
+
+        public virtual Employee Employee { get; set; }
+
+        public int ProjectId { get; set; }
+
+        public virtual Project Project { get; set; }
+        public int ProjectPhaseId { get; set; }
+
+        public virtual ProjectPhase ProjectPhase { get; set; }
+
+        public int ProjectTaskId { get; set; }
+
+        public virtual ProjectTask ProjectTask { get; set; }
 
 
     }
