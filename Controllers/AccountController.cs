@@ -44,6 +44,7 @@ namespace HR_Management_System.Controllers
                     HiringDate = employeeDTO.HiringDate,
                     Status = employeeDTO.Status
                 };
+
                 if(employeeDTO.ProfileUrl != null )
                 {
                     newEmployee.ProfileUrl = employeeDTO.ProfileUrl;
@@ -58,7 +59,7 @@ namespace HR_Management_System.Controllers
 
                 Random random = new Random();
 
-                int randomNumber = random.Next(1, 1000);
+                int randomNumber = random.Next(1, 100000);
 
                 
                 user.UserName = string.Concat(employeeDTO.FirstName, employeeDTO.LastName, randomNumber.ToString());
@@ -67,7 +68,6 @@ namespace HR_Management_System.Controllers
                 user.PhoneNumber = employeeDTO.Phone;
                 try
                 {
-                    
                     User dublicatedUser = await _userManager.FindByEmailAsync(employeeDTO.Email);
                 }
                 catch(Exception)

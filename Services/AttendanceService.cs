@@ -9,9 +9,9 @@ namespace HR_Management_System.Services
 {
     public class AttendanceService : EntityBaseRepository<Models.Attendance>, IAttendanceService
     {
-        private readonly ITIDbContext db;
+        private readonly AppDbContext db;
 
-        public AttendanceService(ITIDbContext _db) : base(_db)
+        public AttendanceService(AppDbContext _db) : base(_db)
         {
             db = _db;
         }

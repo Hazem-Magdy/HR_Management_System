@@ -7,8 +7,8 @@ namespace HR_Management_System.Data.Base
 {
     public class EntityBaseRepository<T> : IEntityBaseRepository<T> where T : class, IEntityBase, new()
     {
-        private readonly ITIDbContext db;
-        public EntityBaseRepository(ITIDbContext _db)
+        private readonly AppDbContext db;
+        public EntityBaseRepository(AppDbContext _db)
         {
             db = _db;
         }

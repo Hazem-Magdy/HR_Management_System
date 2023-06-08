@@ -7,6 +7,6 @@ namespace HR_Management_System.Services
 {
     public class ProjectPhaseService : EntityBaseRepository<ProjectPhase>, IProjectPhaseService
     {
-        public ProjectPhaseService(ITIDbContext _db) : base(_db) { }
+        public ProjectPhaseService(AppDbContext _db) : base(_db) { }
     }
 }

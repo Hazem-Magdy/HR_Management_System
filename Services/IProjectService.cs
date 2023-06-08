@@ -3,6 +3,10 @@ using HR_Management_System.Models;
 
 namespace HR_Management_System.Services
 {
-    public interface IProjectService : IEntityBaseRepository<Project> { }
+    public interface IProjectService : IEntityBaseRepository<Project> {
+
+        bool ProjectExists(int id);
+
+    }
 
 }
