@@ -5,8 +5,8 @@ using System;
 
 namespace HR_Management_System.Services
 {
-    public class TasksService : EntityBaseRepository<Models.ProjectTask>, ITasksService
+    public class ProjectTasksService : EntityBaseRepository<ProjectTask>, IProjectTasksService
     {
-        public TasksService(AppDbContext _db) : base(_db) { }
+        public ProjectTasksService(AppDbContext _db) : base(_db) { }
     }
 }

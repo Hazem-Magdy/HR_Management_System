@@ -19,8 +19,12 @@ namespace HR_Management_System
                 op => op.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
             builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             builder.Services.AddScoped<IEmployeeService,EmployeeService>();
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
+            builder.Services.AddScoped<IProjectPhaseService, ProjectPhaseService>();
+            builder.Services.AddScoped<IProjectTasksService, ProjectTasksService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

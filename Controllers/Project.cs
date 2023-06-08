@@ -2,6 +2,7 @@
 using HR_Management_System.Models;
 using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Services;
+using HR_Management_System.DTO;
 
 namespace HR_Management_System.Controllers
 {
@@ -10,10 +11,22 @@ namespace HR_Management_System.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
+        private readonly IProjectPhaseService _projectPhaseService;
+        private readonly IProjectTasksService _projectTaskService;
+        private readonly IEmployeeProjectService _employeeProjectService;
 
-        public ProjectsController(IProjectService projectService )
+
+        public ProjectsController(
+            IProjectService projectService,
+            IProjectPhaseService projectPhaseService,
+            IProjectTasksService projectTaskService,
+            IEmployeeProjectService employeeProjectService
+        )
         {
             _projectService = projectService;
+            _projectPhaseService = projectPhaseService;
+            _projectTaskService = projectTaskService;
+            _employeeProjectService = employeeProjectService;
         }
 
         // GET: api/Projects
@@ -39,41 +52,79 @@ namespace HR_Management_System.Controllers
 
         // POST: api/Projects
         [HttpPost]
-        public async Task<ActionResult<Project>> CreateProject(Project project)
+        public async Task<ActionResult<Project>> CreateProject(ProjectDTO projectDTO)
         {
-            await _projectService.AddAsync(project);
+            if (ModelState.IsValid)
+            {
+                var project = new Project
+                {
+                    Name = projectDTO.ProjectName,
+                    TotalBudget = projectDTO.TotalBudget,
+                    HoursBudget = projectDTO.ProjectHours,
+                    ProjectStatus = projectDTO.ProjectStatus,
+                    Location = projectDTO.ProjectLocation,
+                    StartDate = projectDTO.ProjectStartDate,
+                    EndDate = projectDTO.ProjectEndDate,
+                    Description = projectDTO.ProjectLocation
+                };
 
-            return CreatedAtAction("GetProject", new { id = project.Id }, project);
+                foreach (var taskId in projectDTO.ProjectTasksIds)
+                {
+                    var task = await _projectTaskService.GetByIdAsync(taskId);
+                    if (task != null)
+                    {
+                        project.projectTasks.Add(task);
+                    }
+                }
+
+                foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
+                {
+                    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
+                    if (employeeProject != null)
+                    {
+                        project.employeeProjects.Add(employeeProject);
+                    }
+                }
+
+                await _projectService.AddAsync(project);
+
+                return CreatedAtAction("GetProject", new { id = project.Id }, project);
+            }
+
+            return BadRequest(ModelState);
         }
+
 
         // PUT: api/Projects/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, Project project)
+        public async Task<IActionResult> UpdateProject(int id, ProjectDTO projectDTO)
         {
-            if (id != project.Id)
-            {
-                return BadRequest();
-            }
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var project = await _projectService.GetByIDAsync(id);
+
+            if (project == null)
+                return NotFound();
+
+            project.Name = projectDTO.ProjectName;
+            project.TotalBudget = projectDTO.TotalBudget;
+            project.HoursBudget = projectDTO.ProjectHours;
+            project.ProjectStatus = projectDTO.ProjectStatus;
+            project.Location = projectDTO.ProjectLocation;
+            project.StartDate = projectDTO.ProjectStartDate;
+            project.EndDate = projectDTO.ProjectEndDate;
+            project.Description = projectDTO.ProjectDescription;
 
             try
             {
                 await _projectService.UpdateAsync(id, project);
+                return Ok("Project updated successfully.");
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-
-                bool projectExists = _projectService.ProjectExists(id);
-                if (!projectExists)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, $"An error occurred while updating the project: {ex.Message}");
             }
-
-            return NoContent();
         }
 
         // DELETE: api/Projects/5
@@ -86,13 +137,18 @@ namespace HR_Management_System.Controllers
                 return NotFound();
             }
 
-            await  _projectService.DeleteAsync(id);
-
-
-            return NoContent();
+            try
+            {
+                await _projectService.DeleteAsync(id);
+                return Ok("Project deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the project: {ex.Message}");
+            }
         }
 
-        [HttpGet("api/ProjectExists/id")]
+        [HttpGet("ProjectExists/{id}")]
         public bool ProjectExists(int id)
         {
             return _projectService.ProjectExists(id);

@@ -33,7 +33,7 @@ namespace HR_Management_System.Models
 
         public ICollection<Attendance> Attendances = new HashSet<Attendance>();
 
-        public ICollection<ProjectPhase> projectPhases = new HashSet<ProjectPhase>();
+        public ICollection<ProjectPhase> projectPhases;
 
         public ICollection<ProjectTask> projectTasks = new List<ProjectTask>();
 
