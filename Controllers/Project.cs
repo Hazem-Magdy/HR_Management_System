@@ -31,14 +31,34 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<List<Project>>> GetProjects()
+        public async Task<ActionResult<List<ProjectDTO>>> GetProjects()
         {
-            return await _projectService.GetAllAsync();
+            var projects = await _projectService.GetAllAsync();
+            List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
+            foreach (var project in projects)
+            {
+                var ProjectDto = new ProjectDTO
+                {
+                    ProjectName = project.Name,
+                    TotalBudget = project.TotalBudget,
+                    ProjectHours = project.HoursBudget,
+                    ProjectStatus = project.ProjectStatus,
+                    ProjectLocation = project.Location,
+                    ProjectStartDate = project.StartDate,
+                    ProjectEndDate = project.EndDate,
+                    ProjectDescription = project.Description,
+                    ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
+                    EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
+                    //Phases = project.projectPhases.Select(p => p.Id).ToList()
+                };
+                projectDTOs.Add(ProjectDto);
+            }
+            return Ok(projectDTOs);
         }
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
             var project = await _projectService.GetByIDAsync(id);
 
@@ -46,8 +66,22 @@ namespace HR_Management_System.Controllers
             {
                 return NotFound();
             }
+            var ProjectDto = new ProjectDTO
+            {
+                ProjectName = project.Name,
+                TotalBudget = project.TotalBudget,
+                ProjectHours = project.HoursBudget,
+                ProjectStatus = project.ProjectStatus,
+                ProjectLocation = project.Location,
+                ProjectStartDate = project.StartDate,
+                ProjectEndDate = project.EndDate,
+                ProjectDescription = project.Description,
+                ProjectTasksIds = project.projectTasks.Select(a=>a.Id).ToList(),
+                EmployeesInProjectIds = project.employeeProjects.Select(e=>e.Id).ToList(),
+                //Phases = project.projectPhases.Select(p => p.Id).ToList()
+            };
 
-            return project;
+            return ProjectDto;
         }
 
         // POST: api/Projects

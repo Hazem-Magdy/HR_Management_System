@@ -52,6 +52,6 @@ namespace HR_Management_System.Models.DTOs
         [EnumDataType(typeof(Status))]
         public Status Status { get; set; }
 
-        public int? DepartmentId { get; set; }
+        public int? DepartmentId{ get; set; }
     }
 }
