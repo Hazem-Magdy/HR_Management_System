@@ -48,10 +48,17 @@ namespace HR_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
-            var projectTask = await _projectTaskService.GetByIdAsync(id);
+            var projectTaskDto = await _projectTaskService.GetByIdAsync(id);
 
-            if (projectTask == null)
+            if (projectTaskDto == null)
                 return NotFound();
+            var projectTask = new ProjectTask
+            {
+                Name = projectTaskDto.Name,
+                Description = projectTaskDto.Description,
+                ToltalHoursPerTask = projectTaskDto.ToltalHoursPerTask,
+                ProjectId = projectTaskDto.ProjectId
+            };
 
             return Ok(projectTask);
         }
