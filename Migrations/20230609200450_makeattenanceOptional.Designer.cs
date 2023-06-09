@@ -4,6 +4,7 @@ using HR_Management_System.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230609200450_makeattenanceOptional")]
+    partial class makeattenanceOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +61,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasIndex("ProjectTaskId");
 
-                    b.ToTable("Attendances", (string)null);
+                    b.ToTable("Attendances");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.Department", b =>
@@ -77,7 +80,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.Employee", b =>
@@ -133,7 +136,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasIndex("DepartmentId");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.EmployeeProject", b =>
@@ -164,7 +167,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasIndex("ProjectPhaseId");
 
-                    b.ToTable("EmployeeProjects", (string)null);
+                    b.ToTable("EmployeeProjects");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.Project", b =>
@@ -202,7 +205,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.ProjectPhase", b =>
@@ -235,7 +238,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectPhases", (string)null);
+                    b.ToTable("ProjectPhases");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.ProjectTask", b =>
@@ -264,7 +267,7 @@ namespace HR_Management_System.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectTasks", (string)null);
+                    b.ToTable("ProjectTasks");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.User", b =>

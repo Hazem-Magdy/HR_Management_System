@@ -27,11 +27,11 @@ namespace HR_Management_System.DTO
 
         public string ProjectDescription { get; set; }
 
-        public ICollection<int> ProjectAttendances { get; set; }
+        public ICollection<int>? ProjectAttendances { get; set; }
 
         public ICollection<ProjectPhaseDTO> Phases { get; set; }
 
-        public ICollection<int> ProjectTasksIds { get; set; }
+        public ICollection<int>? ProjectTasksIds { get; set; }
 
         public ICollection<int> EmployeesInProjectIds { get; set; }
     }

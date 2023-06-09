@@ -33,10 +33,30 @@ namespace HR_Management_System.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ProjectDTO>>> GetProjects()
         {
-            var projects = await _projectService.GetAllAsync();
+            var projects = await _projectService.GetAllAsync(
+                p => p.projectPhases,
+                p => p.projectTasks,
+                p => p.employeeProjects,
+                p => p.Attendances
+            );
+
             List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
+            List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
             foreach (var project in projects)
             {
+                projectPhaseDTOs.Clear();
+                foreach (var phase in project.projectPhases)
+                {
+                    ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
+                    {
+                        Name = phase.Name,
+                        StartDate = phase.StartPhase,
+                        EndDate = phase.EndPhase,
+                        Milestone = phase.Milestone,
+                        HrBudget = phase.HrBudget
+                    };
+                    projectPhaseDTOs.Add(projectPhaseDTO);
+                }
                 var ProjectDto = new ProjectDTO
                 {
                     ProjectName = project.Name,
@@ -49,8 +69,10 @@ namespace HR_Management_System.Controllers
                     ProjectDescription = project.Description,
                     ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
                     EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
-                    //Phases = project.projectPhases.Select(p => p.Id).ToList()
+                    Phases = projectPhaseDTOs
                 };
+
+
                 projectDTOs.Add(ProjectDto);
             }
             return Ok(projectDTOs);
@@ -76,8 +98,8 @@ namespace HR_Management_System.Controllers
                 ProjectStartDate = project.StartDate,
                 ProjectEndDate = project.EndDate,
                 ProjectDescription = project.Description,
-                ProjectTasksIds = project.projectTasks.Select(a=>a.Id).ToList(),
-                EmployeesInProjectIds = project.employeeProjects.Select(e=>e.Id).ToList(),
+                ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
+                EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
                 //Phases = project.projectPhases.Select(p => p.Id).ToList()
             };
 
@@ -88,6 +110,7 @@ namespace HR_Management_System.Controllers
         [HttpPost]
         public async Task<ActionResult<Project>> CreateProject(ProjectDTO projectDTO)
         {
+            List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
             if (ModelState.IsValid)
             {
                 var project = new Project
@@ -101,28 +124,57 @@ namespace HR_Management_System.Controllers
                     EndDate = projectDTO.ProjectEndDate,
                     Description = projectDTO.ProjectLocation
                 };
-
-                foreach (var taskId in projectDTO.ProjectTasksIds)
+                projectPhaseDTOs.Clear();
+                foreach (var phase in project.projectPhases)
                 {
-                    var task = await _projectTaskService.GetByIdAsync(taskId);
-                    if (task != null)
+                    ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
                     {
-                        project.projectTasks.Add(task);
+                        Name = phase.Name,
+                        StartDate = phase.StartPhase,
+                        EndDate = phase.EndPhase,
+                        Milestone = phase.Milestone,
+                        HrBudget = phase.HrBudget
+                    };
+                    projectPhaseDTOs.Add(projectPhaseDTO);
+                }
+                if (projectPhaseDTOs.Count != 0)
+                {
+                    foreach (var phase in projectPhaseDTOs)
+                    {
+                        ProjectPhase projectPhase = new ProjectPhase()
+                        {
+                            Name = phase.Name,
+                            StartPhase = phase.StartDate,
+                            EndPhase = phase.EndDate,
+                            Milestone = phase.Milestone,
+                            HrBudget = phase.HrBudget
+                        };
+                        project.projectPhases.Add(projectPhase);
                     }
                 }
 
-                foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
-                {
-                    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
-                    if (employeeProject != null)
-                    {
-                        project.employeeProjects.Add(employeeProject);
-                    }
-                }
+                //foreach (var taskId in projectDTO.ProjectTasksIds)
+                //{
+                //    var task = await _projectTaskService.GetByIdAsync(taskId);
+                //    if (task != null)
+                //    {
+                //        project.projectTasks.Add(task);
+                //    }
+                //}
+
+                //foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
+                //{
+                //    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
+                //    if (employeeProject != null)
+                //    {
+                //        project.employeeProjects.Add(employeeProject);
+                //    }
+                //}
 
                 await _projectService.AddAsync(project);
 
-                return CreatedAtAction("GetProject", new { id = project.Id }, project);
+                //return CreatedAtAction("GetProject", new { id = project.Id }, project);
+                return Ok(project);
             }
 
             return BadRequest(ModelState);

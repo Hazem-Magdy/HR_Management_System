@@ -69,6 +69,12 @@ namespace HR_Management_System.Controllers
             try
             {
                 var projectTasks = await _projectTaskService.GetByIDAsync(projectId);
+                var projectTaskDto = new ProjectTaskDTO
+                {
+                    Name = projectTasks.Name,
+                    
+
+                };
                 return Ok(projectTasks);
             }
             catch (Exception ex)
