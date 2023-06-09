@@ -69,13 +69,16 @@ namespace HR_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Manger_Id")
-                        .HasColumnType("int");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int")
+                        .HasColumnName("ManagerId");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Departments");
                 });
@@ -498,6 +501,17 @@ namespace HR_Management_System.Migrations
                     b.Navigation("ProjectPhase");
 
                     b.Navigation("ProjectTask");
+                });
+
+            modelBuilder.Entity("HR_Management_System.Models.Department", b =>
+                {
+                    b.HasOne("HR_Management_System.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.Employee", b =>

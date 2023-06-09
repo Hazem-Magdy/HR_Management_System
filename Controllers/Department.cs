@@ -33,7 +33,7 @@ namespace HR_Management_System.Controllers
                 var department = new Department
                 {
                     Name = departmentDTO.Name,
-                    Manger_Id = departmentDTO.ManagerId
+                    EmployeeId = departmentDTO.ManagerId
                 };
 
                 // Set the employee IDs for the department
@@ -69,6 +69,7 @@ namespace HR_Management_System.Controllers
             try
             {
                 var departments = await _departmentService.GetAllAsync();
+
                 return Ok(departments);
             }
             catch (Exception ex)
@@ -82,13 +83,20 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var department = await _departmentService.GetByIDAsync(id);
+                var department = await _departmentService.GetByIdAsync(id,d=>d.Employees);
                 if (department == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(department);
+                GetDepartmentsWithMangerNameDTO departmentDTO = new GetDepartmentsWithMangerNameDTO()
+                {
+                    DepartmentName = department.Name,
+                    MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName),
+                    EmployeeUnderWork = department.Employees.Count()
+                };
+
+                return Ok(departmentDTO);
             }
             catch (Exception ex)
             {
@@ -114,7 +122,7 @@ namespace HR_Management_System.Controllers
 
                 // Update the department properties
                 department.Name = departmentDTO.Name;
-                department.Manger_Id = departmentDTO.ManagerId;
+                department.EmployeeId = departmentDTO.ManagerId;
 
                 // Update the department employees
                 if (departmentDTO.EmployessIds != null && departmentDTO.EmployessIds.Count > 0)
