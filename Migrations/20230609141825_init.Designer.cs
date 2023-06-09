@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230608141205_update")]
-    partial class update
+    [Migration("20230609141825_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,7 +72,7 @@ namespace HR_Management_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Manger_Id")
+                    b.Property<int>("ManagerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -108,6 +108,9 @@ namespace HR_Management_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("OverTime")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
@@ -121,6 +124,9 @@ namespace HR_Management_System.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Salary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("SalaryPerHour")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Status")
@@ -144,10 +150,13 @@ namespace HR_Management_System.Migrations
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("HoursSpent")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalHoursInProject")
+                    b.Property<int>("ProjectPhaseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -155,6 +164,8 @@ namespace HR_Management_System.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("ProjectPhaseId");
 
                     b.ToTable("EmployeeProjects");
                 });
@@ -208,8 +219,11 @@ namespace HR_Management_System.Migrations
                     b.Property<DateTime>("EndPhase")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HoursBudget")
+                    b.Property<int>("HrBudget")
                         .HasColumnType("int");
+
+                    b.Property<string>("Milestone")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Name")
                         .HasColumnType("int");
@@ -491,9 +505,11 @@ namespace HR_Management_System.Migrations
 
             modelBuilder.Entity("HR_Management_System.Models.Employee", b =>
                 {
-                    b.HasOne("HR_Management_System.Models.Department", null)
+                    b.HasOne("HR_Management_System.Models.Department", "Department")
                         .WithMany("Employees")
                         .HasForeignKey("DepartmentId");
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.EmployeeProject", b =>
@@ -510,9 +526,17 @@ namespace HR_Management_System.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("HR_Management_System.Models.ProjectPhase", "ProjectPhase")
+                        .WithMany()
+                        .HasForeignKey("ProjectPhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Employee");
 
                     b.Navigation("Project");
+
+                    b.Navigation("ProjectPhase");
                 });
 
             modelBuilder.Entity("HR_Management_System.Models.ProjectPhase", b =>

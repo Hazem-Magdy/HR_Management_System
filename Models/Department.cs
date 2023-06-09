@@ -7,7 +7,11 @@ namespace HR_Management_System.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int Manger_Id { get; set; }
-        public ICollection<Employee>? Employees { get; set; }=new HashSet<Employee>();
+
+        [ForeignKey("Employee")]
+        [Column(name:"ManagerId")]
+        public int EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+        public ICollection<Employee>? Employees { get; set; } = new HashSet<Employee>();
     }
 }
