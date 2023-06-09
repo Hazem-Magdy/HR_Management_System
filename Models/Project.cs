@@ -31,11 +31,11 @@ namespace HR_Management_System.Models
 
         public string Description { get; set; }
 
-        public ICollection<Attendance> Attendances = new HashSet<Attendance>();
+        public ICollection<Attendance>? Attendances = new HashSet<Attendance>();
 
-        public ICollection<ProjectPhase> projectPhases;
+        public ICollection<ProjectPhase> projectPhases = new HashSet<ProjectPhase>();
 
-        public ICollection<ProjectTask> projectTasks = new List<ProjectTask>();
+        public ICollection<ProjectTask>? projectTasks = new List<ProjectTask>();
 
         public ICollection<EmployeeProject> employeeProjects = new HashSet<EmployeeProject>();
     }

@@ -19,6 +19,7 @@ namespace HR_Management_System
                 op => op.UseSqlServer(builder.Configuration.GetConnectionString("Db")));
             builder.Services.AddIdentity<User,IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
             builder.Services.AddScoped<IEmployeeService,EmployeeService>();
+            builder.Services.AddScoped<IEmployeeProjectService,EmployeeProjectService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IProjectPhaseService, ProjectPhaseService>();
