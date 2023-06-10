@@ -48,7 +48,7 @@ namespace HR_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
-            var projectTaskDto = await _projectTaskService.GetByIdAsync(id);
+            var projectTaskDto = await _projectTaskService.GetByIdAsync(id,t=>t.Project);
 
             if (projectTaskDto == null)
                 return NotFound();

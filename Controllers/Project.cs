@@ -41,11 +41,11 @@ namespace HR_Management_System.Controllers
             );
 
             List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
-            List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
+
             foreach (var project in projects)
             {
-                projectPhaseDTOs.Clear();
-                foreach (var phase in project.projectPhases)
+                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>(); 
+                foreach (ProjectPhase phase in project.projectPhases)
                 {
                     ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
                     {
@@ -57,7 +57,8 @@ namespace HR_Management_System.Controllers
                     };
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
-                var ProjectDto = new ProjectDTO
+
+                ProjectDTO projectDTO = new ProjectDTO
                 {
                     ProjectName = project.Name,
                     TotalBudget = project.TotalBudget,
@@ -71,12 +72,12 @@ namespace HR_Management_System.Controllers
                     EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
                     Phases = projectPhaseDTOs
                 };
-
-
-                projectDTOs.Add(ProjectDto);
+                projectDTOs.Add(projectDTO);
             }
+
             return Ok(projectDTOs);
         }
+
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
@@ -121,7 +122,8 @@ namespace HR_Management_System.Controllers
                         StartPhase = projectPhaseDTO.StartDate,
                         EndPhase = projectPhaseDTO.EndDate,
                         Milestone = projectPhaseDTO.Milestone,
-                        HrBudget = projectPhaseDTO.HrBudget
+                        HrBudget = projectPhaseDTO.HrBudget,
+                        ProjectId = 0 // Temporary placeholder value
                     };
                     projectPhases.Add(projectPhase);
                 }
@@ -134,80 +136,22 @@ namespace HR_Management_System.Controllers
                     Location = projectDTO.ProjectLocation,
                     StartDate = projectDTO.ProjectStartDate,
                     EndDate = projectDTO.ProjectEndDate,
-                    Description = projectDTO.ProjectLocation,
+                    Description = projectDTO.ProjectDescription,
                     projectPhases = projectPhases
                 };
+               
                 await _projectService.AddAsync(project);
-                return Ok(projectPhases);
-            }
-                /*
-                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
-                if (ModelState.IsValid)
+
+                // Assign the project ID to each project phase
+                foreach (var phase in projectPhases.ToList())
                 {
-                    var project = new Project
-                    {
-                        Name = projectDTO.ProjectName,
-                        TotalBudget = projectDTO.TotalBudget,
-                        HoursBudget = projectDTO.ProjectHours,
-                        ProjectStatus = projectDTO.ProjectStatus,
-                        Location = projectDTO.ProjectLocation,
-                        StartDate = projectDTO.ProjectStartDate,
-                        EndDate = projectDTO.ProjectEndDate,
-                        Description = projectDTO.ProjectLocation
-                    };
-                    projectPhaseDTOs.Clear();
-                    foreach (var phase in project.projectPhases)
-                    {
-                        ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
-                        {
-                            Name = phase.Name,
-                            StartDate = phase.StartPhase,
-                            EndDate = phase.EndPhase,
-                            Milestone = phase.Milestone,
-                            HrBudget = phase.HrBudget
-                        };
-                        projectPhaseDTOs.Add(projectPhaseDTO);
-                    }
-                    if (projectPhaseDTOs.Count != 0)
-                    {
-                        foreach (var phase in projectPhaseDTOs)
-                        {
-                            ProjectPhase projectPhase = new ProjectPhase()
-                            {
-                                Name = phase.Name,
-                                StartPhase = phase.StartDate,
-                                EndPhase = phase.EndDate,
-                                Milestone = phase.Milestone,
-                                HrBudget = phase.HrBudget
-                            };
-                            project.projectPhases.Add(projectPhase);
-                        }
-                    }
+                    phase.ProjectId = project.Id;
+                    project.projectPhases.Add(phase);
+                    await _projectPhaseService.AddAsync(phase);
+                }
 
-                    //foreach (var taskId in projectDTO.ProjectTasksIds)
-                    //{
-                    //    var task = await _projectTaskService.GetByIdAsync(taskId);
-                    //    if (task != null)
-                    //    {
-                    //        project.projectTasks.Add(task);
-                    //    }
-                    //}
-
-                    //foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
-                    //{
-                    //    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
-                    //    if (employeeProject != null)
-                    //    {
-                    //        project.employeeProjects.Add(employeeProject);
-                    //    }
-                    //}
-
-                    await _projectService.AddAsync(project);
-
-                    //return CreatedAtAction("GetProject", new { id = project.Id }, project);
-                    return Ok(project);
-                }*/
-
+                return Ok(project);
+            }
                 return BadRequest(ModelState);
         }
 
