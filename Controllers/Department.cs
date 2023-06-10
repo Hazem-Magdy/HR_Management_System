@@ -63,14 +63,26 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetDepartments()
+
+        [HttpGet("/api/GetDepartmentsWithMangersNames")]
+        public async Task<IActionResult> GetDepartmentsWithMangersNames()
         {
             try
             {
-                var departments = await _departmentService.GetAllAsync();
+                var departments = await _departmentService.GetAllAsync(d=>d.Employees);
 
-                return Ok(departments);
+                GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
+                {
+                    DepartmenstNames = departments.Select(d=>d.Name).ToList(),
+                    MangersNames = departments.Select(d => string.Concat(d.Employee.FirstName, " ", d.Employee.LastName) ).ToList(),
+                };
+
+                foreach(var dpt in departments)
+                {
+                    dTO.NOEmployeesInDepartment.Add(dpt.Employees.Count());
+                }
+
+                return Ok(dTO);
             }
             catch (Exception ex)
             {
@@ -93,9 +105,8 @@ namespace HR_Management_System.Controllers
                 {
                     DepartmentName = department.Name,
                     MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName),
-                    EmployeeUnderWork = department.Employees.Count()
+                    EmployeeUnderWork = department.Employees.Count
                 };
-
                 return Ok(departmentDTO);
             }
             catch (Exception ex)

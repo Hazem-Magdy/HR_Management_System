@@ -41,7 +41,6 @@ namespace HR_Management_System.Controllers
                     HiringDate = employeeDTO.HiringDate,
                     Status = employeeDTO.Status,
                     DepartmentId = employeeDTO.DepartmentId,
-                    
                 };
 
                 if(employeeDTO.ProfileUrl != null)
