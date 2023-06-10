@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using System;
+using System.Reflection;
 
 namespace HR_Management_System.Data.Base
 {
@@ -51,12 +52,38 @@ namespace HR_Management_System.Data.Base
             await db.SaveChangesAsync();
         }
 
+        //public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includeProperties)
+        //{
+        //    IQueryable<T> query = db.Set<T>();
+        //    query = includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+        //    return await query.ToListAsync();
+        //}
+
         public async Task<IEnumerable<T>> GetAllAsync(params Expression<Func<T, object>>[] includeProperties)
         {
             IQueryable<T> query = db.Set<T>();
-            query = includeProperties.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
+
+            foreach (var includeProperty in includeProperties)
+            {
+                if (includeProperty.Body is MemberExpression memberExpression)
+                {
+                    if (memberExpression.Member is PropertyInfo propertyInfo)
+                    {
+                        query = query.Include(propertyInfo.Name);
+                    }
+                }
+                else if (includeProperty.Body is UnaryExpression unaryExpression)
+                {
+                    if (unaryExpression.Operand is MemberExpression operandExpression && operandExpression.Member is PropertyInfo operandPropertyInfo)
+                    {
+                        query = query.Include(operandPropertyInfo.Name);
+                    }
+                }
+            }
+
             return await query.ToListAsync();
         }
+        
 
         public async Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties)
         {
