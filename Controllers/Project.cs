@@ -58,7 +58,7 @@ namespace HR_Management_System.Controllers
                     };
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
-                var ProjectDto = new ProjectDTO
+                var projectDto = new ProjectDTO
                 {
                     ProjectName = project.Name,
                     TotalBudget = project.TotalBudget,
@@ -74,7 +74,7 @@ namespace HR_Management_System.Controllers
                 };
 
 
-                projectDTOs.Add(ProjectDto);
+                projectDTOs.Add(projectDto);
             }
             return Ok(projectDTOs);
         }
