@@ -4,7 +4,6 @@ namespace HR_Management_System.DTO
 {
     public class DepartmentDTO
     {
-
         [Required(ErrorMessage = "You must enter the department name.")]
         public string Name { get; set; }
 

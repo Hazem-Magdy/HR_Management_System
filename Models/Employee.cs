@@ -6,6 +6,10 @@ namespace HR_Management_System.Models
 {
     public class Employee : IEntityBase
     {
+        public Employee() {
+
+            OverTime = 0;
+        }
         public int Id { get; set; }
 
         [Required(ErrorMessage = "You must Enter the name of the firstName")]
@@ -15,6 +19,8 @@ namespace HR_Management_System.Models
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name sould only contains letters")]
         public string LastName { get; set; }
 
+        public decimal SalaryPerHour { get; set; }
+        public decimal OverTime { get; set; }
         public decimal Salary { get; set; }
         [RegularExpression(@"\.(jpg|png|jpeg)$")]
         public string? ProfileUrl { get; set; }
@@ -34,7 +40,9 @@ namespace HR_Management_System.Models
 
         public ICollection<Attendance> Attendances = new HashSet<Attendance>();
 
-        //public ICollection<Project> associatedProjects = new HashSet<Project>();
+        public virtual int? DepartmentId { get; set; }
+        public virtual Department Department { get; set; }
+
 
         public ICollection<EmployeeProject> employeeProjects = new HashSet<EmployeeProject>();
 

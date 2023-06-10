@@ -3,6 +3,6 @@ using HR_Management_System.Models;
 
 namespace HR_Management_System.Services
 {
-    public interface ITasksService : IEntityBaseRepository<Models.ProjectTask> { }
+    public interface IProjectTasksService : IEntityBaseRepository<ProjectTask> { }
     
 }

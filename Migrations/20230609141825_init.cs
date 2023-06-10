@@ -57,7 +57,7 @@ namespace HR_Management_System.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Manger_Id = table.Column<int>(type: "int", nullable: false)
+                    ManagerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,6 +198,8 @@ namespace HR_Management_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SalaryPerHour = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    OverTime = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProfileUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -227,7 +229,8 @@ namespace HR_Management_System.Migrations
                     Name = table.Column<int>(type: "int", nullable: false),
                     StartPhase = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndPhase = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    HoursBudget = table.Column<int>(type: "int", nullable: false),
+                    HrBudget = table.Column<int>(type: "int", nullable: false),
+                    Milestone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -249,6 +252,7 @@ namespace HR_Management_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ToltalHoursPerTask = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -270,7 +274,8 @@ namespace HR_Management_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EmployeeId = table.Column<int>(type: "int", nullable: false),
                     ProjectId = table.Column<int>(type: "int", nullable: false),
-                    TotalHoursInProject = table.Column<int>(type: "int", nullable: false)
+                    ProjectPhaseId = table.Column<int>(type: "int", nullable: false),
+                    HoursSpent = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -282,11 +287,17 @@ namespace HR_Management_System.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_EmployeeProjects_ProjectPhases_ProjectPhaseId",
+                        column: x => x.ProjectPhaseId,
+                        principalTable: "ProjectPhases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_EmployeeProjects_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -401,6 +412,11 @@ namespace HR_Management_System.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeProjects_ProjectPhaseId",
+                table: "EmployeeProjects",
+                column: "ProjectPhaseId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Employees_DepartmentId",
                 table: "Employees",
                 column: "DepartmentId");
@@ -447,19 +463,19 @@ namespace HR_Management_System.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "ProjectPhases");
-
-            migrationBuilder.DropTable(
                 name: "ProjectTasks");
 
             migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Projects");
+                name: "ProjectPhases");
 
             migrationBuilder.DropTable(
                 name: "Departments");
+
+            migrationBuilder.DropTable(
+                name: "Projects");
         }
     }
 }

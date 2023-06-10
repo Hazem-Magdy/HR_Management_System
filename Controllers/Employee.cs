@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using HR_Management_System.Models;
+using HR_Management_System.Models.DTOs;
+using HR_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR_Management_System.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Route("api/employees")]
     public class EmployeeController : ControllerBase
@@ -68,8 +69,24 @@ namespace HR_Management_System.Controllers
                 {
                     return NotFound();
                 }
-
-                return Ok(employee);
+                var employeeDTO = new EmployeeDTO
+                {
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    SalaryPerHour = employee.SalaryPerHour,
+                    Salary  =employee.Salary,
+                    OverTime = employee.OverTime,
+                    Phone = employee.Phone,
+                    Email = employee.Email,
+                    Position = employee.Position,
+                    Status = employee.Status,
+                    DepartmentId = employee.DepartmentId
+                };
+                if (employee.ProfileUrl != null)
+                {
+                    employeeDTO.ProfileUrl = employee.ProfileUrl;
+                }
+                return Ok(employeeDTO);
             }
             catch (Exception ex)
             {
@@ -143,7 +160,26 @@ namespace HR_Management_System.Controllers
             try
             {
                 var employees = await _employeeService.GetAllAsync();
-                return Ok(employees);
+                List<EmployeeDTO> employeeDTOs = new List<EmployeeDTO>();
+                foreach (var employee in employeeDTOs)
+                {
+                    var employeeDto = new EmployeeDTO
+                    {
+                        FirstName = employee.FirstName,
+                        LastName = employee.LastName,
+                        SalaryPerHour = employee.SalaryPerHour,
+                        Salary = employee.Salary,
+                        OverTime = employee.OverTime,
+                        Phone = employee.Phone,
+                        Email = employee.Email,
+                        Position = employee.Position,
+                        Status = employee.Status,
+                        DepartmentId = employee.DepartmentId,
+                        ProfileUrl = employee.ProfileUrl
+                    };
+                    employeeDTOs.Add(employeeDto);
+                }
+                return Ok(employeeDTOs);
             }
             catch (Exception ex)
             {

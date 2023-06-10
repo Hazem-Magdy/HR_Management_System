@@ -8,8 +8,8 @@ namespace HR_Management_System.Models
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "You must Enter the name of the Project phase")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contains letters")]
+        [Required(ErrorMessage = "You must enter the name of the Project phase")]
+        [EnumDataType(typeof(ProjectPhases), ErrorMessage = "Invalid Project phase")]
         public ProjectPhases Name { get; set; }
 
         [DataType(DataType.Date)] 
@@ -20,9 +20,11 @@ namespace HR_Management_System.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EndPhase { get; set; }
 
-        public int HoursBudget { get; set; }
+        public int HrBudget { get; set; }
 
-        
+        public string Milestone { get; set; }
+
+
 
         // navigation properties
         public int ProjectId { get; set; }

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using HR_Management_System.Models;
+using HR_Management_System.DTO;
+using HR_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace HR_Management_System.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Route("api/departments")]
     public class DepartmentController : ControllerBase
@@ -60,6 +62,7 @@ namespace HR_Management_System.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
 
         [HttpGet("/api/GetDepartmentsWithMangersNames")]
         public async Task<IActionResult> GetDepartmentsWithMangersNames()
