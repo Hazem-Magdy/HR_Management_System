@@ -64,7 +64,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var employee = await _employeeService.GetByIDAsync(id);
+                var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
                     return NotFound();
@@ -104,7 +104,7 @@ namespace HR_Management_System.Controllers
 
             try
             {
-                var employee = await _employeeService.GetByIDAsync(id);
+                var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
                     return NotFound();
@@ -139,7 +139,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var employee = await _employeeService.GetByIDAsync(id);
+                var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
                     return NotFound();

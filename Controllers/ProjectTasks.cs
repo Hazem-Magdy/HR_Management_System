@@ -10,10 +10,12 @@ namespace HR_Management_System.Controllers
     public class ProjectTaskController : ControllerBase
     {
         private readonly IProjectTasksService _projectTaskService;
+        private readonly IProjectService _projectService;
 
-        public ProjectTaskController(IProjectTasksService projectTaskService)
+        public ProjectTaskController(IProjectTasksService projectTaskService, IProjectService projectService)
         {
             _projectTaskService = projectTaskService;
+            _projectService = projectService;
         }
 
         [HttpPost]
@@ -48,34 +50,28 @@ namespace HR_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
-            var projectTaskDto = await _projectTaskService.GetByIdAsync(id);
+            var projectTask = await _projectTaskService.GetByIdAsync(id, p=>p.Project);
 
-            if (projectTaskDto == null)
+            if (projectTask== null)
                 return NotFound();
-            var projectTask = new ProjectTask
+            var TaskIncludeProjectDTO = new TaskIncludeProjectDTO()
             {
-                Name = projectTaskDto.Name,
-                Description = projectTaskDto.Description,
-                ToltalHoursPerTask = projectTaskDto.ToltalHoursPerTask,
-                ProjectId = projectTaskDto.ProjectId
+                Name = projectTask.Name,
+                Description = projectTask.Description,
+                TotalHoursPerTask = projectTask.ToltalHoursPerTask,
+                projectName = projectTask.Project.Name
             };
 
-            return Ok(projectTask);
+            return Ok(TaskIncludeProjectDTO);
         }
 
-        [HttpGet("project/{projectId}")]
+        [HttpGet("/api/Project/{projectId}")]
         public async Task<IActionResult> GetProjectTasksByProjectId(int projectId)
         {
             try
             {
-                var projectTasks = await _projectTaskService.GetByIDAsync(projectId);
-                var projectTaskDto = new ProjectTaskDTO
-                {
-                    Name = projectTasks.Name,
-                    
-
-                };
-                return Ok(projectTasks);
+                var project = await _projectService.GetByIdAsync(projectId, t => t.projectTasks);
+                return Ok(project.projectTasks.ToList());
             }
             catch (Exception ex)
             {

@@ -66,7 +66,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var projectPhase = await _projectPhaseService.GetByIDAsync(id);
+                var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
                     return NotFound();
@@ -90,7 +90,7 @@ namespace HR_Management_System.Controllers
 
             try
             {
-                var projectPhase = await _projectPhaseService.GetByIDAsync(id);
+                var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
                     return NotFound();
@@ -117,7 +117,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var projectPhase = await _projectPhaseService.GetByIDAsync(id);
+                var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
                     return NotFound();

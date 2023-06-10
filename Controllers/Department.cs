@@ -43,7 +43,7 @@ namespace HR_Management_System.Controllers
 
                     foreach (int employeeId in departmentDTO.EmployessIds)
                     {
-                        var employee = await _employeeService.GetByIDAsync(employeeId);
+                        var employee = await _employeeService.GetByIdAsync(employeeId);
 
                         if (employee != null)
                         {
@@ -125,7 +125,7 @@ namespace HR_Management_System.Controllers
 
             try
             {
-                var department = await _departmentService.GetByIDAsync(id);
+                var department = await _departmentService.GetByIdAsync(id);
                 if (department == null)
                 {
                     return NotFound();
@@ -142,7 +142,7 @@ namespace HR_Management_System.Controllers
 
                     foreach (int employeeId in departmentDTO.EmployessIds)
                     {
-                        var employee = await _employeeService.GetByIDAsync(employeeId);
+                        var employee = await _employeeService.GetByIdAsync(employeeId);
 
                         if (employee != null)
                         {
@@ -165,7 +165,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var department = await _departmentService.GetByIDAsync(id);
+                var department = await _departmentService.GetByIdAsync(id);
                 if (department == null)
                 {
                     return NotFound();

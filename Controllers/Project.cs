@@ -41,10 +41,11 @@ namespace HR_Management_System.Controllers
             );
 
             List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
-            List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
+            //List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
             foreach (var project in projects)
             {
-                projectPhaseDTOs.Clear();
+                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
+                //projectPhaseDTOs.Clear();
                 foreach (var phase in project.projectPhases)
                 {
                     ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
@@ -82,7 +83,7 @@ namespace HR_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
-            var project = await _projectService.GetByIDAsync(id);
+            var project = await _projectService.GetByIdAsync(id);
 
             if (project == null)
             {
@@ -121,7 +122,8 @@ namespace HR_Management_System.Controllers
                         StartPhase = projectPhaseDTO.StartDate,
                         EndPhase = projectPhaseDTO.EndDate,
                         Milestone = projectPhaseDTO.Milestone,
-                        HrBudget = projectPhaseDTO.HrBudget
+                        HrBudget = projectPhaseDTO.HrBudget,
+                        ProjectId = 0 // Temporary placeholder value
                     };
                     projectPhases.Add(projectPhase);
                 }
@@ -134,81 +136,22 @@ namespace HR_Management_System.Controllers
                     Location = projectDTO.ProjectLocation,
                     StartDate = projectDTO.ProjectStartDate,
                     EndDate = projectDTO.ProjectEndDate,
-                    Description = projectDTO.ProjectLocation,
-                    projectPhases = projectPhases
+                    Description = projectDTO.ProjectDescription,
+
                 };
+
                 await _projectService.AddAsync(project);
-                return Ok(projectPhases);
-            }
-                /*
-                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
-                if (ModelState.IsValid)
+
+                // Assign the project ID to each project phase
+                foreach (var phase in projectPhases.ToList())
                 {
-                    var project = new Project
-                    {
-                        Name = projectDTO.ProjectName,
-                        TotalBudget = projectDTO.TotalBudget,
-                        HoursBudget = projectDTO.ProjectHours,
-                        ProjectStatus = projectDTO.ProjectStatus,
-                        Location = projectDTO.ProjectLocation,
-                        StartDate = projectDTO.ProjectStartDate,
-                        EndDate = projectDTO.ProjectEndDate,
-                        Description = projectDTO.ProjectLocation
-                    };
-                    projectPhaseDTOs.Clear();
-                    foreach (var phase in project.projectPhases)
-                    {
-                        ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
-                        {
-                            Name = phase.Name,
-                            StartDate = phase.StartPhase,
-                            EndDate = phase.EndPhase,
-                            Milestone = phase.Milestone,
-                            HrBudget = phase.HrBudget
-                        };
-                        projectPhaseDTOs.Add(projectPhaseDTO);
-                    }
-                    if (projectPhaseDTOs.Count != 0)
-                    {
-                        foreach (var phase in projectPhaseDTOs)
-                        {
-                            ProjectPhase projectPhase = new ProjectPhase()
-                            {
-                                Name = phase.Name,
-                                StartPhase = phase.StartDate,
-                                EndPhase = phase.EndDate,
-                                Milestone = phase.Milestone,
-                                HrBudget = phase.HrBudget
-                            };
-                            project.projectPhases.Add(projectPhase);
-                        }
-                    }
+                    phase.ProjectId = project.Id;
+                    await _projectPhaseService.AddAsync(phase);
+                }
 
-                    //foreach (var taskId in projectDTO.ProjectTasksIds)
-                    //{
-                    //    var task = await _projectTaskService.GetByIdAsync(taskId);
-                    //    if (task != null)
-                    //    {
-                    //        project.projectTasks.Add(task);
-                    //    }
-                    //}
-
-                    //foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
-                    //{
-                    //    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
-                    //    if (employeeProject != null)
-                    //    {
-                    //        project.employeeProjects.Add(employeeProject);
-                    //    }
-                    //}
-
-                    await _projectService.AddAsync(project);
-
-                    //return CreatedAtAction("GetProject", new { id = project.Id }, project);
-                    return Ok(project);
-                }*/
-
-                return BadRequest(ModelState);
+                return Ok("project created successfully");
+            }
+            return BadRequest(ModelState);
         }
 
 
@@ -219,7 +162,7 @@ namespace HR_Management_System.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var project = await _projectService.GetByIDAsync(id);
+            var project = await _projectService.GetByIdAsync(id);
 
             if (project == null)
                 return NotFound();
@@ -248,7 +191,7 @@ namespace HR_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var project = await _projectService.GetByIDAsync(id);
+            var project = await _projectService.GetByIdAsync(id);
             if (project == null)
             {
                 return NotFound();
