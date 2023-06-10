@@ -6,6 +6,9 @@ namespace HR_Management_System.Models.DTOs
 {
     public class EmployeeDTO
     {
+
+        public int EmplyeeId { get; set; }
+
         [Required(ErrorMessage = "You must enter the first name.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name should only contain letters.")]
         public string FirstName { get; set; }

@@ -161,10 +161,12 @@ namespace HR_Management_System.Controllers
             {
                 var employees = await _employeeService.GetAllAsync();
                 List<EmployeeDTO> employeeDTOs = new List<EmployeeDTO>();
-                foreach (var employee in employeeDTOs)
+                
+                foreach (var employee in employees)
                 {
                     var employeeDto = new EmployeeDTO
                     {
+                        EmplyeeId = employee.Id,
                         FirstName = employee.FirstName,
                         LastName = employee.LastName,
                         SalaryPerHour = employee.SalaryPerHour,
