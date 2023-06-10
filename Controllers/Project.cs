@@ -149,27 +149,13 @@ namespace HR_Management_System.Controllers
                             Milestone = phase.Milestone,
                             HrBudget = phase.HrBudget
                         };
-                        project.projectPhases.Add(projectPhase);
+                        //project.projectPhases.Add(projectPhase);
+
+                        await _projectPhaseService.AddAsync(projectPhase);
                     }
                 }
 
-                //foreach (var taskId in projectDTO.ProjectTasksIds)
-                //{
-                //    var task = await _projectTaskService.GetByIdAsync(taskId);
-                //    if (task != null)
-                //    {
-                //        project.projectTasks.Add(task);
-                //    }
-                //}
 
-                //foreach (var employeeProjectId in projectDTO.EmployeesInProjectIds)
-                //{
-                //    var employeeProject = await _employeeProjectService.GetByIdAsync(employeeProjectId);
-                //    if (employeeProject != null)
-                //    {
-                //        project.employeeProjects.Add(employeeProject);
-                //    }
-                //}
 
                 await _projectService.AddAsync(project);
 

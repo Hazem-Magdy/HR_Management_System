@@ -79,7 +79,7 @@ namespace HR_Management_System.Controllers
 
                 foreach(var dpt in departments)
                 {
-                    dTO.NOEmployeesInDepartment.Add(dpt.Employees.Count());
+                    dTO.NOEmployeesInDepartment.Add(dpt.Employees.Count);
                 }
 
                 return Ok(dTO);
