@@ -83,6 +83,7 @@ namespace HR_Management_System.Data.Base
 
             return await query.ToListAsync();
         }
+        
 
 
         public async Task<T> GetByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties)
