@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Services;
 using HR_Management_System.DTO.Project;
 using HR_Management_System.DTO.ProjectPhase;
+using HR_Management_System.DTO.ProjectTask;
 
 namespace HR_Management_System.Controllers
 {
@@ -73,7 +74,6 @@ namespace HR_Management_System.Controllers
                     EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
                     Phases = projectPhaseDTOs
                 };
-
 
                 projectDTOs.Add(projectDto);
             }
@@ -206,6 +206,69 @@ namespace HR_Management_System.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while deleting the project: {ex.Message}");
+            }
+        }
+
+        // get project tasks by projectId
+        [HttpGet("/api/GetProjectTasks/{projectId}")]
+        public async Task<IActionResult> GetProjectTasksByProjectId(int projectId)
+        {
+            try
+            {
+                var project = await _projectService.GetByIdAsync(projectId, t => t.projectTasks);
+
+                if (project == null)
+                    return NotFound();
+                List<GetProjectTasksByProjectIdDTO> dTOs = new List<GetProjectTasksByProjectIdDTO>();
+
+                foreach (var projectTask in project.projectTasks.ToList())
+                {
+                    GetProjectTasksByProjectIdDTO dTO = new GetProjectTasksByProjectIdDTO()
+                    {
+                        TaskName = projectTask.Name,
+                        TaskDescription = projectTask.Description,
+                        TotalHoursPerTask = projectTask.ToltalHoursPerTask
+                    };
+                    dTOs.Add(dTO);
+                }
+                return Ok(dTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving project tasks: {ex.Message}");
+            }
+        }
+
+        [HttpGet("/api/GetProjectPhases/{projectId}")]
+        public async Task<IActionResult> GetProjectPhases(int projectId)
+        {
+            try
+            {
+                var project = await _projectService.GetByIdAsync(projectId, p => p.projectPhases);
+
+                if (project == null)
+                    return NotFound();
+
+                List<GetProjectPhasesByProjectIdDTO> dTOs = new List<GetProjectPhasesByProjectIdDTO>();
+
+                foreach (var projectPhase in project.projectPhases.ToList())
+                {
+                    GetProjectPhasesByProjectIdDTO dTO = new GetProjectPhasesByProjectIdDTO()
+                    {
+                       Name = projectPhase.Name,
+                       StartDate= projectPhase.StartPhase,
+                       EndDate= projectPhase.EndPhase,
+                       HrBudget = projectPhase.HrBudget,
+                       Milestone = projectPhase.Milestone
+                    };
+
+                    dTOs.Add(dTO);
+                }
+                return Ok(dTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving project tasks: {ex.Message}");
             }
         }
 
