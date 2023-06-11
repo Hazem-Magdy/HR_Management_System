@@ -10,15 +10,19 @@ namespace HR_Management_System.Controllers
     public class ProjectPhaseController : ControllerBase
     {
         private readonly IProjectPhaseService _projectPhaseService;
+        private readonly IProjectService _projectService;
 
-        public ProjectPhaseController(IProjectPhaseService projectPhaseService)
+        public ProjectPhaseController(IProjectPhaseService projectPhaseService, IProjectService projectService)
         {
             _projectPhaseService = projectPhaseService;
+            _projectService = projectService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateProjectPhase(ProjectPhaseDTO projectPhaseDTO)
+        [HttpPost("{projectId}")]
+        public async Task<IActionResult> CreateProjectPhase(int projectId,ProjectPhaseDTO projectPhaseDTO)
         {
+            Project project = await _projectService.GetByIdAsync(projectId);
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -33,13 +37,16 @@ namespace HR_Management_System.Controllers
                     StartPhase = projectPhaseDTO.StartDate,
                     EndPhase = projectPhaseDTO.EndDate,
                     Milestone = projectPhaseDTO.Milestone,
-                    HrBudget = projectPhaseDTO.HrBudget
+                    HrBudget = projectPhaseDTO.HrBudget,
+                    ProjectId = projectId,  
                 };
+
+                project.projectPhases.Add(projectPhase);
 
                 // Save the project phase to the database
                 await _projectPhaseService.AddAsync(projectPhase);
 
-                return Ok("Project phase created successfully.");
+                return Ok($"Project phase assigned to project: {project.Name} successfully.");
             }
             catch (Exception ex)
             {

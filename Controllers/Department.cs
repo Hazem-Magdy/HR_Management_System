@@ -2,6 +2,7 @@
 using HR_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
 using HR_Management_System.DTO.Department;
+using HR_Management_System.DTO.Employee;
 
 namespace HR_Management_System.Controllers
 {
@@ -36,9 +37,9 @@ namespace HR_Management_System.Controllers
                 };
 
                 // Set the employee IDs for the department
-                if (departmentDTO.EmployessIds != null && departmentDTO.EmployessIds.Count > 0)
+                if (departmentDTO.EmployessIds.Count > 0)
                 {
-                    department.Employees = new List<Employee>();
+                    //department.Employees = new List<Employee>();
 
                     foreach (int employeeId in departmentDTO.EmployessIds)
                     {
@@ -49,6 +50,8 @@ namespace HR_Management_System.Controllers
                             department.Employees.Add(employee);
                         }
                     }
+
+                    department.NoEmployees = department.Employees.Count;
                 }
 
                 // Save the department to the database
@@ -78,7 +81,7 @@ namespace HR_Management_System.Controllers
                     {
                         DepartmentName = department.Name,
                         MangerName = string.Concat( department.Employee.FirstName," ", department.Employee.LastName),
-                        NOEmployees = department.Employees.Count
+                        NOEmployees = department.NoEmployees.Value
                     };
 
                     dTOs.Add(dTO);
@@ -91,6 +94,7 @@ namespace HR_Management_System.Controllers
             }
         }
 
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDepartment(int id)
         {
@@ -102,12 +106,29 @@ namespace HR_Management_System.Controllers
                     return NotFound();
                 }
 
-                GetDepartmentsWithMangerNameDTO departmentDTO = new GetDepartmentsWithMangerNameDTO()
+                List<EmployeeDeptDetailsDTO> dTos = new List<EmployeeDeptDetailsDTO>();
+
+                foreach (var employee in department.Employees)
+                {
+
+                    EmployeeDeptDetailsDTO employeeDTO = new EmployeeDeptDetailsDTO()
+                    {
+                        FirstName = employee.FirstName,
+                        LastName = employee.LastName,
+                        Position = employee.Position,
+                    };
+                    dTos.Add(employeeDTO);
+                }
+                
+                var departmentDTO = new GetDepartmentWithEmployessDTO()
                 {
                     DepartmentName = department.Name,
-                    MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName),
-                    EmployeeUnderWork = department.Employees.Count
+                    ManagerName = department.Employee != null ? string.Concat(department.Employee.FirstName, " ", department.Employee.LastName) : string.Empty,
+                    NoEmployees = department.NoEmployees.Value,
+                    Employees = dTos
                 };
+
+                
                 return Ok(departmentDTO);
             }
             catch (Exception ex)

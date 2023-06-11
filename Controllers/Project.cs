@@ -134,8 +134,7 @@ namespace HR_Management_System.Controllers
                         StartPhase = projectPhaseDTO.StartDate,
                         EndPhase = projectPhaseDTO.EndDate,
                         Milestone = projectPhaseDTO.Milestone,
-                        HrBudget = projectPhaseDTO.HrBudget,
-                        ProjectId = 0
+                        HrBudget = projectPhaseDTO.HrBudget
                     };
                     projectPhases.Add(projectPhase);
                 }
@@ -162,12 +161,12 @@ namespace HR_Management_System.Controllers
 
         // PUT: api/Projects/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, ProjectDTO projectDTO)
+        public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var project = await _projectService.GetByIdAsync(id);
+            var project = await _projectService.GetByIdAsync(id,p=>p.projectPhases);
 
             if (project == null)
                 return NotFound();
@@ -180,7 +179,6 @@ namespace HR_Management_System.Controllers
             project.StartDate = projectDTO.ProjectStartDate;
             project.EndDate = projectDTO.ProjectEndDate;
             project.Description = projectDTO.ProjectDescription;
-
             try
             {
                 await _projectService.UpdateAsync(id, project);

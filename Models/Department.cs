@@ -11,6 +11,8 @@ namespace HR_Management_System.Models
         [ForeignKey("Employee")]
         [Column(name:"ManagerId")]
         public int EmployeeId { get; set; }
+
+        public int? NoEmployees { get; set; }
         public Employee Employee { get; set; }
         public ICollection<Employee>? Employees { get; set; } = new HashSet<Employee>();
     }
