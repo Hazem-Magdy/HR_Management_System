@@ -1,4 +1,4 @@
-﻿namespace HR_Management_System.DTO
+﻿namespace HR_Management_System.DTO.EmployeeProject
 {
     public class EmployeeProjectDTO
     {
@@ -8,6 +8,6 @@
 
         public int ProjectPhaseId { get; set; }
 
-        public decimal HoursSpent {get; set;}
+        public decimal HoursSpent { get; set; }
     }
 }

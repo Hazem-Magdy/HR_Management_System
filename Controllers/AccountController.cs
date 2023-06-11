@@ -1,4 +1,5 @@
-﻿using HR_Management_System.DTO;
+﻿using HR_Management_System.DTO.Account;
+using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.Models;
 using HR_Management_System.Services;
 using Microsoft.AspNetCore.Identity;

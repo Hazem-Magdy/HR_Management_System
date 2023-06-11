@@ -1,6 +1,6 @@
 ﻿using HR_Management_System.Data.Enums;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.ProjectPhase
 {
     public class ProjectPhaseDTO
     {

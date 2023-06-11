@@ -1,7 +1,8 @@
 ﻿using HR_Management_System.Data.Enums;
+using HR_Management_System.DTO.ProjectPhase;
 using System.ComponentModel.DataAnnotations;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.Project
 {
     public class ProjectDTO
     {
@@ -27,11 +28,11 @@ namespace HR_Management_System.DTO
 
         public string ProjectDescription { get; set; }
 
-        public ICollection<int>? ProjectAttendances { get; set; }
+        public ICollection<int> ProjectAttendances { get; set; }
 
         public ICollection<ProjectPhaseDTO> Phases { get; set; }
 
-        public ICollection<int>? ProjectTasksIds { get; set; }
+        public ICollection<int> ProjectTasksIds { get; set; }
 
         public ICollection<int> EmployeesInProjectIds { get; set; }
     }

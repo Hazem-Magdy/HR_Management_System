@@ -1,9 +1,8 @@
-﻿using HR_Management_System.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.ProjectTask
 {
-    public class TaskIncludeProjectDTO
+    public class ProjectTaskDTO
     {
         [Required(ErrorMessage = "You must enter the name of the task.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters.")]
@@ -18,7 +17,6 @@ namespace HR_Management_System.DTO
         public int TotalHoursPerTask { get; set; }
 
         [Required(ErrorMessage = "You must specify the project ID.")]
-        //public int ProjectId { get; set; }
-        public string projectName { get; set; }
+        public int ProjectId { get; set; }
     }
 }

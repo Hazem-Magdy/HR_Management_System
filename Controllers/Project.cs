@@ -2,7 +2,8 @@
 using HR_Management_System.Models;
 using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Services;
-using HR_Management_System.DTO;
+using HR_Management_System.DTO.Project;
+using HR_Management_System.DTO.ProjectPhase;
 
 namespace HR_Management_System.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using HR_Management_System.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.Account
 {
     public class RegisterEmployeeDTO
     {
@@ -9,7 +9,7 @@ namespace HR_Management_System.DTO
         public string LastName { get; set; }
 
         public decimal Salary { get; set; }
-        public string? ProfileUrl { get; set; }
+        public string ProfileUrl { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Position { get; set; }
