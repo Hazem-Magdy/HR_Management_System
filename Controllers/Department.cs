@@ -68,20 +68,22 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var departments = await _departmentService.GetAllAsync(d=>d.Employees);
+                var departments = await _departmentService.GetAllAsync(d => d.Employees);
 
-                GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
-                {
-                    DepartmenstNames = departments.Select(d=>d.Name).ToList(),
-                    MangersNames = departments.Select(d => string.Concat(d.Employee.FirstName, " ", d.Employee.LastName) ).ToList(),
-                };
+                List<GetDepartmentsWithMangersNamesDTO> dTOs = new List<GetDepartmentsWithMangersNamesDTO>();
 
-                foreach(var dpt in departments)
+                foreach (var department in departments.ToList())
                 {
-                    dTO.NOEmployeesInDepartment.Add(dpt.Employees.Count());
+                    GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
+                    {
+                        DepartmentName = department.Name,
+                        MangerName = string.Concat( department.Employee.FirstName," ", department.Employee.LastName),
+                        NOEmployees = department.Employees.Count
+                    };
+
+                    dTOs.Add(dTO);
                 }
-
-                return Ok(dTO);
+                return Ok(dTOs);
             }
             catch (Exception ex)
             {
@@ -94,7 +96,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var department = await _departmentService.GetByIdAsync(id,d=>d.Employees);
+                var department = await _departmentService.GetByIdAsync(id, d => d.Employees);
                 if (department == null)
                 {
                     return NotFound();
@@ -150,7 +152,7 @@ namespace HR_Management_System.Controllers
                     }
                 }
 
-                await _departmentService.UpdateAsync(id,department);
+                await _departmentService.UpdateAsync(id, department);
                 return Ok("Department updated successfully.");
             }
             catch (Exception ex)
@@ -164,10 +166,16 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var department = await _departmentService.GetByIdAsync(id);
+                var department = await _departmentService.GetByIdAsync(id,e=>e.Employees);
+
                 if (department == null)
                 {
                     return NotFound();
+                }
+
+                foreach (var employee in department.Employees)
+                {
+                    employee.DepartmentId = null;
                 }
 
                 await _departmentService.DeleteAsync(id);
