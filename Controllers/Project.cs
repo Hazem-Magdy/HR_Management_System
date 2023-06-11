@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HR_Management_System.Models;
-using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Services;
 using HR_Management_System.DTO.Project;
 using HR_Management_System.DTO.ProjectPhase;
@@ -43,11 +42,9 @@ namespace HR_Management_System.Controllers
             );
 
             List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
-            //List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
             foreach (var project in projects)
             {
-                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
-                //projectPhaseDTOs.Clear();
+                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();          
                 foreach (var phase in project.projectPhases)
                 {
                     ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
@@ -84,11 +81,25 @@ namespace HR_Management_System.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDTO>> GetProject(int id)
         {
-            var project = await _projectService.GetByIdAsync(id);
+            var project = await _projectService.GetByIdAsync(id,p=>p.projectPhases);
 
             if (project == null)
             {
                 return NotFound();
+            }
+
+            List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
+            foreach (var phase in project.projectPhases)
+            {
+                ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
+                {
+                    Name = phase.Name,
+                    StartDate = phase.StartPhase,
+                    EndDate = phase.EndPhase,
+                    Milestone = phase.Milestone,
+                    HrBudget = phase.HrBudget
+                };
+                projectPhaseDTOs.Add(projectPhaseDTO);
             }
             var ProjectDto = new ProjectDTO
             {
@@ -102,10 +113,10 @@ namespace HR_Management_System.Controllers
                 ProjectDescription = project.Description,
                 ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
                 EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
-                //Phases = project.projectPhases.Select(p => p.Id).ToList()
+                Phases = projectPhaseDTOs
             };
 
-            return ProjectDto;
+            return Ok(ProjectDto);
         }
 
         // POST: api/Projects
@@ -124,7 +135,7 @@ namespace HR_Management_System.Controllers
                         EndPhase = projectPhaseDTO.EndDate,
                         Milestone = projectPhaseDTO.Milestone,
                         HrBudget = projectPhaseDTO.HrBudget,
-                        ProjectId = 0 // Temporary placeholder value
+                        ProjectId = 0
                     };
                     projectPhases.Add(projectPhase);
                 }
@@ -138,18 +149,11 @@ namespace HR_Management_System.Controllers
                     StartDate = projectDTO.ProjectStartDate,
                     EndDate = projectDTO.ProjectEndDate,
                     Description = projectDTO.ProjectDescription,
+                    projectPhases = projectPhases
 
                 };
 
                 await _projectService.AddAsync(project);
-
-                // Assign the project ID to each project phase
-                foreach (var phase in projectPhases.ToList())
-                {
-                    phase.ProjectId = project.Id;
-                    await _projectPhaseService.AddAsync(phase);
-                }
-
                 return Ok("project created successfully");
             }
             return BadRequest(ModelState);
@@ -255,11 +259,11 @@ namespace HR_Management_System.Controllers
                 {
                     GetProjectPhasesByProjectIdDTO dTO = new GetProjectPhasesByProjectIdDTO()
                     {
-                       Name = projectPhase.Name,
-                       StartDate= projectPhase.StartPhase,
-                       EndDate= projectPhase.EndPhase,
-                       HrBudget = projectPhase.HrBudget,
-                       Milestone = projectPhase.Milestone
+                        Name = projectPhase.Name,
+                        StartDate = projectPhase.StartPhase,
+                        EndDate = projectPhase.EndPhase,
+                        HrBudget = projectPhase.HrBudget,
+                        Milestone = projectPhase.Milestone
                     };
 
                     dTOs.Add(dTO);
