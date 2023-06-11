@@ -17,7 +17,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployee(EmployeeDTO employeeDTO)
+        public async Task<IActionResult> CreateEmployee(AddGetByIdEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace HR_Management_System.Controllers
                 {
                     return NotFound();
                 }
-                var employeeDTO = new EmployeeDTO
+                var employeeDTO = new AddGetByIdEmployeeDTO
                 {
                     FirstName = employee.FirstName,
                     LastName = employee.LastName,
@@ -95,7 +95,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, EmployeeDTO employeeDTO)
+        public async Task<IActionResult> UpdateEmployee(int id, AddGetByIdEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
             {
