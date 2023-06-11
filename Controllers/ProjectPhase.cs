@@ -47,20 +47,6 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetProjectPhases()
-        {
-            try
-            {
-                var projectPhases = await _projectPhaseService.GetAllAsync();
-                return Ok(projectPhases);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectPhase(int id)
         {
@@ -71,8 +57,15 @@ namespace HR_Management_System.Controllers
                 {
                     return NotFound();
                 }
-
-                return Ok(projectPhase);
+                ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
+                {
+                    Name = projectPhase.Name,
+                    StartDate = projectPhase.StartPhase,
+                    EndDate = projectPhase.EndPhase,
+                    Milestone = projectPhase.Milestone,
+                    HrBudget = projectPhase.HrBudget,
+                };
+                return Ok(projectPhaseDTO);
             }
             catch (Exception ex)
             {
