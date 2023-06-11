@@ -2,10 +2,10 @@
 {
     public class GetDepartmentsWithMangersNamesDTO
     {
-        public List<string> MangersNames { get; set; } = new List<string>();
+        public string MangerName { get; set; } 
 
-        public List<string> DepartmenstNames { get; set; } = new List<string>();
+        public string DepartmentName { get; set; } 
 
-        public List<int> NOEmployeesInDepartment { get; set; } = new List<int>();
+        public int NOEmployees { get; set; } 
     }
 }

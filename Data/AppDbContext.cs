@@ -17,13 +17,20 @@ namespace HR_Management_System.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            
+
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Department)
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Employee)
                 .WithMany()
                 .HasForeignKey(d => d.EmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Project>()
                 .HasMany(p => p.projectTasks)
                 .WithOne(pt => pt.Project)
@@ -68,6 +75,8 @@ namespace HR_Management_System.Data
                 .HasMany(pp => pp.Attendances)
                 .WithOne(ep => ep.ProjectPhase)
                 .HasForeignKey(ep => ep.ProjectPhaseId);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
