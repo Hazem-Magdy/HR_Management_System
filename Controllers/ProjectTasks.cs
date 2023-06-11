@@ -1,4 +1,5 @@
 ﻿using HR_Management_System.DTO;
+using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Models;
 using HR_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -38,8 +39,7 @@ namespace HR_Management_System.Controllers
                 // Save the project task to the database
                 await _projectTaskService.AddAsync(projectTask);
 
-                // Return the created project task with its generated ID
-                return CreatedAtAction(nameof(GetProjectTaskById), new { id = projectTask.Id }, projectTask);
+                return Ok("Project task created successfully.");
             }
             catch (Exception ex)
             {
@@ -47,6 +47,7 @@ namespace HR_Management_System.Controllers
             }
         }
 
+        // get task With project name by taskId 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
@@ -54,7 +55,7 @@ namespace HR_Management_System.Controllers
 
             if (projectTask== null)
                 return NotFound();
-            var TaskIncludeProjectDTO = new TaskIncludeProjectDTO()
+            var TaskWhithProjectNameDTO = new TaskWhithProjectNameDTO()
             {
                 Name = projectTask.Name,
                 Description = projectTask.Description,
@@ -62,25 +63,11 @@ namespace HR_Management_System.Controllers
                 projectName = projectTask.Project.Name
             };
 
-            return Ok(TaskIncludeProjectDTO);
-        }
-
-        [HttpGet("/api/Project/{projectId}")]
-        public async Task<IActionResult> GetProjectTasksByProjectId(int projectId)
-        {
-            try
-            {
-                var project = await _projectService.GetByIdAsync(projectId, t => t.projectTasks);
-                return Ok(project.projectTasks.ToList());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while retrieving project tasks: {ex.Message}");
-            }
+            return Ok(TaskWhithProjectNameDTO);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProjectTask(int id, ProjectTaskDTO projectTaskDTO)
+        public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskDTO projectTaskDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

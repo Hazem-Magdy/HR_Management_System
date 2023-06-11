@@ -1,8 +1,7 @@
-﻿
-using HR_Management_System.Data.Enums;
+﻿using HR_Management_System.Data.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace HR_Management_System.Models.DTOs
+namespace HR_Management_System.DTO.Employee
 {
     public class EmployeeDTO
     {
@@ -30,7 +29,7 @@ namespace HR_Management_System.Models.DTOs
         public decimal Salary { get; set; }
 
         [RegularExpression(@"\.(jpg|png|jpeg)$", ErrorMessage = "Invalid profile URL format.")]
-        public string? ProfileUrl { get; set; }
+        public string ProfileUrl { get; set; }
 
         [Required(ErrorMessage = "You must enter the phone number.")]
         [RegularExpression("^(010|012|011|015)\\d{8}$", ErrorMessage = "Invalid phone number format.")]
@@ -55,6 +54,6 @@ namespace HR_Management_System.Models.DTOs
         [EnumDataType(typeof(Status))]
         public Status Status { get; set; }
 
-        public int? DepartmentId{ get; set; }
+        public int? DepartmentId { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using HR_Management_System.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.Attendance
 {
     public class AttendanceDTO
     {

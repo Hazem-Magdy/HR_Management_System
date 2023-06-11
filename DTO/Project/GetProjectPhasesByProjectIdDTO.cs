@@ -1,8 +1,8 @@
 ﻿using HR_Management_System.Data.Enums;
 
-namespace HR_Management_System.DTO
+namespace HR_Management_System.DTO.Project
 {
-    public class ProjectPhaseDTO
+    public class GetProjectPhasesByProjectIdDTO
     {
         public ProjectPhases Name { get; set; }
 

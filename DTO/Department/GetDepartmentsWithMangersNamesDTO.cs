@@ -1,4 +1,4 @@
-﻿namespace HR_Management_System.DTO
+﻿namespace HR_Management_System.DTO.Department
 {
     public class GetDepartmentsWithMangersNamesDTO
     {
