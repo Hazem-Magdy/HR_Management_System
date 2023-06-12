@@ -107,13 +107,13 @@ namespace HR_Management_System.Controllers
             {
                 // check if user exist in the system
 
-                User userExist = await _userManager.FindByNameAsync(userDTO.UserName);
+                User userExist = await _userManager.FindByEmailAsync(userDTO.Email);
                 if (userExist != null && await _userManager.CheckPasswordAsync(userExist, userDTO.Password))
                 {
                     // claims
                     List<Claim> userClaims = new List<Claim>();
                     userClaims.Add(new Claim(ClaimTypes.NameIdentifier, userExist.Id));
-                    userClaims.Add(new Claim(ClaimTypes.Name, userExist.UserName));
+                    userClaims.Add(new Claim(ClaimTypes.Email, userExist.Email));
                     userClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
                     // roles 

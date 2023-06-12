@@ -157,6 +157,11 @@ namespace HR_Management_System.Controllers
                 department.Name = departmentDTO.Name;
                 department.EmployeeId = departmentDTO.ManagerId;
 
+                if (departmentDTO.EmployessIds.Count != department.NoEmployees)
+                {
+                    department.NoEmployees = departmentDTO.EmployessIds.Count;
+                }
+
                 // Update the department employees
                 if (departmentDTO.EmployessIds != null && departmentDTO.EmployessIds.Count > 0)
                 {

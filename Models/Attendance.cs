@@ -14,6 +14,8 @@ namespace HR_Management_System.Models
 
         public int HoursSpent { get; set; }
 
+        public string Description { get; set; }
+
         public int EmployeeId { get; set; }
 
         public virtual Employee Employee { get; set; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.DTO.Employee
 {
-    public class AddGetByIdEmployeeDTO
+    public class AddUpdateEmployeeDTO
     {
 
         [Required(ErrorMessage = "You must enter the first name.")]

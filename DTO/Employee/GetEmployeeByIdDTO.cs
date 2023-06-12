@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.DTO.Employee
 {
-    public class EmployeeDTO
+    public class GetEmployeeByIdDTO
     {
-
-        public int EmplyeeId { get; set; }
-
         [Required(ErrorMessage = "You must enter the first name.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name should only contain letters.")]
         public string FirstName { get; set; }
@@ -39,8 +36,6 @@ namespace HR_Management_System.DTO.Employee
         [RegularExpression("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid email address format.")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "You must enter the password.")]
-        public string Password { get; set; }
 
         [Required(ErrorMessage = "You must enter the position.")]
         public string Position { get; set; }
