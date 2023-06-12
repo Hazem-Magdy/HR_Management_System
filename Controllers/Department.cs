@@ -66,8 +66,8 @@ namespace HR_Management_System.Controllers
         }
 
 
-        [HttpGet("/api/GetDepartmentsWithMangersNames")]
-        public async Task<IActionResult> GetDepartmentsWithMangersNames()
+        [HttpGet]
+        public async Task<IActionResult> GetDepartments()
         {
             try
             {
@@ -138,7 +138,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartment(int id, DepartmentDTO departmentDTO)
+        public async Task<IActionResult> UpdateDepartment(int id, [FromBody] DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
             {
