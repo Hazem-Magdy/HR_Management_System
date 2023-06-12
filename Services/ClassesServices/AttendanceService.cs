@@ -2,10 +2,11 @@
 using HR_Management_System.Data;
 using HR_Management_System.Data.Base;
 using HR_Management_System.Models;
+using HR_Management_System.Services.InterfacesServices;
 using System;
 using System.Linq.Expressions;
 
-namespace HR_Management_System.Services
+namespace HR_Management_System.Services.ClassesServices
 {
     public class AttendanceService : EntityBaseRepository<Models.Attendance>, IAttendanceService
     {
@@ -23,6 +24,6 @@ namespace HR_Management_System.Services
             return employeeAttended;
         }
 
-        
+
     }
 }

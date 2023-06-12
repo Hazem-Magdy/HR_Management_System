@@ -1,6 +1,6 @@
 ﻿using HR_Management_System.DTO.ProjectPhase;
 using HR_Management_System.Models;
-using HR_Management_System.Services;
+using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR_Management_System.Controllers

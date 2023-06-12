@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using HR_Management_System.Models;
 using Microsoft.AspNetCore.Identity;
-using HR_Management_System.Services;
+using HR_Management_System.Services.ClassesServices;
+using HR_Management_System.Services.InterfacesServices;
 
 namespace HR_Management_System
 {

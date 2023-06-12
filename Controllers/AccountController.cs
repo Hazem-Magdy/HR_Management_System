@@ -1,7 +1,7 @@
 ﻿using HR_Management_System.DTO.Account;
 using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.Models;
-using HR_Management_System.Services;
+using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

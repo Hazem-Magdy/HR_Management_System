@@ -1,8 +1,8 @@
 ﻿using HR_Management_System.Models;
-using HR_Management_System.Services;
 using Microsoft.AspNetCore.Mvc;
 using HR_Management_System.DTO.Department;
 using HR_Management_System.DTO.Employee;
+using HR_Management_System.Services.InterfacesServices;
 
 namespace HR_Management_System.Controllers
 {

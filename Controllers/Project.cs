@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using HR_Management_System.Models;
-using HR_Management_System.Services;
 using HR_Management_System.DTO.Project;
 using HR_Management_System.DTO.ProjectPhase;
 using HR_Management_System.DTO.ProjectTask;
+using HR_Management_System.Services.InterfacesServices;
 
 namespace HR_Management_System.Controllers
 {
