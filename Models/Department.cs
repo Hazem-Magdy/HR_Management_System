@@ -10,7 +10,7 @@ namespace HR_Management_System.Models
 
         [ForeignKey("Employee")]
         [Column(name:"ManagerId")]
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
 
         public int? NoEmployees { get; set; }
         public Employee Employee { get; set; }

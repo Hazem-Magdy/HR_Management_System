@@ -33,7 +33,7 @@ namespace HR_Management_System.Controllers
             if (ModelState.IsValid)
             {
                 // create Employee
-                Models.Employee newEmployee = new Models.Employee()
+                Employee newEmployee = new Employee()
                 {
                     FirstName = employeeDTO.FirstName,
                     LastName = employeeDTO.LastName,

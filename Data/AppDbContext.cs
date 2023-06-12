@@ -15,6 +15,10 @@ namespace HR_Management_System.Data
         public virtual DbSet<ProjectTask> ProjectTasks { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -23,7 +27,7 @@ namespace HR_Management_System.Data
                 .HasOne(e => e.Department)
                 .WithMany(d => d.Employees)
                 .HasForeignKey(e => e.DepartmentId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Employee)
