@@ -28,8 +28,8 @@ namespace HR_Management_System.Controllers
             // Map the DTO to the ProjectTask model
             var projectTask = new ProjectTask
             {
-                Name = projectTaskDTO.Name,
-                Description = projectTaskDTO.Description,
+                Name = projectTaskDTO.TaskName,
+                Description = projectTaskDTO.TaskDescription,
                 ToltalHoursPerTask = projectTaskDTO.TotalHoursPerTask,
                 ProjectId = projectTaskDTO.ProjectId
             };
@@ -57,10 +57,10 @@ namespace HR_Management_System.Controllers
                 return NotFound();
             var TaskWhithProjectNameDTO = new TaskWhithProjectNameDTO()
             {
-                Name = projectTask.Name,
-                Description = projectTask.Description,
+                TaskName = projectTask.Name,
+                TaskDescription = projectTask.Description,
                 TotalHoursPerTask = projectTask.ToltalHoursPerTask,
-                projectName = projectTask.Project.Name
+                ProjectName = projectTask.Project.Name
             };
 
             return Ok(TaskWhithProjectNameDTO);
@@ -78,8 +78,8 @@ namespace HR_Management_System.Controllers
                 return NotFound();
 
             // Update the project task properties
-            projectTask.Name = projectTaskDTO.Name;
-            projectTask.Description = projectTaskDTO.Description;
+            projectTask.Name = projectTaskDTO.TaskName;
+            projectTask.Description = projectTaskDTO.TaskDescription;
             projectTask.ToltalHoursPerTask = projectTaskDTO.TotalHoursPerTask;
 
             try

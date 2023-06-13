@@ -32,7 +32,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<List<ProjectDTO>>> GetProjects()
+        public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
         {
             var projects = await _projectService.GetAllAsync(
                 p => p.projectPhases,
@@ -49,18 +49,20 @@ namespace HR_Management_System.Controllers
                 {
                     ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
                     {
-                        Name = phase.Name,
-                        StartDate = phase.StartPhase,
-                        EndDate = phase.EndPhase,
-                        Milestone = phase.Milestone,
-                        HrBudget = phase.HrBudget
+                        PhaseId = phase.Id,
+                        PhaseName = phase.Name,
+                        PhaseStartDate = phase.StartPhase,
+                        PhaseEndDate = phase.EndPhase,
+                        PhaseMilestone = phase.Milestone,
+                        PhaseHrBudget = phase.HrBudget
                     };
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
                 var projectDto = new ProjectDTO
                 {
+                    ProjectId = project.Id,
                     ProjectName = project.Name,
-                    TotalBudget = project.TotalBudget,
+                    ProjectTotalBudget = project.TotalBudget,
                     ProjectHours = project.HoursBudget,
                     ProjectStatus = project.ProjectStatus,
                     ProjectLocation = project.Location,
@@ -69,7 +71,7 @@ namespace HR_Management_System.Controllers
                     ProjectDescription = project.Description,
                     ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
                     EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
-                    Phases = projectPhaseDTOs
+                    ProjectPhases = projectPhaseDTOs
                 };
 
                 projectDTOs.Add(projectDto);
@@ -79,7 +81,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProjectDTO>> GetProject(int id)
+        public async Task<ActionResult<ProjectDTO>> GetProjectById(int id)
         {
             var project = await _projectService.GetByIdAsync(id,p=>p.projectPhases);
 
@@ -93,18 +95,18 @@ namespace HR_Management_System.Controllers
             {
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
                 {
-                    Name = phase.Name,
-                    StartDate = phase.StartPhase,
-                    EndDate = phase.EndPhase,
-                    Milestone = phase.Milestone,
-                    HrBudget = phase.HrBudget
+                    PhaseName = phase.Name,
+                    PhaseStartDate = phase.StartPhase,
+                    PhaseEndDate = phase.EndPhase,
+                    PhaseMilestone = phase.Milestone,
+                    PhaseHrBudget = phase.HrBudget
                 };
                 projectPhaseDTOs.Add(projectPhaseDTO);
             }
             var ProjectDto = new ProjectDTO
             {
                 ProjectName = project.Name,
-                TotalBudget = project.TotalBudget,
+                ProjectTotalBudget = project.TotalBudget,
                 ProjectHours = project.HoursBudget,
                 ProjectStatus = project.ProjectStatus,
                 ProjectLocation = project.Location,
@@ -113,7 +115,7 @@ namespace HR_Management_System.Controllers
                 ProjectDescription = project.Description,
                 ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
                 EmployeesInProjectIds = project.employeeProjects.Select(e => e.Id).ToList(),
-                Phases = projectPhaseDTOs
+                ProjectPhases = projectPhaseDTOs
             };
 
             return Ok(ProjectDto);
@@ -126,22 +128,22 @@ namespace HR_Management_System.Controllers
             if (ModelState.IsValid)
             {
                 List<ProjectPhase> projectPhases = new List<ProjectPhase>();
-                foreach (ProjectPhaseDTO projectPhaseDTO in projectDTO.Phases)
+                foreach (ProjectPhaseDTO projectPhaseDTO in projectDTO.ProjectPhases)
                 {
                     ProjectPhase projectPhase = new ProjectPhase
                     {
-                        Name = projectPhaseDTO.Name,
-                        StartPhase = projectPhaseDTO.StartDate,
-                        EndPhase = projectPhaseDTO.EndDate,
-                        Milestone = projectPhaseDTO.Milestone,
-                        HrBudget = projectPhaseDTO.HrBudget
+                        Name = projectPhaseDTO.PhaseName,
+                        StartPhase = projectPhaseDTO.PhaseStartDate,
+                        EndPhase = projectPhaseDTO.PhaseEndDate,
+                        Milestone = projectPhaseDTO.PhaseMilestone,
+                        HrBudget = projectPhaseDTO.PhaseHrBudget
                     };
                     projectPhases.Add(projectPhase);
                 }
                 var project = new Project
                 {
                     Name = projectDTO.ProjectName,
-                    TotalBudget = projectDTO.TotalBudget,
+                    TotalBudget = projectDTO.ProjectTotalBudget,
                     HoursBudget = projectDTO.ProjectHours,
                     ProjectStatus = projectDTO.ProjectStatus,
                     Location = projectDTO.ProjectLocation,
@@ -172,7 +174,7 @@ namespace HR_Management_System.Controllers
                 return NotFound();
 
             project.Name = projectDTO.ProjectName;
-            project.TotalBudget = projectDTO.TotalBudget;
+            project.TotalBudget = projectDTO.ProjectTotalBudget;
             project.HoursBudget = projectDTO.ProjectHours;
             project.ProjectStatus = projectDTO.ProjectStatus;
             project.Location = projectDTO.ProjectLocation;
@@ -242,7 +244,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("/api/GetProjectPhases/{projectId}")]
-        public async Task<IActionResult> GetProjectPhases(int projectId)
+        public async Task<IActionResult> GetProjectPhasesByProjectId(int projectId)
         {
             try
             {
@@ -257,11 +259,11 @@ namespace HR_Management_System.Controllers
                 {
                     GetProjectPhasesByProjectIdDTO dTO = new GetProjectPhasesByProjectIdDTO()
                     {
-                        Name = projectPhase.Name,
-                        StartDate = projectPhase.StartPhase,
-                        EndDate = projectPhase.EndPhase,
-                        HrBudget = projectPhase.HrBudget,
-                        Milestone = projectPhase.Milestone
+                        PhaseName = projectPhase.Name,
+                        PhaseStartDate = projectPhase.StartPhase,
+                        PhaseEndDate = projectPhase.EndPhase,
+                        PhaseHrBudget = projectPhase.HrBudget,
+                        PhaseMilestone = projectPhase.Milestone
                     };
 
                     dTOs.Add(dTO);
@@ -274,10 +276,10 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpGet("ProjectExists/{id}")]
-        public bool ProjectExists(int id)
+        [HttpGet("ProjectExists/{projectId}")]
+        public bool ProjectExists(int projectId)
         {
-            return _projectService.ProjectExists(id);
+            return _projectService.ProjectExists(projectId);
         }
     }
 }

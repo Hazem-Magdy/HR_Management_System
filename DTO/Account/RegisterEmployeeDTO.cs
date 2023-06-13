@@ -5,20 +5,20 @@ namespace HR_Management_System.DTO.Account
 {
     public class RegisterEmployeeDTO
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string EmployeeFirstName { get; set; }
+        public string EmployeeLastName { get; set; }
 
-        public decimal Salary { get; set; }
-        public string ProfileUrl { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
-        public string Position { get; set; }
+        public decimal EmployeeSalary { get; set; }
+        public string EmployeeProfileUrl { get; set; }
+        public string EmployeePhone { get; set; }
+        public string EmployeeEmail { get; set; }
+        public string EmployeePosition { get; set; }
 
-        public string Password { get; set; }
+        public string EmployeePassword { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime HiringDate { get; set; }
-        public Status Status { get; set; }
+        public DateTime EmployeeHiringDate { get; set; }
+        public Status EmployeeStatus { get; set; }
     }
 }

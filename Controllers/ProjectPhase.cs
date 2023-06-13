@@ -33,11 +33,11 @@ namespace HR_Management_System.Controllers
                 // Map the DTO to the ProjectPhase entity
                 var projectPhase = new ProjectPhase
                 {
-                    Name = projectPhaseDTO.Name,
-                    StartPhase = projectPhaseDTO.StartDate,
-                    EndPhase = projectPhaseDTO.EndDate,
-                    Milestone = projectPhaseDTO.Milestone,
-                    HrBudget = projectPhaseDTO.HrBudget,
+                    Name = projectPhaseDTO.PhaseName,
+                    StartPhase = projectPhaseDTO.PhaseStartDate,
+                    EndPhase = projectPhaseDTO.PhaseEndDate,
+                    Milestone = projectPhaseDTO.PhaseMilestone,
+                    HrBudget = projectPhaseDTO.PhaseHrBudget,
                     ProjectId = projectId,  
                 };
 
@@ -55,7 +55,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProjectPhase(int id)
+        public async Task<IActionResult> GetProjectPhaseById(int id)
         {
             try
             {
@@ -66,11 +66,11 @@ namespace HR_Management_System.Controllers
                 }
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
                 {
-                    Name = projectPhase.Name,
-                    StartDate = projectPhase.StartPhase,
-                    EndDate = projectPhase.EndPhase,
-                    Milestone = projectPhase.Milestone,
-                    HrBudget = projectPhase.HrBudget,
+                    PhaseName = projectPhase.Name,
+                    PhaseStartDate = projectPhase.StartPhase,
+                    PhaseEndDate = projectPhase.EndPhase,
+                    PhaseMilestone = projectPhase.Milestone,
+                    PhaseHrBudget = projectPhase.HrBudget,
                 };
                 return Ok(projectPhaseDTO);
             }
@@ -97,11 +97,11 @@ namespace HR_Management_System.Controllers
                 }
 
                 // Update the project phase properties
-                projectPhase.Name = projectPhaseDTO.Name;
-                projectPhase.StartPhase = projectPhaseDTO.StartDate;
-                projectPhase.EndPhase = projectPhaseDTO.EndDate;
-                projectPhase.Milestone = projectPhaseDTO.Milestone;
-                projectPhase.HrBudget = projectPhaseDTO.HrBudget;
+                projectPhase.Name = projectPhaseDTO.PhaseName;
+                projectPhase.StartPhase = projectPhaseDTO.PhaseStartDate;
+                projectPhase.EndPhase = projectPhaseDTO.PhaseEndDate;
+                projectPhase.Milestone = projectPhaseDTO.PhaseMilestone;
+                projectPhase.HrBudget = projectPhaseDTO.PhaseHrBudget;
 
                 await _projectPhaseService.UpdateAsync(id, projectPhase);
                 return Ok("Project phase updated successfully.");

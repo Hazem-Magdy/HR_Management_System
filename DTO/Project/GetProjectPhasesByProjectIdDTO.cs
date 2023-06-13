@@ -4,14 +4,14 @@ namespace HR_Management_System.DTO.Project
 {
     public class GetProjectPhasesByProjectIdDTO
     {
-        public ProjectPhases Name { get; set; }
+        public ProjectPhases PhaseName { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime PhaseStartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime PhaseEndDate { get; set; }
 
-        public string Milestone { get; set; }
+        public string PhaseMilestone { get; set; }
 
-        public int HrBudget { get; set; }
+        public int PhaseHrBudget { get; set; }
     }
 }

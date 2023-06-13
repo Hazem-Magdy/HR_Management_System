@@ -10,7 +10,7 @@ namespace HR_Management_System.DTO.Project
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters")]
         public string ProjectName { get; set; }
 
-        public decimal TotalBudget { get; set; }
+        public decimal ProjectTotalBudget { get; set; }
 
         public int ProjectHours { get; set; }
 

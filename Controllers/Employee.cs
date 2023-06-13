@@ -15,7 +15,11 @@ namespace HR_Management_System.Controllers
         private readonly IDepartmentService _departmentService;
         private readonly UserManager<User> _userManager;
 
-        public EmployeeController(IEmployeeService employeeService, UserManager<User> userManager, IDepartmentService departmentService)
+        public EmployeeController(
+            IEmployeeService employeeService, 
+            UserManager<User> userManager, 
+            IDepartmentService departmentService
+            )
         {
             _employeeService = employeeService;
             _userManager = userManager;
@@ -34,29 +38,29 @@ namespace HR_Management_System.Controllers
             Boolean flag = true;
             try
             {
-                Employee employeeExist = await _employeeService.GetByEmailAsync(employeeDTO.Email);
+                Employee employeeExist = await _employeeService.GetByEmailAsync(employeeDTO.EmployeeEmail);
                 if (employeeExist == null)
                 {
                     // Map the DTO to the Employee entity
                     var employee = new Employee
                     {
-                        FirstName = employeeDTO.FirstName,
-                        LastName = employeeDTO.LastName,
-                        SalaryPerHour = employeeDTO.SalaryPerHour,
-                        OverTime = employeeDTO.OverTime,
-                        Salary = employeeDTO.Salary,
-                        Phone = employeeDTO.Phone,
-                        Email = employeeDTO.Email,
-                        Password = employeeDTO.Password,
-                        Position = employeeDTO.Position,
-                        HiringDate = employeeDTO.HiringDate,
-                        Status = employeeDTO.Status,
+                        FirstName = employeeDTO.EmployeeFirstName,
+                        LastName = employeeDTO.EmployeeLastName,
+                        SalaryPerHour = employeeDTO.EmployeeSalaryPerHour,
+                        OverTime = employeeDTO.EmployeeOverTime,
+                        Salary = employeeDTO.EmployeeSalary,
+                        Phone = employeeDTO.EmployeePhone,
+                        Email = employeeDTO.EmployeeEmail,
+                        Password = employeeDTO.EmployeePassword,
+                        Position = employeeDTO.EmployeePosition,
+                        HiringDate = employeeDTO.EmployeeHiringDate,
+                        Status = employeeDTO.EmployeeStatus,
                         DepartmentId = employeeDTO.DepartmentId,
                     };
 
-                    if (employeeDTO.ProfileUrl != null)
+                    if (employeeDTO.EmployeeProfileUrl != null)
                     {
-                        employee.ProfileUrl = employeeDTO.ProfileUrl;
+                        employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                     }
                     
 
@@ -67,13 +71,13 @@ namespace HR_Management_System.Controllers
 
                     int randomNumber = random.Next(1, 100000);
 
-                    user.UserName = string.Concat(employeeDTO.FirstName, employeeDTO.LastName, randomNumber.ToString());
+                    user.UserName = string.Concat(employeeDTO.EmployeeFirstName, employeeDTO.EmployeeLastName, randomNumber.ToString());
 
-                    user.Email = employeeDTO.Email;
-                    user.PhoneNumber = employeeDTO.Phone;
+                    user.Email = employeeDTO.EmployeeEmail;
+                    user.PhoneNumber = employeeDTO.EmployeePhone;
 
 
-                    IdentityResult createResult = await _userManager.CreateAsync(user, employeeDTO.Password);
+                    IdentityResult createResult = await _userManager.CreateAsync(user, employeeDTO.EmployeePassword);
 
                     if (createResult.Succeeded)
                     {
@@ -112,7 +116,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetEmployee(int id)
+        public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
             {
@@ -123,20 +127,20 @@ namespace HR_Management_System.Controllers
                 }
                 var employeeDTO = new GetEmployeeByIdDTO
                 {
-                    FirstName = employee.FirstName,
-                    LastName = employee.LastName,
-                    SalaryPerHour = employee.SalaryPerHour,
-                    Salary = employee.Salary,
-                    OverTime = employee.OverTime,
-                    Phone = employee.Phone,
-                    Email = employee.Email,
-                    Position = employee.Position,
-                    Status = employee.Status,
+                    EmployeeFirstName = employee.FirstName,
+                    EmployeeLastName = employee.LastName,
+                    EmployeeSalaryPerHour = employee.SalaryPerHour,
+                    EmployeeSalary = employee.Salary,
+                    EmployeeOverTime = employee.OverTime,
+                    EmployeePhone = employee.Phone,
+                    EmployeeEmail = employee.Email,
+                    EmployeePosition = employee.Position,
+                    EmployeeStatus = employee.Status,
                     DepartmentId = employee.DepartmentId
                 };
                 if (employee.ProfileUrl != null)
                 {
-                    employeeDTO.ProfileUrl = employee.ProfileUrl;
+                    employeeDTO.EmployeeProfileUrl = employee.ProfileUrl;
                 }
                 return Ok(employeeDTO);
             }
@@ -171,17 +175,17 @@ namespace HR_Management_System.Controllers
                     await _departmentService.UpdateAsync(id, departmentDTO);
                 }
                 // Update the employee properties
-                employee.FirstName = employeeDTO.FirstName;
-                employee.LastName = employeeDTO.LastName;
-                employee.SalaryPerHour = employeeDTO.SalaryPerHour;
-                employee.OverTime = employeeDTO.OverTime;
-                employee.Salary = employeeDTO.Salary;
-                employee.ProfileUrl = employeeDTO.ProfileUrl;
-                employee.Phone = employeeDTO.Phone;
-                employee.Email = employeeDTO.Email;
-                employee.Position = employeeDTO.Position;
-                employee.HiringDate = employeeDTO.HiringDate;
-                employee.Status = employeeDTO.Status;
+                employee.FirstName = employeeDTO.EmployeeFirstName;
+                employee.LastName = employeeDTO.EmployeeLastName;
+                employee.SalaryPerHour = employeeDTO.EmployeeSalaryPerHour;
+                employee.OverTime = employeeDTO.EmployeeOverTime;
+                employee.Salary = employeeDTO.EmployeeSalary;
+                employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
+                employee.Phone = employeeDTO.EmployeePhone;
+                employee.Email = employeeDTO.EmployeeEmail;
+                employee.Position = employeeDTO.EmployeePosition;
+                employee.HiringDate = employeeDTO.EmployeeHiringDate;
+                employee.Status = employeeDTO.EmployeeStatus;
                 employee.DepartmentId = employeeDTO.DepartmentId;
        
                 await _employeeService.UpdateAsync(id, employee);
@@ -226,17 +230,17 @@ namespace HR_Management_System.Controllers
                     var employeeDto = new GetAllEmployeesDTO
                     {
                         EmplyeeId = employee.Id,
-                        FirstName = employee.FirstName,
-                        LastName = employee.LastName,
-                        SalaryPerHour = employee.SalaryPerHour,
-                        Salary = employee.Salary,
-                        OverTime = employee.OverTime,
-                        Phone = employee.Phone,
-                        Email = employee.Email,
-                        Position = employee.Position,
-                        Status = employee.Status,
+                        EmployeeFirstName = employee.FirstName,
+                        EmployeeLastName = employee.LastName,
+                        EmployeeSalaryPerHour = employee.SalaryPerHour,
+                        EmployeeSalary = employee.Salary,
+                        EmployeeOverTime = employee.OverTime,
+                        EmployeePhone = employee.Phone,
+                        EmployeeEmail = employee.Email,
+                        EmployeePosition = employee.Position,
+                        EmployeeStatus = employee.Status,
                         DepartmentId = employee.DepartmentId,
-                        ProfileUrl = employee.ProfileUrl
+                        EmployeeProfileUrl = employee.ProfileUrl
                     };
                     employeeDTOs.Add(employeeDto);
                 }

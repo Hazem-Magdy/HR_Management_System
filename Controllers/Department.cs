@@ -32,7 +32,7 @@ namespace HR_Management_System.Controllers
                 // Map the DTO to the Department entity
                 var department = new Department
                 {
-                    Name = departmentDTO.Name,
+                    Name = departmentDTO.DepartmentName,
                     EmployeeId = departmentDTO.ManagerId
                 };
 
@@ -67,7 +67,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetDepartments()
+        public async Task<IActionResult> GetAllDepartments()
         {
             try
             {
@@ -79,6 +79,7 @@ namespace HR_Management_System.Controllers
                 {
                     GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
                     {
+                        DepartmentId = department.Id,
                         DepartmentName = department.Name,
                         MangerName = string.Concat( department.Employee.FirstName," ", department.Employee.LastName),
                         NOEmployees = department.NoEmployees.Value
@@ -96,7 +97,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetDepartment(int id)
+        public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
             {
@@ -113,9 +114,10 @@ namespace HR_Management_System.Controllers
 
                     EmployeeDeptDetailsDTO employeeDTO = new EmployeeDeptDetailsDTO()
                     {
-                        FirstName = employee.FirstName,
-                        LastName = employee.LastName,
-                        Position = employee.Position,
+                        EmployeeId = employee.Id,
+                        EmployeeFirstName = employee.FirstName,
+                        EmployeeLastName = employee.LastName,
+                        EmployeePosition = employee.Position,
                     };
                     dTos.Add(employeeDTO);
                 }
@@ -138,7 +140,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartment(int id, [FromBody] DepartmentDTO departmentDTO)
+        public async Task<IActionResult> UpdateDepartment(int id,DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -154,7 +156,7 @@ namespace HR_Management_System.Controllers
                 }
 
                 // Update the department properties
-                department.Name = departmentDTO.Name;
+                department.Name = departmentDTO.DepartmentName;
                 department.EmployeeId = departmentDTO.ManagerId;
 
                 if (departmentDTO.EmployessIds.Count != department.NoEmployees)

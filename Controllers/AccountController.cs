@@ -35,20 +35,20 @@ namespace HR_Management_System.Controllers
                 // create Employee
                 Employee newEmployee = new Employee()
                 {
-                    FirstName = employeeDTO.FirstName,
-                    LastName = employeeDTO.LastName,
-                    Salary= employeeDTO.Salary,
-                    Phone = employeeDTO.Phone,
-                    Email = employeeDTO.Email,
-                    Password = employeeDTO.Password,
-                    Position = employeeDTO.Position,
-                    HiringDate = employeeDTO.HiringDate,
-                    Status = employeeDTO.Status
+                    FirstName = employeeDTO.EmployeeFirstName,
+                    LastName = employeeDTO.EmployeeLastName,
+                    Salary= employeeDTO.EmployeeSalary,
+                    Phone = employeeDTO.EmployeePhone,
+                    Email = employeeDTO.EmployeeEmail,
+                    Password = employeeDTO.EmployeePassword,
+                    Position = employeeDTO.EmployeePosition,
+                    HiringDate = employeeDTO.EmployeeHiringDate,
+                    Status = employeeDTO.EmployeeStatus
                 };
 
-                if(employeeDTO.ProfileUrl != null )
+                if(employeeDTO.EmployeeProfileUrl != null )
                 {
-                    newEmployee.ProfileUrl = employeeDTO.ProfileUrl;
+                    newEmployee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                 }
 
                 // add employee to database
@@ -63,13 +63,13 @@ namespace HR_Management_System.Controllers
                 int randomNumber = random.Next(1, 100000);
 
                 
-                user.UserName = string.Concat(employeeDTO.FirstName, employeeDTO.LastName, randomNumber.ToString());
+                user.UserName = string.Concat(employeeDTO.EmployeeFirstName, employeeDTO.EmployeeLastName, randomNumber.ToString());
               
-                user.Email = employeeDTO.Email;
-                user.PhoneNumber = employeeDTO.Phone;
+                user.Email = employeeDTO.EmployeeEmail;
+                user.PhoneNumber = employeeDTO.EmployeePhone;
                 try
                 {
-                    User dublicatedUser = await _userManager.FindByEmailAsync(employeeDTO.Email);
+                    User dublicatedUser = await _userManager.FindByEmailAsync(employeeDTO.EmployeeEmail);
                 }
                 catch(Exception)
                 {

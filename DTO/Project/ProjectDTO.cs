@@ -6,11 +6,14 @@ namespace HR_Management_System.DTO.Project
 {
     public class ProjectDTO
     {
+
+        public int ProjectId { get; set; }  
+
         [Required(ErrorMessage = "You must enter the name of the project")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters")]
         public string ProjectName { get; set; }
 
-        public decimal TotalBudget { get; set; }
+        public decimal ProjectTotalBudget { get; set; }
 
         public int ProjectHours { get; set; }
 
@@ -30,7 +33,7 @@ namespace HR_Management_System.DTO.Project
 
         public ICollection<int> ProjectAttendances { get; set; }
 
-        public ICollection<ProjectPhaseDTO> Phases { get; set; }
+        public ICollection<ProjectPhaseDTO> ProjectPhases { get; set; }
 
         public ICollection<int> ProjectTasksIds { get; set; }
 
