@@ -108,25 +108,19 @@ namespace HR_Management_System.Controllers
                 // check if user exist in the system
 
                 User userExist = await _userManager.FindByEmailAsync(userDTO.Email);
+                Employee employee = await _employeeService.GetByEmailAsync(userDTO.Email);
+
+
                 if (userExist != null && await _userManager.CheckPasswordAsync(userExist, userDTO.Password))
                 {
                     // claims
                     List<Claim> userClaims = new List<Claim>();
-                    userClaims.Add(new Claim(ClaimTypes.NameIdentifier, userExist.Id));
-                    userClaims.Add(new Claim(ClaimTypes.Email, userExist.Email));
+            
+                    userClaims.Add(new Claim("Id", employee.Id.ToString()));
+                    userClaims.Add(new Claim("Position", employee.Position));
                     userClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
-                    // roles 
-                    IList<string> roles = await _userManager.GetRolesAsync(userExist);
-
-                    if (roles != null)
-                    {
-                        // add roles to claims
-                        foreach (string role in roles)
-                        {
-                            userClaims.Add(new Claim(ClaimTypes.Role, role));
-                        }
-                    }
+                    
                     // generate secret key
                     SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("frr656164971316cfrvv6f4v6f7v49fv46ftv6v"));
                     SigningCredentials userCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

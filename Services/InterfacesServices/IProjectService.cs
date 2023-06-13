@@ -10,6 +10,8 @@ namespace HR_Management_System.Services.InterfacesServices
 
         Task<Project> GetProjectByIdCustomAsync(int id);
 
+        Task<List<Project>> GetAllProjectsCustomAsync();
+
     }
 
 }

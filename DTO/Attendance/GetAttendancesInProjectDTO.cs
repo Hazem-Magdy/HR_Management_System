@@ -4,6 +4,7 @@ namespace HR_Management_System.DTO.Attendance
 {
     public class GetAttendancesInProjectDTO
     {
+        public int EmployeeId { get; set; }
         public string EmployeeName { get; set; }
 
         public string ProjectName { get; set; }
