@@ -104,6 +104,7 @@ namespace HR_Management_System.Controllers
             {
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
                 {
+                    Id = phase.Id,
                     PhaseName = phase.Name,
                     PhaseStartDate = phase.StartPhase,
                     PhaseEndDate = phase.EndPhase,
@@ -302,6 +303,7 @@ namespace HR_Management_System.Controllers
                 {
                     GetProjectTasksByProjectIdDTO dTO = new GetProjectTasksByProjectIdDTO()
                     {
+                        Id = projectTask.Id,
                         TaskName = projectTask.Name,
                         TaskDescription = projectTask.Description,
                         TotalHoursPerTask = projectTask.ToltalHoursPerTask
@@ -332,6 +334,7 @@ namespace HR_Management_System.Controllers
                 {
                     GetProjectPhasesByProjectIdDTO dTO = new GetProjectPhasesByProjectIdDTO()
                     {
+                        Id = projectPhase.Id,
                         PhaseName = projectPhase.Name,
                         PhaseStartDate = projectPhase.StartPhase,
                         PhaseEndDate = projectPhase.EndPhase,

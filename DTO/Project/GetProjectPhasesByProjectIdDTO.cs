@@ -4,6 +4,7 @@ namespace HR_Management_System.DTO.Project
 {
     public class GetProjectPhasesByProjectIdDTO
     {
+        public int Id { get; set; }
         public ProjectPhases PhaseName { get; set; }
 
         public DateTime PhaseStartDate { get; set; }

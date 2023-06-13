@@ -6,6 +6,7 @@ namespace HR_Management_System.DTO.Department
 {
     public class GetDepartmentWithEmployessDTO
     {
+        public int Id { get; set; }
         public string DepartmentName { get; set; }
         public string ManagerName { get; set; }
         public int? NoEmployees { get; set; }

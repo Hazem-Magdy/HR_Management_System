@@ -4,6 +4,8 @@ namespace HR_Management_System.DTO.ProjectTask
 {
     public class GetProjectTasksByProjectIdDTO
     {
+        public int Id { get; set; }
+
         [Required(ErrorMessage = "You must enter the name of the task.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters.")]
         public string TaskName { get; set; }
