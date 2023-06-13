@@ -32,7 +32,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        public async Task<ActionResult<List<ProjectDTO>>> GetAllProjects()
+        public async Task<ActionResult<List<GetAllProjectsDTO>>> GetAllProjects()
         {
             var projects = await _projectService.GetAllAsync(
                 p => p.projectPhases,
@@ -41,13 +41,13 @@ namespace HR_Management_System.Controllers
                 p => p.Attendances
             );
 
-            List<ProjectDTO> projectDTOs = new List<ProjectDTO>();
+            List<GetAllProjectsDTO> projectDTOs = new List<GetAllProjectsDTO>();
             foreach (var project in projects)
             {
-                List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();          
+                List<ProjectPhaseWithIdDTO> projectPhaseDTOs = new List<ProjectPhaseWithIdDTO>();          
                 foreach (var phase in project.projectPhases)
                 {
-                    ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
+                    ProjectPhaseWithIdDTO projectPhaseDTO = new ProjectPhaseWithIdDTO()
                     {
                         PhaseId = phase.Id,
                         PhaseName = phase.Name,
@@ -58,7 +58,7 @@ namespace HR_Management_System.Controllers
                     };
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
-                var projectDto = new ProjectDTO
+                var projectDto = new GetAllProjectsDTO()
                 {
                     ProjectId = project.Id,
                     ProjectName = project.Name,
