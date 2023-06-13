@@ -8,6 +8,8 @@ namespace HR_Management_System.Services.InterfacesServices
 
         bool ProjectExists(int id);
 
+        Task<Project> GetProjectByIdCustomAsync(int id);
+
     }
 
 }

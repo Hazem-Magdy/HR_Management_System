@@ -17,5 +17,19 @@ namespace HR_Management_System.Services.ClassesServices
         {
             return _context.Projects.Any(e => e.Id == id);
         }
+
+        public async Task<Project> GetProjectByIdCustomAsync(int id)
+        {
+
+            Project existingProject = await _context.Projects
+                .Include(p => p.projectPhases)
+                .Include(p => p.projectTasks)
+                .Include(p => p.Attendances)
+                    .ThenInclude(a => a.Employee)
+                .Include(p=>p.Employees)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            return existingProject;
+        }
     }
 }

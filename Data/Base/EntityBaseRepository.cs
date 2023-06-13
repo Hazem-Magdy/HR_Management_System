@@ -67,7 +67,8 @@ namespace HR_Management_System.Data.Base
             }
 
             return await query.FirstOrDefaultAsync(a => a.Id == id);
-            
+
         }
+
     }
 }

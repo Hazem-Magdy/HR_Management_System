@@ -10,9 +10,9 @@ namespace HR_Management_System.Data
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Employee> Employees { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
-        public virtual DbSet<EmployeeProject> EmployeeProjects { get; set; }
         public virtual DbSet<ProjectPhase> ProjectPhases { get; set; }
         public virtual DbSet<ProjectTask> ProjectTasks { get; set; }
+        public virtual DbSet<EmployeeProject> EmployeeProjects { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -65,20 +65,23 @@ namespace HR_Management_System.Data
                 .WithOne(a => a.ProjectTask)
                 .HasForeignKey(a => a.ProjectTaskId);
 
-            modelBuilder.Entity<Employee>()
-                .HasMany(e => e.employeeProjects)
-                .WithOne(ep => ep.Employee)
-                .HasForeignKey(ep => ep.EmployeeId);
-
-            modelBuilder.Entity<Project>()
-                .HasMany(p => p.employeeProjects)
-                .WithOne(ep => ep.Project)
-                .HasForeignKey(ep => ep.ProjectId);
-
             modelBuilder.Entity<ProjectPhase>()
                 .HasMany(pp => pp.Attendances)
                 .WithOne(ep => ep.ProjectPhase)
                 .HasForeignKey(ep => ep.ProjectPhaseId);
+
+            modelBuilder.Entity<EmployeeProject>()
+        .HasKey(ep => new { ep.EmployeeId, ep.ProjectId });
+
+            modelBuilder.Entity<EmployeeProject>()
+                .HasOne(ep => ep.Employee)
+                .WithMany(e => e.Projects)
+                .HasForeignKey(ep => ep.EmployeeId);
+
+            modelBuilder.Entity<EmployeeProject>()
+                .HasOne(ep => ep.Project)
+                .WithMany(p => p.Employees)
+                .HasForeignKey(ep => ep.ProjectId);
 
             base.OnModelCreating(modelBuilder);
         }

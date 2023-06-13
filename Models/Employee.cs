@@ -43,8 +43,9 @@ namespace HR_Management_System.Models
         public virtual int? DepartmentId { get; set; }
         public virtual Department Department { get; set; }
 
+        public ICollection<EmployeeProject> Projects = new HashSet<EmployeeProject>();
 
-        public ICollection<EmployeeProject> employeeProjects = new HashSet<EmployeeProject>();
+
 
     }
 }

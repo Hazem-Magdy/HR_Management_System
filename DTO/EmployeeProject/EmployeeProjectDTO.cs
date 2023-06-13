@@ -6,8 +6,5 @@
 
         public int ProjectId { get; set; }
 
-        public int ProjectPhaseId { get; set; }
-
-        public decimal HoursSpent { get; set; }
     }
 }

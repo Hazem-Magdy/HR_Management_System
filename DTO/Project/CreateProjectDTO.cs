@@ -5,9 +5,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.DTO.Project
 {
-    public class ProjectDTO
+    public class CreateProjectDTO
     {
-
         [Required(ErrorMessage = "You must enter the name of the project")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters")]
         public string ProjectName { get; set; }
@@ -30,11 +29,7 @@ namespace HR_Management_System.DTO.Project
 
         public string ProjectDescription { get; set; }
 
-        public ICollection<GetAttendancesInProjectDTO> ProjectAttendances { get; set; }
-
         public ICollection<ProjectPhaseDTO> ProjectPhases { get; set; }
-
-        public ICollection<int> ProjectTasksIds { get; set; }
 
         public ICollection<int> EmployeesInProjectIds { get; set; }
     }
