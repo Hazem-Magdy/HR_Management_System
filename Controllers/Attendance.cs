@@ -30,55 +30,41 @@ namespace HR_Management_System.Controllers
             CustomResultDTO result = new CustomResultDTO();
             try
             {
-                // cheack if user exist 
-                Models.User existUser = await _userManager.FindByNameAsync(attendanceDTO.UserName);
-                if (existUser == null)
+                // cheack if employee exist 
+                Employee existingEmployee = await _employeeService.GetByIdAsync(attendanceDTO.EmployeeId);
+
+                if (existingEmployee == null)
                 {
                     result.IsPass = false;
-                    result.Message = "user not exist on the system.";
+                    result.Message = "employee not exist on the system.";
                 }
                 else
                 {
-                    // user is existing in the system
-                    // get employee id
-                    Models.Employee employee = await _employeeService.GetByEmailAsync(existUser.Email);
-                    int employeeId = employee.Id;
-
-                    Models.Attendance attendToday =_attendanceService.IsAttendInSpecificDay(DateTime.Today, employeeId);
-
-                    if (attendToday == null)
+                    // employee is existing in the system
+                    // attend the employee to the system
+                    Models.Attendance attendance = new Models.Attendance()
                     {
-                        // attend the employee to the system
+                        EmployeeId = attendanceDTO.EmployeeId,
+                        ProjectId = attendanceDTO.ProjectId,
+                        ProjectPhaseId = attendanceDTO.ProjectPhaseId,
+                        ProjectTaskId = attendanceDTO.ProjectTaskId,
+                        Date = attendanceDTO.Date,
+                        HoursSpent = attendanceDTO.HoursSpent,
+                        Description = attendanceDTO.Description,
+                    };
 
-                        Models.Attendance attendance = new Models.Attendance()
-                        {
-                            
-                            EmployeeId = employeeId,
-                            ProjectId = attendanceDTO.ProjectId,
-                            ProjectPhaseId= attendanceDTO.ProjectPhaseId,
-                            ProjectTaskId= attendanceDTO.ProjectTaskId,
-                            Date = DateTime.Today,
-                            HoursSpent = attendanceDTO.HoursSpent,
+                    Models.Attendance addedAttendance = await _attendanceService.AddAsync(attendance);
 
-                        };
-                        Models.Attendance addedAttendance = await _attendanceService.AddAsync(attendance);
-                        if (addedAttendance != null)
-                        {
-                            // return data 
-                            result.IsPass = true;
-                            result.Message = "user attend successfully to the system.";
-                            result.Data = new
-                            {
-                                UserName = attendanceDTO.UserName,
-                                Date = attendance.Date.ToString("yyyy-MM-dd")
-                            };
-
-                        }
+                    if (addedAttendance != null)
+                    {
+                        // return data 
+                        result.IsPass = true;
+                        result.Message = "user attend successfully to the system.";
                     }
                     else
                     {
                         result.IsPass = false;
-                        result.Message = "user attend to the system before.";
+                        result.Message = "attend didnt save correctly in the system.";
                     }
                 }
             }
