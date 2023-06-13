@@ -19,8 +19,8 @@ namespace HR_Management_System.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO)
+        [HttpPost("{IfManagerExistInDepartmentMove}")]
+        public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove =0)
         {
             if (!ModelState.IsValid)
             {
@@ -29,42 +29,63 @@ namespace HR_Management_System.Controllers
 
             try
             {
-                // Map the DTO to the Department entity
-                var department = new Department
+                if (IfManagerExistInDepartmentMove == 1)
                 {
-                    Name = departmentDTO.DepartmentName,
-                    EmployeeId = departmentDTO.ManagerId
-                };
-
-                // Set the employee IDs for the department
-                if (departmentDTO.EmployessIds.Count > 0)
-                {
-                    //department.Employees = new List<Employee>();
-
-                    foreach (int employeeId in departmentDTO.EmployessIds)
-                    {
-                        var employee = await _employeeService.GetByIdAsync(employeeId);
-
-                        if (employee != null)
-                        {
-                            department.Employees.Add(employee);
-                        }
-                    }
-
-                    department.NoEmployees = department.Employees.Count;
+                    Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId);
+                    employee.DepartmentId = departmentDTO.ManagerId;
+                    await _employeeService.UpdateAsync(employee.Id, employee);
+                    return await Create(departmentDTO);
                 }
-
-                // Save the department to the database
-                await _departmentService.AddAsync(department);
-
-                return Ok("Department created successfully.");
+                else
+                {
+                    var Employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId);
+                    if (Employee.DepartmentId != null)
+                    {
+                        return StatusCode(500, "The Manger Exist in another department Enter 1 to complete moving to another Department");
+                    }
+                    else
+                    {
+                        return await Create(departmentDTO);
+                    }
+                }
+                
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+        // function to confirm and create Department 
+        private async Task<IActionResult> Create(DepartmentDTO departmentDTO)
+        {
+            // Map the DTO to the Department entity
+            var department = new Department
+            {
+                Name = departmentDTO.DepartmentName,
+                EmployeeId = departmentDTO.ManagerId
+            };
 
+            // Set the employee IDs for the department
+            if (departmentDTO.EmployessIds.Count > 0)
+            {
+                foreach (int employeeId in departmentDTO.EmployessIds)
+                {
+                    var employee = await _employeeService.GetByIdAsync(employeeId);
+
+                    if (employee != null)
+                    {
+                        department.Employees.Add(employee);
+                    }
+                }
+
+                department.NoEmployees = department.Employees.Count;
+            }
+
+            // Save the department to the database
+            await _departmentService.AddAsync(department);
+
+            return Ok("Department created successfully.");
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllDepartments()
