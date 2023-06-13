@@ -6,6 +6,7 @@ using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Services.InterfacesServices;
 using HR_Management_System.DTO.Attendance;
 using HR_Management_System.DTO.EmployeeProject;
+using HR_Management_System.DTO.Employee;
 
 namespace HR_Management_System.Controllers
 {
@@ -17,6 +18,7 @@ namespace HR_Management_System.Controllers
         private readonly IProjectPhaseService _projectPhaseService;
         private readonly IProjectTasksService _projectTaskService;
         private readonly IEmployeeService _employeeService;
+        private readonly IEmployeeProjectsService _employeeProjectsService;
 
 
 
@@ -24,13 +26,15 @@ namespace HR_Management_System.Controllers
             IProjectService projectService,
             IProjectPhaseService projectPhaseService,
             IProjectTasksService projectTaskService,
-            IEmployeeService employeeService
+            IEmployeeService employeeService,
+            IEmployeeProjectsService employeeProjectsService
         )
         {
             _projectService = projectService;
             _projectPhaseService = projectPhaseService;
             _projectTaskService = projectTaskService;
             _employeeService = employeeService;
+            _employeeProjectsService = employeeProjectsService;
         }
 
         // GET: api/Projects
@@ -94,6 +98,8 @@ namespace HR_Management_System.Controllers
 
             List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
             List<GetAttendancesInProjectDTO> projectAttendanceDTOs = new List<GetAttendancesInProjectDTO>();
+            List<EmployeeDeptDetailsDTO> employeeDeptDetails = new List<EmployeeDeptDetailsDTO>();
+            List<ProjectTaskWithIdDTO> projectTaskWithIdDTOs = new List<ProjectTaskWithIdDTO>();
             foreach (var phase in project.projectPhases)
             {
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
@@ -106,7 +112,17 @@ namespace HR_Management_System.Controllers
                 };
                 projectPhaseDTOs.Add(projectPhaseDTO);
             }
-
+            foreach (var task in project.projectTasks)
+            {
+                ProjectTaskWithIdDTO projectTaskWithIdDTO = new ProjectTaskWithIdDTO()
+                {
+                    Id = task.Id,
+                    TaskName = task.Name,
+                    TaskDescription = task.Description,
+                    TotalHoursPerTask = task.ToltalHoursPerTask
+                };
+                projectTaskWithIdDTOs.Add(projectTaskWithIdDTO);
+            }
 
             foreach (var attendance in project.Attendances)
             {
@@ -124,7 +140,17 @@ namespace HR_Management_System.Controllers
                 };
                 projectAttendanceDTOs.Add(projectAttendanceDTO);
             }
-
+            foreach (var employee in project.Employees.ToList())
+            {
+                EmployeeDeptDetailsDTO employeeDept = new EmployeeDeptDetailsDTO()
+                {
+                    EmployeeId = employee.Employee.Id,
+                    EmployeeFirstName = employee.Employee.FirstName,
+                    EmployeeLastName = employee.Employee.LastName,
+                    EmployeePosition = employee.Employee.Position
+                };
+                employeeDeptDetails.Add(employeeDept);
+            }
 
             var ProjectDto = new ProjectDTO
             {
@@ -136,8 +162,8 @@ namespace HR_Management_System.Controllers
                 ProjectStartDate = project.StartDate,
                 ProjectEndDate = project.EndDate,
                 ProjectDescription = project.Description,
-                ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
-                EmployeesInProjectIds = project.Employees.Select(e => e.Id).ToList(),
+                ProjectTasks = projectTaskWithIdDTOs,
+                EmployeesInProject = employeeDeptDetails,
                 ProjectPhases = projectPhaseDTOs,
                 ProjectAttendances = projectAttendanceDTOs
 
@@ -191,15 +217,15 @@ namespace HR_Management_System.Controllers
                         EmployeeProject employeeProject = new EmployeeProject()
                         {
                             EmployeeId = EmployyeId,
-                            ProjectId = createdProject.Id,
-
+                            ProjectId = createdProject.Id
                         };
                         employeeProjects.Add(employeeProject);
+                        await _employeeProjectsService.AddAsync(employeeProject);
                     }
                     
                 }
                 project.Employees = employeeProjects;
-
+                
 
                 
                 return Ok("project created successfully");

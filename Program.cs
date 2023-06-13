@@ -25,6 +25,7 @@ namespace HR_Management_System
             builder.Services.AddScoped<IProjectPhaseService, ProjectPhaseService>();
             builder.Services.AddScoped<IProjectTasksService, ProjectTasksService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+            builder.Services.AddScoped<IEmployeeProjectsService, EmployeeProjectsService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
