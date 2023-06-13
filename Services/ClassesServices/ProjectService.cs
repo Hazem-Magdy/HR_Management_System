@@ -32,5 +32,18 @@ namespace HR_Management_System.Services.ClassesServices
 
             return existingProject;
         }
+
+        public Task<List<Project>> GetAllProjectsCustomAsync()
+        {
+            List<Project> ProjectList = _context.Projects
+                .Include(p => p.projectPhases)
+                .Include(p => p.projectTasks)
+                .Include(p => p.Attendances)
+                    .ThenInclude(a => a.Employee)
+                .Include(p => p.Employees)
+                    .ThenInclude(e => e.Employee).ToList();
+
+            return Task.FromResult(ProjectList);
+        }
     }
 }

@@ -41,17 +41,16 @@ namespace HR_Management_System.Controllers
         [HttpGet]
         public async Task<ActionResult<List<GetAllProjectsDTO>>> GetAllProjects()
         {
-            var projects = await _projectService.GetAllAsync(
-                p => p.projectPhases,
-                p => p.projectTasks,
-                p => p.Employees,
-                p => p.Attendances
-            );
+            
+            var projects = await _projectService.GetAllProjectsCustomAsync();
 
-            List<GetAllProjectsDTO> projectDTOs = new List<GetAllProjectsDTO>();
+            List <GetAllProjectsDTO> projectDTOs = new List<GetAllProjectsDTO>();
             foreach (var project in projects)
             {
                 List<ProjectPhaseWithIdDTO> projectPhaseDTOs = new List<ProjectPhaseWithIdDTO>();
+                List<GetAttendancesInProjectDTO> projectAttendanceDTOs = new List<GetAttendancesInProjectDTO>();
+                List<EmployeeDeptDetailsDTO> employeeDeptDetails = new List<EmployeeDeptDetailsDTO>();
+                List<ProjectTaskWithIdDTO> projectTaskWithIdDTOs = new List<ProjectTaskWithIdDTO>();
                 foreach (var phase in project.projectPhases)
                 {
                     ProjectPhaseWithIdDTO projectPhaseDTO = new ProjectPhaseWithIdDTO()
@@ -65,6 +64,47 @@ namespace HR_Management_System.Controllers
                     };
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
+                foreach (var task in project.projectTasks)
+                {
+                    ProjectTaskWithIdDTO projectTaskWithIdDTO = new ProjectTaskWithIdDTO()
+                    {
+                        Id = task.Id,
+                        TaskName = task.Name,
+                        TaskDescription = task.Description,
+                        TotalHoursPerTask = task.ToltalHoursPerTask
+                    };
+                    projectTaskWithIdDTOs.Add(projectTaskWithIdDTO);
+                }
+
+                foreach (var attendance in project.Attendances)
+                {
+                    GetAttendancesInProjectDTO projectAttendanceDTO = new GetAttendancesInProjectDTO()
+                    {
+                        EmployeeId = attendance.EmployeeId,
+                        EmployeeName = string.Concat(attendance.Employee.FirstName, " ", attendance.Employee.LastName),
+                        ProjectName = attendance.Project.Name,
+                        PhaseName = attendance.ProjectPhase.Name.ToString(),
+                        TaskName = attendance.ProjectTask.Name,
+                        Date = attendance.Date,
+                        Description = attendance.Description,
+                        HoursSpent = attendance.HoursSpent
+
+
+                    };
+                    projectAttendanceDTOs.Add(projectAttendanceDTO);
+                }
+                foreach (var employee in project.Employees.ToList())
+                {
+                    EmployeeDeptDetailsDTO employeeDept = new EmployeeDeptDetailsDTO()
+                    {
+                        EmployeeId = employee.Employee.Id,
+                        EmployeeFirstName = employee.Employee.FirstName,
+                        EmployeeLastName = employee.Employee.LastName,
+                        EmployeePosition = employee.Employee.Position
+                    };
+                    employeeDeptDetails.Add(employeeDept);
+                }
+
                 var projectDto = new GetAllProjectsDTO()
                 {
                     ProjectId = project.Id,
@@ -76,9 +116,10 @@ namespace HR_Management_System.Controllers
                     ProjectStartDate = project.StartDate,
                     ProjectEndDate = project.EndDate,
                     ProjectDescription = project.Description,
-                    ProjectTasksIds = project.projectTasks.Select(a => a.Id).ToList(),
-                    EmployeesInProjectIds = project.Employees.Select(e => e.Id).ToList(),
-                    ProjectPhases = projectPhaseDTOs
+                    ProjectTasks = projectTaskWithIdDTOs,
+                    EmployeesInProject = employeeDeptDetails,
+                    ProjectPhases = projectPhaseDTOs,
+                    ProjectAttendances = projectAttendanceDTOs
                 };
 
                 projectDTOs.Add(projectDto);
@@ -112,6 +153,7 @@ namespace HR_Management_System.Controllers
                 };
                 projectPhaseDTOs.Add(projectPhaseDTO);
             }
+
             foreach (var task in project.projectTasks)
             {
                 ProjectTaskWithIdDTO projectTaskWithIdDTO = new ProjectTaskWithIdDTO()
@@ -128,6 +170,7 @@ namespace HR_Management_System.Controllers
             {
                 GetAttendancesInProjectDTO projectAttendanceDTO = new GetAttendancesInProjectDTO()
                 {
+                    EmployeeId = attendance.EmployeeId,
                     EmployeeName = string.Concat(attendance.Employee.FirstName, " ", attendance.Employee.LastName),
                     ProjectName = attendance.Project.Name,
                     PhaseName = attendance.ProjectPhase.Name.ToString(),
