@@ -20,8 +20,12 @@ namespace HR_Management_System.Models
         public string LastName { get; set; }
 
         public decimal SalaryPerHour { get; set; }
-        public decimal OverTime { get; set; }
+        public decimal OverTime { get; set; } = 0;
         public decimal Salary { get; set; }
+        public decimal OvertimeRate { get; set; }
+        public decimal RegularHoursPerDay { get; set; }
+        public int WorkingDaysPerWeek { get; set; }
+
         [RegularExpression(@"\.(jpg|png|jpeg)$")]
         public string? ProfileUrl { get; set; }
         [RegularExpression("^(010|012|011|015)\\d{8}$")]
@@ -45,7 +49,26 @@ namespace HR_Management_System.Models
 
         public ICollection<EmployeeProject> Projects = new HashSet<EmployeeProject>();
 
+        //public decimal CalculateSalary(decimal totalHoursSpent)
+        //{
+        //    //decimal overtime = OverTime; // Use 0 as the default value if OverTime is null
 
+        //    decimal regularHours = RegularHoursPerDay * WorkingDaysPerWeek;
+        //    //decimal overtimeHours = Math.Max(overtime - regularHours, 0); // Calculate overtime hours exceeding regular hours
 
+        //    decimal regularSalary = regularHours * SalaryPerHour;
+        //    //decimal overtimeSalary = overtimeHours * OvertimeRate;
+
+        //    //decimal totalSalary = regularSalary + overtimeSalary;
+        //    //return totalSalary;
+
+        //    return regularSalary;
+        //}
+        public decimal CalculateSalaryPerProject(decimal totalHoursSpent)
+        {
+            decimal totalCost = totalHoursSpent * SalaryPerHour;
+            
+            return totalCost;
+        }
     }
 }

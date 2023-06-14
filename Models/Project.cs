@@ -38,5 +38,6 @@ namespace HR_Management_System.Models
         public ICollection<ProjectTask>? projectTasks = new List<ProjectTask>();
 
         public ICollection<EmployeeProject> Employees = new HashSet<EmployeeProject>();
+
     }
 }

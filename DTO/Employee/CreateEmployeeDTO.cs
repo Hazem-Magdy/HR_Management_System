@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HR_Management_System.DTO.Employee
 {
-    public class AddUpdateEmployeeDTO
+    public class CreateEmployeeDTO
     {
-
         [Required(ErrorMessage = "You must enter the first name.")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First name should only contain letters.")]
         public string EmployeeFirstName { get; set; }
@@ -25,6 +24,10 @@ namespace HR_Management_System.DTO.Employee
         [Required(ErrorMessage = "You must enter the salary.")]
         [Range(0, double.MaxValue, ErrorMessage = "Salary must be a non-negative value.")]
         public decimal EmployeeSalary { get; set; }
+
+        public decimal EmployeeOvertimeRate { get; set; }
+        public decimal EmployeeRegularHoursPerDay { get; set; }
+        public int EmployeeWorkingDaysPerWeek { get; set; }
 
         [RegularExpression(@"\.(jpg|png|jpeg)$", ErrorMessage = "Invalid profile URL format.")]
         public string EmployeeProfileUrl { get; set; }
@@ -51,7 +54,5 @@ namespace HR_Management_System.DTO.Employee
         [Required(ErrorMessage = "You must enter the status.")]
         [EnumDataType(typeof(Status))]
         public Status EmployeeStatus { get; set; }
-
-        public int? DepartmentId { get; set; }
     }
 }

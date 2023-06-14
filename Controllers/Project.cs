@@ -5,8 +5,8 @@ using HR_Management_System.DTO.ProjectPhase;
 using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Services.InterfacesServices;
 using HR_Management_System.DTO.Attendance;
-using HR_Management_System.DTO.EmployeeProject;
 using HR_Management_System.DTO.Employee;
+
 
 namespace HR_Management_System.Controllers
 {
@@ -15,8 +15,6 @@ namespace HR_Management_System.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
-        private readonly IProjectPhaseService _projectPhaseService;
-        private readonly IProjectTasksService _projectTaskService;
         private readonly IEmployeeService _employeeService;
         private readonly IEmployeeProjectsService _employeeProjectsService;
 
@@ -24,15 +22,11 @@ namespace HR_Management_System.Controllers
 
         public ProjectsController(
             IProjectService projectService,
-            IProjectPhaseService projectPhaseService,
-            IProjectTasksService projectTaskService,
             IEmployeeService employeeService,
             IEmployeeProjectsService employeeProjectsService
         )
         {
             _projectService = projectService;
-            _projectPhaseService = projectPhaseService;
-            _projectTaskService = projectTaskService;
             _employeeService = employeeService;
             _employeeProjectsService = employeeProjectsService;
         }
@@ -397,5 +391,42 @@ namespace HR_Management_System.Controllers
         {
             return _projectService.ProjectExists(projectId);
         }
+
+
+        [HttpGet("GetProjectHours/{projectId}")]
+        public async Task<IActionResult> GetProjectHours(int projectId)
+        {
+            var project = await _projectService.GetByIdAsync(projectId,p=>p.Attendances);
+
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            var projectHours = new
+            {
+                ProjectId = project.Id,
+                ProjectName = project.Name,
+                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent)
+            };
+
+            return Ok(projectHours);
+        }
+
+        [HttpGet("GetProjectsHours")]
+        public async Task<IActionResult> GetProjectsHours()
+        {
+            var projects =await _projectService.GetAllAsync(p=>p.Attendances);
+
+            var projectHours = projects.Select(project => new
+            {
+                ProjectId = project.Id,
+                ProjectName = project.Name,
+                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent)
+            });
+
+            return Ok(projectHours);
+        }
+
     }
 }

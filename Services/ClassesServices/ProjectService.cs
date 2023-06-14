@@ -33,6 +33,17 @@ namespace HR_Management_System.Services.ClassesServices
             return existingProject;
         }
 
+        public async Task<Project> GetProjectByIdCustom2Async(int id)
+        {
+            Project existingProject = await _context.Projects
+                .Include(p => p.Attendances)
+                    .ThenInclude(a => a.Employee)
+                .Include(p => p.Employees)
+                    .ThenInclude(e => e.Employee)
+                .FirstOrDefaultAsync(e => e.Id == id);
+            return existingProject;
+        }
+
         public Task<List<Project>> GetAllProjectsCustomAsync()
         {
             List<Project> ProjectList = _context.Projects

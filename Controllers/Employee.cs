@@ -13,22 +13,25 @@ namespace HR_Management_System.Controllers
     {
         private readonly IEmployeeService _employeeService;
         private readonly IDepartmentService _departmentService;
+        private readonly IProjectService _projectService;
         private readonly UserManager<User> _userManager;
 
         public EmployeeController(
-            IEmployeeService employeeService, 
-            UserManager<User> userManager, 
-            IDepartmentService departmentService
+            IEmployeeService employeeService,
+            UserManager<User> userManager,
+            IDepartmentService departmentService,
+            IProjectService projectService
             )
         {
             _employeeService = employeeService;
             _userManager = userManager;
             _departmentService = departmentService;
+            _projectService = projectService;
         }
 
         //create Employee & user 
         [HttpPost]
-        public async Task<IActionResult> CreateEmployee(AddUpdateEmployeeDTO employeeDTO)
+        public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
             if (!ModelState.IsValid)
@@ -49,20 +52,22 @@ namespace HR_Management_System.Controllers
                         SalaryPerHour = employeeDTO.EmployeeSalaryPerHour,
                         OverTime = employeeDTO.EmployeeOverTime,
                         Salary = employeeDTO.EmployeeSalary,
+                        WorkingDaysPerWeek = employeeDTO.EmployeeWorkingDaysPerWeek,
+                        RegularHoursPerDay = employeeDTO.EmployeeRegularHoursPerDay,
+                        OvertimeRate = employeeDTO.EmployeeOvertimeRate,
                         Phone = employeeDTO.EmployeePhone,
                         Email = employeeDTO.EmployeeEmail,
                         Password = employeeDTO.EmployeePassword,
                         Position = employeeDTO.EmployeePosition,
                         HiringDate = employeeDTO.EmployeeHiringDate,
-                        Status = employeeDTO.EmployeeStatus,
-                        DepartmentId = employeeDTO.DepartmentId,
+                        Status = employeeDTO.EmployeeStatus
                     };
 
                     if (employeeDTO.EmployeeProfileUrl != null)
                     {
                         employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                     }
-                    
+
 
                     // create user
                     User user = new User();
@@ -132,6 +137,10 @@ namespace HR_Management_System.Controllers
                     EmployeeSalaryPerHour = employee.SalaryPerHour,
                     EmployeeSalary = employee.Salary,
                     EmployeeOverTime = employee.OverTime,
+                    EmployeeHiringDate = employee.HiringDate,
+                    EmployeeOvertimeRate = employee.OvertimeRate,
+                    EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
+                    EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
                     EmployeePhone = employee.Phone,
                     EmployeeEmail = employee.Email,
                     EmployeePosition = employee.Position,
@@ -151,7 +160,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEmployee(int id, AddUpdateEmployeeDTO employeeDTO)
+        public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -167,8 +176,8 @@ namespace HR_Management_System.Controllers
                 }
                 if (employee.DepartmentId != employeeDTO.DepartmentId)
                 {
-                    Department department= await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
-                    Department departmentDTO= await _departmentService.GetByIdAsync(employeeDTO.DepartmentId.Value);
+                    Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
+                    Department departmentDTO = await _departmentService.GetByIdAsync(employeeDTO.DepartmentId.Value);
                     department.NoEmployees--;
                     departmentDTO.NoEmployees++;
                     await _departmentService.UpdateAsync(id, department);
@@ -180,6 +189,9 @@ namespace HR_Management_System.Controllers
                 employee.SalaryPerHour = employeeDTO.EmployeeSalaryPerHour;
                 employee.OverTime = employeeDTO.EmployeeOverTime;
                 employee.Salary = employeeDTO.EmployeeSalary;
+                employee.WorkingDaysPerWeek = employeeDTO.EmployeeWorkingDaysPerWeek;
+                employee.RegularHoursPerDay = employeeDTO.EmployeeRegularHoursPerDay;
+                employee.OvertimeRate = employeeDTO.EmployeeOvertimeRate;
                 employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                 employee.Phone = employeeDTO.EmployeePhone;
                 employee.Email = employeeDTO.EmployeeEmail;
@@ -187,7 +199,7 @@ namespace HR_Management_System.Controllers
                 employee.HiringDate = employeeDTO.EmployeeHiringDate;
                 employee.Status = employeeDTO.EmployeeStatus;
                 employee.DepartmentId = employeeDTO.DepartmentId;
-       
+
                 await _employeeService.UpdateAsync(id, employee);
                 return Ok("Employee updated successfully.");
             }
@@ -234,7 +246,11 @@ namespace HR_Management_System.Controllers
                         EmployeeLastName = employee.LastName,
                         EmployeeSalaryPerHour = employee.SalaryPerHour,
                         EmployeeSalary = employee.Salary,
+                        EmployeeOvertimeRate = employee.OvertimeRate,
+                        EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
+                        EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
                         EmployeeOverTime = employee.OverTime,
+                        EmployeeHiringDate = employee.HiringDate,
                         EmployeePhone = employee.Phone,
                         EmployeeEmail = employee.Email,
                         EmployeePosition = employee.Position,
@@ -251,5 +267,49 @@ namespace HR_Management_System.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+
+        [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
+        public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
+        {
+            var employees = await _employeeService.GetAllAsync(p=>p.Attendances);
+
+            var employeeHours = employees.Select(employee => new
+            {
+                EmployeeId = employee.Id,
+                EmployeeName = $"{employee.FirstName} {employee.LastName}",
+                TotalHoursSpent = employee.Attendances.Sum(a => a.HoursSpent),
+                TotalCost = employee.CalculateSalaryPerProject(employee.Attendances.Sum(a => a.HoursSpent))
+            });
+
+            return Ok(employeeHours);
+        }
+
+        [HttpGet("GetEmployeesCostsInProject/{projectId}")]
+        public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
+        {
+            var project = await _projectService.GetProjectByIdCustom2Async(projectId);
+           
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+
+            var employeeCosts = project.Employees.Select(employee =>
+            {
+                decimal totalHoursSpent = project.Attendances.Where(a=>a.EmployeeId == employee.EmployeeId).Sum(a => a.HoursSpent);
+                decimal totalCost = employee.Employee.CalculateSalaryPerProject(totalHoursSpent);
+                return new
+                {
+                    EmployeeId = employee.Employee.Id,
+                    EmployeeName = $"{employee.Employee.FirstName} {employee.Employee.LastName}",
+                    TotalCost = totalCost
+                };
+            });
+
+            return Ok(employeeCosts);
+        }
+
     }
 }
