@@ -20,7 +20,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost("{IfManagerExistInDepartmentMove}")]
-        public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove =0)
+        public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove = 0)
         {
             if (!ModelState.IsValid)
             {
@@ -32,8 +32,11 @@ namespace HR_Management_System.Controllers
                 if (IfManagerExistInDepartmentMove == 1)
                 {
                     Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId);
+                    Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
                     employee.DepartmentId = departmentDTO.ManagerId;
+                    department.EmployeeId = null;
                     await _employeeService.UpdateAsync(employee.Id, employee);
+                    await _departmentService.UpdateAsync(department.Id, department);
                     return await Create(departmentDTO);
                 }
                 else
@@ -48,7 +51,7 @@ namespace HR_Management_System.Controllers
                         return await Create(departmentDTO);
                     }
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -58,6 +61,7 @@ namespace HR_Management_System.Controllers
         // function to confirm and create Department 
         private async Task<IActionResult> Create(DepartmentDTO departmentDTO)
         {
+            Boolean flag = false;
             // Map the DTO to the Department entity
             var department = new Department
             {
@@ -75,10 +79,17 @@ namespace HR_Management_System.Controllers
                     if (employee != null)
                     {
                         department.Employees.Add(employee);
+                        if (employee.Id == departmentDTO.ManagerId) flag = true;
                     }
                 }
-
-                department.NoEmployees = department.Employees.Count;
+                if (flag)
+                {
+                    department.NoEmployees = department.Employees.Count;
+                }
+                else
+                {
+                    department.NoEmployees = department.Employees.Count+1;
+                }
             }
 
             // Save the department to the database
@@ -102,7 +113,7 @@ namespace HR_Management_System.Controllers
                     {
                         DepartmentId = department.Id,
                         DepartmentName = department.Name,
-                        MangerName = string.Concat( department.Employee.FirstName," ", department.Employee.LastName),
+                        MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName),
                         NOEmployees = department.NoEmployees.Value
                     };
 
@@ -142,16 +153,17 @@ namespace HR_Management_System.Controllers
                     };
                     dTos.Add(employeeDTO);
                 }
-                
+
                 var departmentDTO = new GetDepartmentWithEmployessDTO()
                 {
+                    Id = department.Id,
                     DepartmentName = department.Name,
                     ManagerName = department.Employee != null ? string.Concat(department.Employee.FirstName, " ", department.Employee.LastName) : string.Empty,
                     NoEmployees = department.NoEmployees.Value,
                     Employees = dTos
                 };
 
-                
+
                 return Ok(departmentDTO);
             }
             catch (Exception ex)
@@ -161,7 +173,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDepartment(int id,DepartmentDTO departmentDTO)
+        public async Task<IActionResult> UpdateDepartment(int id, DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -211,7 +223,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpDelete("delete/{deletedId}/target/{targetDepartmentId}")]
-        public async Task<IActionResult> DeleteDepartment(int deletedId, int targetDepartmentId, [FromBody] List<int>? selectedEmployeeIds=null)
+        public async Task<IActionResult> DeleteDepartment(int deletedId, int targetDepartmentId, [FromBody] List<int>? selectedEmployeeIds = null)
         {
             try
             {
@@ -222,7 +234,7 @@ namespace HR_Management_System.Controllers
                     return NotFound();
                 }
 
-                var targetDepartment = await _departmentService.GetByIdAsync(targetDepartmentId,e=>e.Employees);
+                var targetDepartment = await _departmentService.GetByIdAsync(targetDepartmentId, e => e.Employees);
 
                 if (targetDepartment == null)
                 {
@@ -239,11 +251,11 @@ namespace HR_Management_System.Controllers
                     else
                     {
                         employee.DepartmentId = null;
-                        if(department.EmployeeId ==  employee.Id)
+                        if (department.EmployeeId == employee.Id)
                         {
                             department.EmployeeId = null;
                         }
-                        await  _employeeService.DeleteAsync(employee.Id);
+                        await _employeeService.DeleteAsync(employee.Id);
                     }
                 }
 

@@ -66,6 +66,7 @@ namespace HR_Management_System.Controllers
                 }
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
                 {
+                    Id = projectPhase.Id,
                     PhaseName = projectPhase.Name,
                     PhaseStartDate = projectPhase.StartPhase,
                     PhaseEndDate = projectPhase.EndPhase,

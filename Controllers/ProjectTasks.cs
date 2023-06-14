@@ -57,6 +57,7 @@ namespace HR_Management_System.Controllers
                 return NotFound();
             var TaskWhithProjectNameDTO = new TaskWhithProjectNameDTO()
             {
+                
                 TaskName = projectTask.Name,
                 TaskDescription = projectTask.Description,
                 TotalHoursPerTask = projectTask.ToltalHoursPerTask,
