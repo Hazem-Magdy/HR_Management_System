@@ -218,7 +218,7 @@ namespace HR_Management_System.Controllers
             {
                 List<ProjectPhase> projectPhases = new List<ProjectPhase>();
                 List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
-                foreach (ProjectPhaseDTO projectPhaseDTO in projectDTO.ProjectPhases)
+                foreach (ProjectPhaseWithNoIdDTO projectPhaseDTO in projectDTO.ProjectPhases)
                 {
                     ProjectPhase projectPhase = new ProjectPhase
                     {
