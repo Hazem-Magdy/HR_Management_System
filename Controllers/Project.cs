@@ -396,8 +396,8 @@ namespace HR_Management_System.Controllers
         }
 
 
-        [HttpGet("GetProjectHours/{projectId}")]
-        public async Task<IActionResult> GetProjectHours(int projectId)
+        [HttpGet("GetProjectHoursAndTotalCost/{projectId}")]
+        public async Task<IActionResult> GetProjectHoursAndTotalCost(int projectId)
         {
             var project = await _projectService.GetByIdAsync(projectId,p=>p.Attendances);
 
@@ -405,31 +405,47 @@ namespace HR_Management_System.Controllers
             {
                 return NotFound("Project not found.");
             }
+            decimal totalCost = 0;
+
+            foreach (var employee in project.Attendances)
+            {
+                var employeeDetails = await _employeeService.GetByIdAsync(employee.EmployeeId);
+
+                if (employeeDetails != null)
+                {
+                    decimal totalCostPerEmployee = employeeDetails.CalculateSalaryPerProject(employee.HoursSpent);
+                    if(totalCostPerEmployee!= 0){
+                        totalCost += totalCostPerEmployee;
+                    }
+                    
+                }
+            }
 
             var projectHours = new
             {
                 ProjectId = project.Id,
                 ProjectName = project.Name,
-                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent)
+                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent),
+                TotalCost = totalCost
             };
 
             return Ok(projectHours);
         }
 
-        [HttpGet("GetProjectsHours")]
-        public async Task<IActionResult> GetProjectsHours()
+        [HttpGet("GetProjectsHoursAndTotalCosts")]
+        public async Task<IActionResult> GetProjectsHoursAndTotalCosts()
         {
-            var projects =await _projectService.GetAllAsync(p=>p.Attendances);
+            var projects =await _projectService.GetAllProjectsCustomAsync();
 
             var projectHours = projects.Select(project => new
             {
                 ProjectId = project.Id,
                 ProjectName = project.Name,
-                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent)
+                TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent),
+                TotalCost = project.Attendances.Where(p=>p.ProjectId == project.Id).Sum(e=>e.HoursSpent *e.Employee.SalaryPerHour)
             });
 
             return Ok(projectHours);
         }
-
     }
 }
