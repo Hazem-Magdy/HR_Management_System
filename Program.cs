@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
 using Hangfire;
+using HR_Management_System.Data.Helpers.Mappers;
+using Microsoft.Data.SqlClient;
 
 namespace HR_Management_System
 {
@@ -27,6 +29,16 @@ namespace HR_Management_System
             builder.Services.AddScoped<IProjectTasksService, ProjectTasksService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
             builder.Services.AddScoped<IEmployeeProjectsService, EmployeeProjectsService>();
+
+            builder.Services.AddAutoMapper(
+                            typeof(AttendanceMappingProfile), 
+                            typeof(DepartmentMappingProfile), 
+                            typeof(EmployeeMappingProfile), 
+                            typeof(EmployeeProjectMappingProfile), 
+                            typeof(ProjectMappingProfile), 
+                            typeof(ProjectPhaseMappingProfile), 
+                            typeof(ProjectTaskMappingProfile)
+           );
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
