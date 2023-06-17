@@ -4,6 +4,7 @@ using HR_Management_System.Models;
 using Microsoft.AspNetCore.Identity;
 using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
+using Hangfire;
 
 namespace HR_Management_System
 {

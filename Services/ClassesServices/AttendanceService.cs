@@ -1,10 +1,7 @@
-﻿using HR_Management_System.Controllers;
-using HR_Management_System.Data;
+﻿using HR_Management_System.Data;
 using HR_Management_System.Data.Base;
-using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
-using System;
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR_Management_System.Services.ClassesServices
 {
@@ -17,13 +14,21 @@ namespace HR_Management_System.Services.ClassesServices
             db = _db;
         }
 
-        public Models.Attendance IsAttendInSpecificDay(DateTime date, int employeeId)
+        public async Task<int> getNoDaysWorkingSpentAsync(int employeeId, DateTime startDate, DateTime endDate)
         {
-            Models.Attendance employeeAttended = db.Attendances.SingleOrDefault(a => a.EmployeeId == employeeId && a.Date == date);
+            int noDays = await db.Attendances
+                .Where(a => a.EmployeeId == employeeId && (a.Date >= startDate && a.Date <= endDate))
+                .CountAsync();
 
-            return employeeAttended;
+            return noDays;
         }
 
-
+        public async Task<decimal> getTotalHoursSpentAsync(int employeeId, DateTime startDate, DateTime endDate)
+        {
+            decimal totalHoursSpent = await db.Attendances
+                .Where(a => a.EmployeeId == employeeId && (a.Date >= startDate && a.Date <= endDate))
+                .SumAsync(a => a.HoursSpent);
+            return totalHoursSpent;
+        }
     }
 }

@@ -4,6 +4,7 @@ using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HR_Management_System.Controllers
 {
@@ -13,6 +14,7 @@ namespace HR_Management_System.Controllers
     {
         private readonly IEmployeeService _employeeService;
         private readonly IDepartmentService _departmentService;
+        private readonly IAttendanceService _attendanceService;
         private readonly IProjectService _projectService;
         private readonly UserManager<User> _userManager;
 
@@ -20,6 +22,7 @@ namespace HR_Management_System.Controllers
             IEmployeeService employeeService,
             UserManager<User> userManager,
             IDepartmentService departmentService,
+            IAttendanceService attendanceService,
             IProjectService projectService
             )
         {
@@ -27,6 +30,7 @@ namespace HR_Management_System.Controllers
             _userManager = userManager;
             _departmentService = departmentService;
             _projectService = projectService;
+            _attendanceService = attendanceService;
         }
 
         //create Employee & user 
@@ -272,7 +276,7 @@ namespace HR_Management_System.Controllers
         [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
         public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
         {
-            var employees = await _employeeService.GetAllAsync(p=>p.Attendances);
+            var employees = await _employeeService.GetAllAsync(p => p.Attendances);
 
             var employeeHours = employees.Select(employee => new
             {
@@ -289,7 +293,7 @@ namespace HR_Management_System.Controllers
         public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(projectId);
-           
+
             if (project == null)
             {
                 return NotFound("Project not found.");
@@ -298,7 +302,7 @@ namespace HR_Management_System.Controllers
 
             var employeeCosts = project.Employees.Select(employee =>
             {
-                decimal totalHoursSpent = project.Attendances.Where(a=>a.EmployeeId == employee.EmployeeId).Sum(a => a.HoursSpent);
+                decimal totalHoursSpent = project.Attendances.Where(a => a.EmployeeId == employee.EmployeeId).Sum(a => a.HoursSpent);
                 decimal totalCost = employee.Employee.CalculateSalaryPerProject(totalHoursSpent);
                 return new
                 {
@@ -311,5 +315,46 @@ namespace HR_Management_System.Controllers
             return Ok(employeeCosts);
         }
 
+        [HttpGet("GetEmployeeSalaryAndOverTime/{employeeId}/StartDate/{startDate}/EndDate/{endDate}")]
+        public async Task<IActionResult> GetEmployeeSalaryAndOverTime(int employeeId, DateTime startDate, DateTime endDate)
+        {
+
+            decimal overTime = 0;
+
+            int numberOfDays = await _attendanceService.getNoDaysWorkingSpentAsync(employeeId, startDate, endDate);
+
+            Employee employee = await _employeeService.GetByIdAsync(employeeId);
+
+            if (employee == null)
+            {
+                return NotFound("Employee doesn't Exist.");
+            }
+
+            decimal regularHours = employee.GetRegularHours(numberOfDays);
+
+            decimal totalHours = await _attendanceService.getTotalHoursSpentAsync(employeeId, startDate, endDate);
+
+            if (totalHours > regularHours)
+            {
+                overTime = totalHours - regularHours;
+                //employee.OverTime = overTime;
+                GetEmployeeSalaryAndOverTimeDTO dto = new GetEmployeeSalaryAndOverTimeDTO()
+                {
+                    EmployeeSalary = employee.CalculateSalaryPerPeriod(overTime, regularHours),
+                    EmployeeOverTime = overTime
+                };
+                return Ok(dto);
+            }
+            else
+            {
+                //employee.OverTime = overTime = 0;
+                GetEmployeeSalaryAndOverTimeDTO dto = new GetEmployeeSalaryAndOverTimeDTO()
+                {
+                    EmployeeSalary = employee.CalculateSalaryPerPeriod(overTime, regularHours),
+                    EmployeeOverTime = overTime
+                };
+                return Ok(dto);
+            }
+        }
     }
 }

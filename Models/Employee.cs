@@ -6,10 +6,6 @@ namespace HR_Management_System.Models
 {
     public class Employee : IEntityBase
     {
-        public Employee() {
-
-            OverTime = 0;
-        }
         public int Id { get; set; }
 
         [Required(ErrorMessage = "You must Enter the name of the firstName")]
@@ -34,8 +30,8 @@ namespace HR_Management_System.Models
         public string Email { get; set; }
         public string Password { get; set; }
         public string Position { get; set; }
-        
-        [DataType(DataType.Date)] 
+
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime HiringDate { get; set; }
 
@@ -49,25 +45,25 @@ namespace HR_Management_System.Models
 
         public ICollection<EmployeeProject> Projects = new HashSet<EmployeeProject>();
 
-        //public decimal CalculateSalary(decimal totalHoursSpent)
-        //{
-        //    //decimal overtime = OverTime; // Use 0 as the default value if OverTime is null
+        public decimal CalculateSalaryPerPeriod(decimal overTime, decimal regularHours)
+        {
+           
+            decimal regularSalary = regularHours * SalaryPerHour;
+            decimal overtimeSalary = overTime * OvertimeRate;
 
-        //    decimal regularHours = RegularHoursPerDay * WorkingDaysPerWeek;
-        //    //decimal overtimeHours = Math.Max(overtime - regularHours, 0); // Calculate overtime hours exceeding regular hours
+            decimal totalSalary = regularSalary + overtimeSalary;
+            return totalSalary;
+        }
+        public decimal GetRegularHours(int numberOfDays)
+        {
+            decimal regularHours = RegularHoursPerDay * numberOfDays;
 
-        //    decimal regularSalary = regularHours * SalaryPerHour;
-        //    //decimal overtimeSalary = overtimeHours * OvertimeRate;
-
-        //    //decimal totalSalary = regularSalary + overtimeSalary;
-        //    //return totalSalary;
-
-        //    return regularSalary;
-        //}
+            return regularHours;
+        }
         public decimal CalculateSalaryPerProject(decimal totalHoursSpent)
         {
             decimal totalCost = totalHoursSpent * SalaryPerHour;
-            
+
             return totalCost;
         }
     }
