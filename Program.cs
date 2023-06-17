@@ -53,6 +53,16 @@ namespace HR_Management_System
                 app.UseSwaggerUI();
             }
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -63,6 +73,7 @@ namespace HR_Management_System
 
             app.UseAuthorization();
 
+            app.UseCors();
 
             app.MapControllers();
 
