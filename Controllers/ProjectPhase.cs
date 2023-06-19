@@ -19,7 +19,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost("{projectId}")]
-        public async Task<IActionResult> CreateProjectPhase(int projectId,ProjectPhaseDTO projectPhaseDTO)
+        public async Task<IActionResult> CreateProjectPhase(int projectId, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             Project project = await _projectService.GetByIdAsync(projectId);
 
@@ -67,7 +67,7 @@ namespace HR_Management_System.Controllers
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
                 {
                     Id = projectPhase.Id,
-                    PhaseName = projectPhase.Name,
+                    PhaseName = projectPhase.Name.ToString(),
                     PhaseStartDate = projectPhase.StartPhase,
                     PhaseEndDate = projectPhase.EndPhase,
                     PhaseMilestone = projectPhase.Milestone,
@@ -82,7 +82,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProjectPhase(int id, ProjectPhaseDTO projectPhaseDTO)
+        public async Task<IActionResult> UpdateProjectPhase(int id, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             if (!ModelState.IsValid)
             {

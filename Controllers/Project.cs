@@ -50,7 +50,7 @@ namespace HR_Management_System.Controllers
                     ProjectPhaseWithIdDTO projectPhaseDTO = new ProjectPhaseWithIdDTO()
                     {
                         PhaseId = phase.Id,
-                        PhaseName = phase.Name,
+                        PhaseName = phase.Name.ToString(),
                         PhaseStartDate = phase.StartPhase,
                         PhaseEndDate = phase.EndPhase,
                         PhaseMilestone = phase.Milestone,
@@ -105,7 +105,7 @@ namespace HR_Management_System.Controllers
                     ProjectName = project.Name,
                     ProjectTotalBudget = project.TotalBudget,
                     ProjectHours = project.HoursBudget,
-                    ProjectStatus = project.ProjectStatus,
+                    ProjectStatus = project.ProjectStatus.ToString(),
                     ProjectLocation = project.Location,
                     ProjectStartDate = project.StartDate,
                     ProjectEndDate = project.EndDate,
@@ -135,67 +135,80 @@ namespace HR_Management_System.Controllers
             List<GetAttendancesInProjectDTO> projectAttendanceDTOs = new List<GetAttendancesInProjectDTO>();
             List<EmployeeDeptDetailsDTO> employeeDeptDetails = new List<EmployeeDeptDetailsDTO>();
             List<ProjectTaskWithIdDTO> projectTaskWithIdDTOs = new List<ProjectTaskWithIdDTO>();
-            foreach (var phase in project.projectPhases)
+
+            if(project.projectPhases != null)
             {
-                ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
+                foreach (var phase in project.projectPhases)
                 {
-                    Id = phase.Id,
-                    PhaseName = phase.Name,
-                    PhaseStartDate = phase.StartPhase,
-                    PhaseEndDate = phase.EndPhase,
-                    PhaseMilestone = phase.Milestone,
-                    PhaseHrBudget = phase.HrBudget
-                };
-                projectPhaseDTOs.Add(projectPhaseDTO);
+                    ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO()
+                    {
+                        Id = phase.Id,
+                        PhaseName = phase.Name.ToString(),
+                        PhaseStartDate = phase.StartPhase,
+                        PhaseEndDate = phase.EndPhase,
+                        PhaseMilestone = phase.Milestone,
+                        PhaseHrBudget = phase.HrBudget
+                    };
+                    projectPhaseDTOs.Add(projectPhaseDTO);
+                }
             }
+            
 
-            foreach (var task in project.projectTasks)
+            if (project.projectTasks != null)
             {
-                ProjectTaskWithIdDTO projectTaskWithIdDTO = new ProjectTaskWithIdDTO()
+                foreach (var task in project.projectTasks)
                 {
-                    Id = task.Id,
-                    TaskName = task.Name,
-                    TaskDescription = task.Description,
-                    TotalHoursPerTask = task.ToltalHoursPerTask
-                };
-                projectTaskWithIdDTOs.Add(projectTaskWithIdDTO);
-            }
+                    ProjectTaskWithIdDTO projectTaskWithIdDTO = new ProjectTaskWithIdDTO()
+                    {
+                        Id = task.Id,
+                        TaskName = task.Name,
+                        TaskDescription = task.Description,
+                        TotalHoursPerTask = task.ToltalHoursPerTask
+                    };
+                    projectTaskWithIdDTOs.Add(projectTaskWithIdDTO);
+                }
 
-            foreach (var attendance in project.Attendances)
+            }
+            if(project.Attendances != null)
             {
-                GetAttendancesInProjectDTO projectAttendanceDTO = new GetAttendancesInProjectDTO()
+                foreach (var attendance in project.Attendances)
                 {
-                    EmployeeId = attendance.EmployeeId,
-                    EmployeeName = string.Concat(attendance.Employee.FirstName, " ", attendance.Employee.LastName),
-                    ProjectName = attendance.Project.Name,
-                    PhaseName = attendance.ProjectPhase.Name.ToString(),
-                    TaskName = attendance.ProjectTask.Name,
-                    Date = attendance.Date,
-                    Description = attendance.Description,
-                    HoursSpent = attendance.HoursSpent
-
-
-                };
-                projectAttendanceDTOs.Add(projectAttendanceDTO);
+                    GetAttendancesInProjectDTO projectAttendanceDTO = new GetAttendancesInProjectDTO()
+                    {
+                        EmployeeId = attendance.EmployeeId,
+                        EmployeeName = string.Concat(attendance.Employee.FirstName, " ", attendance.Employee.LastName),
+                        ProjectName = attendance.Project.Name,
+                        PhaseName = attendance.ProjectPhase.Name.ToString(),
+                        TaskName = attendance.ProjectTask.Name,
+                        Date = attendance.Date,
+                        Description = attendance.Description,
+                        HoursSpent = attendance.HoursSpent
+                    };
+                    projectAttendanceDTOs.Add(projectAttendanceDTO);
+                }
             }
-            foreach (var employee in project.Employees.ToList())
+            
+            if(project.Employees != null)
             {
-                EmployeeDeptDetailsDTO employeeDept = new EmployeeDeptDetailsDTO()
+                foreach (var employee in project.Employees.ToList())
                 {
-                    EmployeeId = employee.Employee.Id,
-                    EmployeeFirstName = employee.Employee.FirstName,
-                    EmployeeLastName = employee.Employee.LastName,
-                    EmployeePosition = employee.Employee.Position
-                };
-                employeeDeptDetails.Add(employeeDept);
+                    EmployeeDeptDetailsDTO employeeDept = new EmployeeDeptDetailsDTO()
+                    {
+                        EmployeeId = employee.Employee.Id,
+                        EmployeeFirstName = employee.Employee.FirstName,
+                        EmployeeLastName = employee.Employee.LastName,
+                        EmployeePosition = employee.Employee.Position
+                    };
+                    employeeDeptDetails.Add(employeeDept);
+                }
             }
-
+            
             var ProjectDto = new ProjectDTO
             {
                 ProjectName = project.Name,
                 ProjectTotalBudget = project.TotalBudget,
                 ProjectHours = project.HoursBudget,
-                ProjectStatus = project.ProjectStatus,
+                ProjectStatus = project.ProjectStatus.ToString(),
                 ProjectLocation = project.Location,
                 ProjectStartDate = project.StartDate,
                 ProjectEndDate = project.EndDate,

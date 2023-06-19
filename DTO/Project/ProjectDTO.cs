@@ -18,7 +18,7 @@ namespace HR_Management_System.DTO.Project
 
         public int ProjectHours { get; set; }
 
-        public ProjectStatus ProjectStatus { get; set; }
+        public string ProjectStatus { get; set; }
 
         public string ProjectLocation { get; set; }
 
