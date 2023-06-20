@@ -339,6 +339,15 @@ namespace HR_Management_System.Controllers
             }
 
 
+            List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
+
+            var employeesInProject = await _employeeProjectsService.GetAllEmployeesCustom(project.Id);
+
+            foreach (var employeeProject in employeesInProject)
+            {
+                project.Employees.Remove(employeeProject);
+            }
+
             if (project == null)
                 return NotFound();
 
