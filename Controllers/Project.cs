@@ -320,7 +320,7 @@ namespace HR_Management_System.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProject(int id)
         {
-            var project = await _projectService.GetByIdAsync(id);
+            var project = await _projectService.GetProjectByIdCustom2Async(id);
             if (project == null)
             {
                 return NotFound();
@@ -328,6 +328,7 @@ namespace HR_Management_System.Controllers
 
             try
             {
+                
                 await _projectService.DeleteAsync(id);
                 return Ok("Project deleted successfully.");
             }

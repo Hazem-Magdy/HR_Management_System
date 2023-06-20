@@ -1,6 +1,8 @@
 ﻿using HR_Management_System.DTO;
+using HR_Management_System.DTO.ProjectPhase;
 using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Models;
+using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +19,40 @@ namespace HR_Management_System.Controllers
         {
             _projectTaskService = projectTaskService;
             _projectService = projectService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllProjectsTasks()
+        {
+            IEnumerable<ProjectTask> projectsTasks = await _projectTaskService.getAllIncludinProjectAsync();
+            List<GetAllProjectsTasksDTO> projectsTasksDTOs = new List<GetAllProjectsTasksDTO>();
+
+            if (projectsTasks == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                foreach (var projectTask in projectsTasks.ToList())
+                {
+                    var projectTaskDto = new GetAllProjectsTasksDTO
+                    {
+                        TaskId = projectTask.Id,
+                        TaskName = projectTask.Name,
+                        TaskDescription = projectTask.Description,
+                        ToltalHoursPerTask = projectTask.ToltalHoursPerTask,
+                        ProjectName = projectTask.Project.Name
+
+                    };
+                    projectsTasksDTOs.Add(projectTaskDto);
+                }
+                return Ok(projectsTasksDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         [HttpPost]
