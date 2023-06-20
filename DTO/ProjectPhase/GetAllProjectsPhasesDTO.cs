@@ -1,8 +1,6 @@
-﻿using HR_Management_System.Data.Enums;
-
-namespace HR_Management_System.DTO.ProjectPhase
+﻿namespace HR_Management_System.DTO.ProjectPhase
 {
-    public class ProjectPhaseWithIdDTO
+    public class GetAllProjectsPhasesDTO
     {
         public int PhaseId { get; set; }
         public string PhaseName { get; set; }
@@ -14,5 +12,6 @@ namespace HR_Management_System.DTO.ProjectPhase
         public string PhaseMilestone { get; set; }
 
         public int PhaseHrBudget { get; set; }
+        public string ProjectName { get; set; }
     }
 }

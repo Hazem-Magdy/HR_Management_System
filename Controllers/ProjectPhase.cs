@@ -1,4 +1,5 @@
-﻿using HR_Management_System.DTO.ProjectPhase;
+﻿using HR_Management_System.DTO.Employee;
+using HR_Management_System.DTO.ProjectPhase;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Mvc;
@@ -18,8 +19,44 @@ namespace HR_Management_System.Controllers
             _projectService = projectService;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllProjectsPhases()
+        {
+            IEnumerable<ProjectPhase> projectsPhases = await _projectPhaseService.getAllIncludeProjectAsync();
+            List<GetAllProjectsPhasesDTO> projectsPhasesDTOs = new List<GetAllProjectsPhasesDTO>();
+
+            if (projectsPhases == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                foreach (var projectPhase in projectsPhases.ToList())
+                {
+                    var projectPhaseDto = new GetAllProjectsPhasesDTO
+                    {
+                        PhaseId= projectPhase.Id,
+                        PhaseName = projectPhase.Name.ToString(),
+                        PhaseStartDate= projectPhase.StartPhase,
+                        PhaseEndDate= projectPhase.EndPhase,
+                        PhaseHrBudget= projectPhase.HrBudget,
+                        PhaseMilestone= projectPhase.Milestone,
+                        ProjectName= projectPhase.Project.Name
+                    };
+                    projectsPhasesDTOs.Add(projectPhaseDto);
+                }
+                return Ok(projectsPhasesDTOs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
         [HttpPost("{projectId}")]
-        public async Task<IActionResult> CreateProjectPhase(int projectId,ProjectPhaseDTO projectPhaseDTO)
+        public async Task<IActionResult> CreateProjectPhase(int projectId, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             Project project = await _projectService.GetByIdAsync(projectId);
 
@@ -67,7 +104,7 @@ namespace HR_Management_System.Controllers
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
                 {
                     Id = projectPhase.Id,
-                    PhaseName = projectPhase.Name,
+                    PhaseName = projectPhase.Name.ToString(),
                     PhaseStartDate = projectPhase.StartPhase,
                     PhaseEndDate = projectPhase.EndPhase,
                     PhaseMilestone = projectPhase.Milestone,
@@ -82,7 +119,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProjectPhase(int id, ProjectPhaseDTO projectPhaseDTO)
+        public async Task<IActionResult> UpdateProjectPhase(int id, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             if (!ModelState.IsValid)
             {
