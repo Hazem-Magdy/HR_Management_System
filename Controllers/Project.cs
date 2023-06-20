@@ -279,7 +279,16 @@ namespace HR_Management_System.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var project = await _projectService.GetByIdAsync(id, p => p.projectPhases);
+            var project = await _projectService.GetByIdAsync(id, p => p.projectPhases, e=>e.Employees);
+
+            List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
+
+            var employeesInProject = await _employeeProjectsService.GetAllEmployeesCustom(project.Id);
+
+            foreach (var employeeProject in employeesInProject)
+            {
+                project.Employees.Remove(employeeProject);
+            }
 
             if (project == null)
                 return NotFound();
@@ -292,6 +301,22 @@ namespace HR_Management_System.Controllers
             project.StartDate = projectDTO.ProjectStartDate;
             project.EndDate = projectDTO.ProjectEndDate;
             project.Description = projectDTO.ProjectDescription;
+
+
+            foreach (var EmployyeId in projectDTO.EmployeesInProjectIds)
+            {
+                var employee = await _employeeService.GetByIdAsync(EmployyeId);
+                if (employee != null)
+                {
+                    EmployeeProject employeeProject = new EmployeeProject()
+                    {
+                        EmployeeId = EmployyeId,
+                        ProjectId = project.Id
+                    };
+                    employeeProjects.Add(employeeProject);
+                    await _employeeProjectsService.AddAsync(employeeProject);
+                }
+            }
             try
             {
                 await _projectService.UpdateAsync(id, project);

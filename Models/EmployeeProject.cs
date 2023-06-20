@@ -5,7 +5,7 @@ namespace HR_Management_System.Models
 {
     public class EmployeeProject : IEntityBase
     {
-        [NotMapped]
+        //[NotMapped]
         public  int Id { get; set; }
 
         [ForeignKey("Employee")]
