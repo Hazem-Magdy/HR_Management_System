@@ -1,11 +1,13 @@
 ﻿using HR_Management_System.Data.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HR_Management_System.Models
 {
     public class EmployeeProject : IEntityBase
     {
-        [NotMapped]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public  int Id { get; set; }
 
         [ForeignKey("Employee")]

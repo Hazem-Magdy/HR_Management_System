@@ -6,7 +6,6 @@ using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
 using Hangfire;
 using HR_Management_System.Data.Helpers.Mappers;
-using Microsoft.Data.SqlClient;
 
 namespace HR_Management_System
 {

@@ -5,6 +5,6 @@ namespace HR_Management_System.Services.InterfacesServices
 {
     public interface IEmployeeProjectsService : IEntityBaseRepository<EmployeeProject>
     {
-
+        public Task<IEnumerable<EmployeeProject>> GetAllEmployeesCustom(int projectId);
     }
 }

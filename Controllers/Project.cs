@@ -285,14 +285,59 @@ namespace HR_Management_System.Controllers
         }
 
 
-        // PUT: api/Projects/5
+        //// PUT: api/Projects/5
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+
+        //    var project = await _projectService.GetByIdAsync(id, p => p.projectPhases);
+
+        //    if (project == null)
+        //        return NotFound();
+
+        //    project.Name = projectDTO.ProjectName;
+        //    project.TotalBudget = projectDTO.ProjectTotalBudget;
+        //    project.HoursBudget = projectDTO.ProjectHours;
+        //    project.ProjectStatus = projectDTO.ProjectStatus;
+        //    project.Location = projectDTO.ProjectLocation;
+        //    project.StartDate = projectDTO.ProjectStartDate;
+        //    project.EndDate = projectDTO.ProjectEndDate;
+        //    project.Description = projectDTO.ProjectDescription;
+        //    try
+        //    {
+        //        await _projectService.UpdateAsync(id, project);
+        //        return Ok("Project updated successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"An error occurred while updating the project: {ex.Message}");
+        //    }
+        //}
+
+        
+
+        // PUT: api/Projects/5 
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var project = await _projectService.GetByIdAsync(id, p => p.projectPhases);
+            var project = await _projectService.GetByIdAsync(id, p => p.projectPhases, e => e.Employees);
+
+            List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
+
+            var employeesInProject = await _employeeProjectsService.GetAllEmployeesCustom(project.Id);
+
+            foreach (var employeeProject in employeesInProject)
+            {
+                project.Employees.Remove(employeeProject);
+                await _employeeProjectsService.DeleteAsync(employeeProject.Id);
+            }
+
 
             if (project == null)
                 return NotFound();
@@ -305,6 +350,22 @@ namespace HR_Management_System.Controllers
             project.StartDate = projectDTO.ProjectStartDate;
             project.EndDate = projectDTO.ProjectEndDate;
             project.Description = projectDTO.ProjectDescription;
+
+
+            foreach (var EmployyeId in projectDTO.EmployeesInProjectIds)
+            {
+                var employee = await _employeeService.GetByIdAsync(EmployyeId);
+                if (employee != null)
+                {
+                    EmployeeProject employeeProject = new EmployeeProject()
+                    {
+                        EmployeeId = EmployyeId,
+                        ProjectId = project.Id
+                    };
+                    employeeProjects.Add(employeeProject);
+                    await _employeeProjectsService.AddAsync(employeeProject);
+                }
+            }
             try
             {
                 await _projectService.UpdateAsync(id, project);
