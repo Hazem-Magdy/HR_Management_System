@@ -22,5 +22,11 @@ namespace HR_Management_System.Services.ClassesServices
 
             return projectPhases;
         }
+        public async Task<IEnumerable<ProjectPhase>> GetAllprojectPhasesCustom(int projectId)
+        {
+            IEnumerable<ProjectPhase> projectPhasesList = await context.ProjectPhases.Where(e=>e.ProjectId == projectId).ToListAsync();
+
+            return projectPhasesList;
+        }
     }
 }

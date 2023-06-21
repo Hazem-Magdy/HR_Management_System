@@ -16,21 +16,12 @@ namespace HR_Management_System.DTO.Employee
         [Required(ErrorMessage = "You must enter the salary per hour.")]
         [Range(0, double.MaxValue, ErrorMessage = "Salary per hour must be a non-negative value.")]
         public decimal EmployeeSalaryPerHour { get; set; }
-
-        [Required(ErrorMessage = "You must enter the overtime.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Overtime must be a non-negative value.")]
-        public decimal EmployeeOverTime { get; set; }
-
-        [Required(ErrorMessage = "You must enter the salary.")]
-        [Range(0, double.MaxValue, ErrorMessage = "Salary must be a non-negative value.")]
-        public decimal EmployeeSalary { get; set; }
-
         public decimal EmployeeOvertimeRate { get; set; }
         public decimal EmployeeRegularHoursPerDay { get; set; }
         public int EmployeeWorkingDaysPerWeek { get; set; }
 
         [RegularExpression(@"\.(jpg|png|jpeg)$", ErrorMessage = "Invalid profile URL format.")]
-        public string EmployeeProfileUrl { get; set; }
+        public string? EmployeeProfileUrl { get; set; }
 
         [Required(ErrorMessage = "You must enter the phone number.")]
         [RegularExpression("^(010|012|011|015)\\d{8}$", ErrorMessage = "Invalid phone number format.")]

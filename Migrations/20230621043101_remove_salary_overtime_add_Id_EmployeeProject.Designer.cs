@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230620193559_add_id_employeeproject")]
-    partial class add_id_employeeproject
+    [Migration("20230621043101_remove_salary_overtime_add_Id_EmployeeProject")]
+    partial class remove_salary_overtime_add_Id_EmployeeProject
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,9 +117,6 @@ namespace HR_Management_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("OverTime")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("OvertimeRate")
                         .HasColumnType("decimal(18,2)");
 
@@ -136,9 +133,6 @@ namespace HR_Management_System.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RegularHoursPerDay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SalaryPerHour")

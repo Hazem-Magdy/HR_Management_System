@@ -37,13 +37,16 @@ namespace HR_Management_System.Controllers
                 {
                     FirstName = employeeDTO.EmployeeFirstName,
                     LastName = employeeDTO.EmployeeLastName,
-                    Salary= employeeDTO.EmployeeSalary,
                     Phone = employeeDTO.EmployeePhone,
                     Email = employeeDTO.EmployeeEmail,
                     Password = employeeDTO.EmployeePassword,
                     Position = employeeDTO.EmployeePosition,
                     HiringDate = employeeDTO.EmployeeHiringDate,
-                    Status = employeeDTO.EmployeeStatus
+                    Status = employeeDTO.EmployeeStatus,
+                    OvertimeRate= employeeDTO.OvertimeRate,
+                    RegularHoursPerDay= employeeDTO.RegularHoursPerDay,
+                    SalaryPerHour = employeeDTO.SalaryPerHour,
+                    WorkingDaysPerWeek = employeeDTO.WorkingDaysPerWeek,
                 };
 
                 if(employeeDTO.EmployeeProfileUrl != null )

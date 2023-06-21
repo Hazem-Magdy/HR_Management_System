@@ -54,8 +54,6 @@ namespace HR_Management_System.Controllers
                         FirstName = employeeDTO.EmployeeFirstName,
                         LastName = employeeDTO.EmployeeLastName,
                         SalaryPerHour = employeeDTO.EmployeeSalaryPerHour,
-                        OverTime = employeeDTO.EmployeeOverTime,
-                        Salary = employeeDTO.EmployeeSalary,
                         WorkingDaysPerWeek = employeeDTO.EmployeeWorkingDaysPerWeek,
                         RegularHoursPerDay = employeeDTO.EmployeeRegularHoursPerDay,
                         OvertimeRate = employeeDTO.EmployeeOvertimeRate,
@@ -64,7 +62,7 @@ namespace HR_Management_System.Controllers
                         Password = employeeDTO.EmployeePassword,
                         Position = employeeDTO.EmployeePosition,
                         HiringDate = employeeDTO.EmployeeHiringDate,
-                        Status = employeeDTO.EmployeeStatus
+                        Status = employeeDTO.EmployeeStatus,
                     };
 
                     if (employeeDTO.EmployeeProfileUrl != null)
@@ -139,8 +137,6 @@ namespace HR_Management_System.Controllers
                     EmployeeFirstName = employee.FirstName,
                     EmployeeLastName = employee.LastName,
                     EmployeeSalaryPerHour = employee.SalaryPerHour,
-                    EmployeeSalary = employee.Salary,
-                    EmployeeOverTime = employee.OverTime,
                     EmployeeHiringDate = employee.HiringDate,
                     EmployeeOvertimeRate = employee.OvertimeRate,
                     EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
@@ -148,7 +144,7 @@ namespace HR_Management_System.Controllers
                     EmployeePhone = employee.Phone,
                     EmployeeEmail = employee.Email,
                     EmployeePosition = employee.Position,
-                    EmployeeStatus = employee.Status,
+                    EmployeeStatus = employee.Status.ToString(),
                     DepartmentId = employee.DepartmentId
                 };
                 if (employee.ProfileUrl != null)
@@ -191,8 +187,6 @@ namespace HR_Management_System.Controllers
                 employee.FirstName = employeeDTO.EmployeeFirstName;
                 employee.LastName = employeeDTO.EmployeeLastName;
                 employee.SalaryPerHour = employeeDTO.EmployeeSalaryPerHour;
-                employee.OverTime = employeeDTO.EmployeeOverTime;
-                employee.Salary = employeeDTO.EmployeeSalary;
                 employee.WorkingDaysPerWeek = employeeDTO.EmployeeWorkingDaysPerWeek;
                 employee.RegularHoursPerDay = employeeDTO.EmployeeRegularHoursPerDay;
                 employee.OvertimeRate = employeeDTO.EmployeeOvertimeRate;
@@ -203,7 +197,7 @@ namespace HR_Management_System.Controllers
                 employee.HiringDate = employeeDTO.EmployeeHiringDate;
                 employee.Status = employeeDTO.EmployeeStatus;
                 employee.DepartmentId = employeeDTO.DepartmentId;
-
+              
                 await _employeeService.UpdateAsync(id, employee);
                 return Ok("Employee updated successfully.");
             }
@@ -212,6 +206,8 @@ namespace HR_Management_System.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
@@ -249,16 +245,14 @@ namespace HR_Management_System.Controllers
                         EmployeeFirstName = employee.FirstName,
                         EmployeeLastName = employee.LastName,
                         EmployeeSalaryPerHour = employee.SalaryPerHour,
-                        EmployeeSalary = employee.Salary,
                         EmployeeOvertimeRate = employee.OvertimeRate,
                         EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
                         EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
-                        EmployeeOverTime = employee.OverTime,
                         EmployeeHiringDate = employee.HiringDate,
                         EmployeePhone = employee.Phone,
                         EmployeeEmail = employee.Email,
                         EmployeePosition = employee.Position,
-                        EmployeeStatus = employee.Status,
+                        EmployeeStatus = employee.Status.ToString(),
                         DepartmentId = employee.DepartmentId,
                         EmployeeProfileUrl = employee.ProfileUrl
                     };

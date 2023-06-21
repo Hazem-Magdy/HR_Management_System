@@ -7,7 +7,7 @@ namespace HR_Management_System.Services.InterfacesServices
 
         public Task<IEnumerable<ProjectPhase>> getAllIncludeProjectAsync();
 
-
+        public Task<IEnumerable<ProjectPhase>> GetAllprojectPhasesCustom(int projectId);
     }
 
 }

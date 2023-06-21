@@ -17,28 +17,31 @@ namespace HR_Management_System.Controllers
         private readonly IProjectService _projectService;
         private readonly IEmployeeService _employeeService;
         private readonly IEmployeeProjectsService _employeeProjectsService;
+        private readonly IProjectPhaseService _projectPhaseService;
 
 
 
         public ProjectsController(
             IProjectService projectService,
             IEmployeeService employeeService,
-            IEmployeeProjectsService employeeProjectsService
+            IEmployeeProjectsService employeeProjectsService,
+            IProjectPhaseService projectPhaseService
         )
         {
             _projectService = projectService;
             _employeeService = employeeService;
             _employeeProjectsService = employeeProjectsService;
+            _projectPhaseService = projectPhaseService;
         }
 
         // GET: api/Projects
         [HttpGet]
         public async Task<ActionResult<List<GetAllProjectsDTO>>> GetAllProjects()
         {
-            
+
             var projects = await _projectService.GetAllProjectsCustomAsync();
 
-            List <GetAllProjectsDTO> projectDTOs = new List<GetAllProjectsDTO>();
+            List<GetAllProjectsDTO> projectDTOs = new List<GetAllProjectsDTO>();
             foreach (var project in projects)
             {
                 List<ProjectPhaseWithIdDTO> projectPhaseDTOs = new List<ProjectPhaseWithIdDTO>();
@@ -136,7 +139,7 @@ namespace HR_Management_System.Controllers
             List<EmployeeDeptDetailsDTO> employeeDeptDetails = new List<EmployeeDeptDetailsDTO>();
             List<ProjectTaskWithIdDTO> projectTaskWithIdDTOs = new List<ProjectTaskWithIdDTO>();
 
-            if(project.projectPhases != null)
+            if (project.projectPhases != null)
             {
                 foreach (var phase in project.projectPhases)
                 {
@@ -152,7 +155,7 @@ namespace HR_Management_System.Controllers
                     projectPhaseDTOs.Add(projectPhaseDTO);
                 }
             }
-            
+
 
             if (project.projectTasks != null)
             {
@@ -169,7 +172,7 @@ namespace HR_Management_System.Controllers
                 }
 
             }
-            if(project.Attendances != null)
+            if (project.Attendances != null)
             {
                 foreach (var attendance in project.Attendances)
                 {
@@ -187,8 +190,8 @@ namespace HR_Management_System.Controllers
                     projectAttendanceDTOs.Add(projectAttendanceDTO);
                 }
             }
-            
-            if(project.Employees != null)
+
+            if (project.Employees != null)
             {
                 foreach (var employee in project.Employees.ToList())
                 {
@@ -202,7 +205,7 @@ namespace HR_Management_System.Controllers
                     employeeDeptDetails.Add(employeeDept);
                 }
             }
-            
+
             var ProjectDto = new ProjectDTO
             {
                 ProjectName = project.Name,
@@ -273,12 +276,12 @@ namespace HR_Management_System.Controllers
                         employeeProjects.Add(employeeProject);
                         await _employeeProjectsService.AddAsync(employeeProject);
                     }
-                    
+
                 }
                 project.Employees = employeeProjects;
-                
 
-                
+
+
                 return Ok("project created successfully");
             }
             return BadRequest(ModelState);
@@ -288,54 +291,90 @@ namespace HR_Management_System.Controllers
         // PUT: api/Projects/5 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
+        public async Task<IActionResult> UpdateProject(int id,[FromForm] UpdateProjectDTO projectDTO)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var project = await _projectService.GetByIdAsync(id, p => p.projectPhases, e => e.Employees);
-
-            List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
-
-            var employeesInProject = await _employeeProjectsService.GetAllEmployeesCustom(project.Id);
-
-            foreach (var employeeProject in employeesInProject)
-            {
-                project.Employees.Remove(employeeProject);
-                await _employeeProjectsService.DeleteAsync(employeeProject.Id);
-            }
-
-
-            if (project == null)
-                return NotFound();
-
-            project.Name = projectDTO.ProjectName;
-            project.TotalBudget = projectDTO.ProjectTotalBudget;
-            project.HoursBudget = projectDTO.ProjectHours;
-            project.ProjectStatus = projectDTO.ProjectStatus;
-            project.Location = projectDTO.ProjectLocation;
-            project.StartDate = projectDTO.ProjectStartDate;
-            project.EndDate = projectDTO.ProjectEndDate;
-            project.Description = projectDTO.ProjectDescription;
-
-
-            foreach (var EmployyeId in projectDTO.EmployeesInProjectIds)
-            {
-                var employee = await _employeeService.GetByIdAsync(EmployyeId);
-                if (employee != null)
-                {
-                    EmployeeProject employeeProject = new EmployeeProject()
-                    {
-                        EmployeeId = EmployyeId,
-                        ProjectId = project.Id
-                    };
-                    employeeProjects.Add(employeeProject);
-                    await _employeeProjectsService.AddAsync(employeeProject);
-                }
-            }
             try
             {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var project = await _projectService.GetByIdAsync(id, p => p.projectPhases, e => e.Employees);
+
+                if (project == null)
+                    return NotFound();
+
+                List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
+
+                if (projectDTO.EmployeesInProjectIds.ToList().Count() > 0)
+                {
+                    var employeesInProject = await _employeeProjectsService.GetAllEmployeesCustom(project.Id);
+
+                    foreach (var employeeProject in employeesInProject)
+                    {
+
+                        project.Employees.Remove(employeeProject);
+                        await _employeeProjectsService.DeleteAsync(employeeProject.Id);
+                    }
+
+                    foreach (var EmployyeId in projectDTO.EmployeesInProjectIds)
+                    {
+                        var employee = await _employeeService.GetByIdAsync(EmployyeId);
+                        if (employee != null)
+                        {
+                            EmployeeProject employeeProject = new EmployeeProject()
+                            {
+                                EmployeeId = EmployyeId,
+                                ProjectId = project.Id
+                            };
+                            employeeProjects.Add(employeeProject);
+                            await _employeeProjectsService.AddAsync(employeeProject);
+                        }
+                    }
+
+                }
+
+                project.Name = projectDTO.ProjectName;
+                project.TotalBudget = projectDTO.ProjectTotalBudget;
+                project.HoursBudget = projectDTO.ProjectHours;
+                project.ProjectStatus = projectDTO.ProjectStatus;
+                project.Location = projectDTO.ProjectLocation;
+                project.StartDate = projectDTO.ProjectStartDate;
+                project.EndDate = projectDTO.ProjectEndDate;
+                project.Description = projectDTO.ProjectDescription;
+
+                if (projectDTO.projectPhases.ToList().Count() > 0)
+                {
+                    var phasesInProject = await _projectPhaseService.GetAllprojectPhasesCustom(project.Id);
+
+                    foreach (var projectPhase in phasesInProject)
+                    {
+
+                        project.projectPhases.Remove(projectPhase);
+                        await _projectPhaseService.DeleteAsync(projectPhase.Id);
+                    }
+
+                    foreach (var phase in projectDTO.projectPhases.ToList())
+                    {
+
+                        ProjectPhase ProjectPhase = new ProjectPhase()
+                        {
+                            Name = phase.PhaseName,
+                            EndPhase = phase.PhaseEndDate,
+                            StartPhase = phase.PhaseStartDate,
+                            HrBudget = phase.PhaseHrBudget,
+                            Milestone = phase.PhaseMilestone,
+                            ProjectId = project.Id,
+                        };
+                        project.projectPhases.Add(ProjectPhase);
+                        await _projectPhaseService.AddAsync(ProjectPhase);
+
+                    }
+
+                }
+
                 await _projectService.UpdateAsync(id, project);
+
+
                 return Ok("Project updated successfully.");
             }
             catch (Exception ex)
@@ -356,7 +395,7 @@ namespace HR_Management_System.Controllers
 
             try
             {
-                
+
                 await _projectService.DeleteAsync(id);
                 return Ok("Project deleted successfully.");
             }
@@ -441,7 +480,7 @@ namespace HR_Management_System.Controllers
         [HttpGet("GetProjectHoursAndTotalCost/{projectId}")]
         public async Task<IActionResult> GetProjectHoursAndTotalCost(int projectId)
         {
-            var project = await _projectService.GetByIdAsync(projectId,p=>p.Attendances);
+            var project = await _projectService.GetByIdAsync(projectId, p => p.Attendances);
 
             if (project == null)
             {
@@ -456,10 +495,11 @@ namespace HR_Management_System.Controllers
                 if (employeeDetails != null)
                 {
                     decimal totalCostPerEmployee = employeeDetails.CalculateSalaryPerProject(employee.HoursSpent);
-                    if(totalCostPerEmployee!= 0){
+                    if (totalCostPerEmployee != 0)
+                    {
                         totalCost += totalCostPerEmployee;
                     }
-                    
+
                 }
             }
 
@@ -477,14 +517,14 @@ namespace HR_Management_System.Controllers
         [HttpGet("GetProjectsHoursAndTotalCosts")]
         public async Task<IActionResult> GetProjectsHoursAndTotalCosts()
         {
-            var projects =await _projectService.GetAllProjectsCustomAsync();
+            var projects = await _projectService.GetAllProjectsCustomAsync();
 
             var projectHours = projects.Select(project => new
             {
                 ProjectId = project.Id,
                 ProjectName = project.Name,
                 TotalHoursSpent = project.Attendances.Sum(a => a.HoursSpent),
-                TotalCost = project.Attendances.Where(p=>p.ProjectId == project.Id).Sum(e=>e.HoursSpent *e.Employee.SalaryPerHour)
+                TotalCost = project.Attendances.Where(p => p.ProjectId == project.Id).Sum(e => e.HoursSpent * e.Employee.SalaryPerHour)
             });
 
             return Ok(projectHours);

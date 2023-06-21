@@ -114,9 +114,6 @@ namespace HR_Management_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("OverTime")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("OvertimeRate")
                         .HasColumnType("decimal(18,2)");
 
@@ -133,9 +130,6 @@ namespace HR_Management_System.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RegularHoursPerDay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SalaryPerHour")

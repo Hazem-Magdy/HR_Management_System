@@ -14,10 +14,7 @@ namespace HR_Management_System.Models
         [Required(ErrorMessage = "You must Enter the name of the lastName")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name sould only contains letters")]
         public string LastName { get; set; }
-
         public decimal SalaryPerHour { get; set; }
-        public decimal OverTime { get; set; } = 0;
-        public decimal Salary { get; set; }
         public decimal OvertimeRate { get; set; }
         public decimal RegularHoursPerDay { get; set; }
         public int WorkingDaysPerWeek { get; set; }
