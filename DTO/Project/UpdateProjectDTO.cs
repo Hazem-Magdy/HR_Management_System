@@ -6,8 +6,6 @@ namespace HR_Management_System.DTO.Project
 {
     public class UpdateProjectDTO
     {
-        [Required(ErrorMessage = "You must enter the name of the project")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters")]
         public string ProjectName { get; set; }
 
         public decimal ProjectTotalBudget { get; set; }

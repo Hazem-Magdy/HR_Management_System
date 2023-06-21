@@ -32,7 +32,7 @@ namespace HR_Management_System.DTO.Employee
 
         public string EmployeePassword { get; set; }
 
-        public string EmployeePosition { get; set; }
+        public EmployeePositions EmployeePosition { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

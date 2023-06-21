@@ -149,7 +149,7 @@ namespace HR_Management_System.Controllers
                         EmployeeId = employee.Id,
                         EmployeeFirstName = employee.FirstName,
                         EmployeeLastName = employee.LastName,
-                        EmployeePosition = employee.Position,
+                        EmployeePosition = employee.Position.ToString(),
                     };
                     dTos.Add(employeeDTO);
                 }

@@ -1,4 +1,5 @@
-﻿using HR_Management_System.DTO.CustomResult;
+﻿using HR_Management_System.Data.Enums;
+using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
@@ -143,7 +144,7 @@ namespace HR_Management_System.Controllers
                     EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
                     EmployeePhone = employee.Phone,
                     EmployeeEmail = employee.Email,
-                    EmployeePosition = employee.Position,
+                    EmployeePosition = employee.Position.ToString(),
                     EmployeeStatus = employee.Status.ToString(),
                     DepartmentId = employee.DepartmentId
                 };
@@ -251,11 +252,12 @@ namespace HR_Management_System.Controllers
                         EmployeeHiringDate = employee.HiringDate,
                         EmployeePhone = employee.Phone,
                         EmployeeEmail = employee.Email,
-                        EmployeePosition = employee.Position,
+                        EmployeePosition = employee.Position.ToString(),
                         EmployeeStatus = employee.Status.ToString(),
                         DepartmentId = employee.DepartmentId,
                         EmployeeProfileUrl = employee.ProfileUrl
                     };
+
                     employeeDTOs.Add(employeeDto);
                 }
                 return Ok(employeeDTOs);

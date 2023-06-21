@@ -26,7 +26,8 @@ namespace HR_Management_System.Models
         [RegularExpression("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")]
         public string Email { get; set; }
         public string Password { get; set; }
-        public string Position { get; set; }
+        [EnumDataType(typeof(EmployeePositions))]
+        public EmployeePositions Position { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

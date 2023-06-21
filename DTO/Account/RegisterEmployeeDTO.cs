@@ -14,7 +14,7 @@ namespace HR_Management_System.DTO.Account
         public decimal OvertimeRate { get; set; }
         public decimal RegularHoursPerDay { get; set; }
         public int WorkingDaysPerWeek { get; set; }
-        public string EmployeePosition { get; set; }
+        public EmployeePositions EmployeePosition { get; set; }
         public string EmployeePassword { get; set; }
 
         [DataType(DataType.Date)]

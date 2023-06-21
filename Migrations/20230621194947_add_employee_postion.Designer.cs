@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HR_Management_System.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230620184640_update_Employee_Projects")]
-    partial class update_Employee_Projects
+    [Migration("20230621194947_add_employee_postion")]
+    partial class add_employee_postion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -117,9 +117,6 @@ namespace HR_Management_System.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("OverTime")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("OvertimeRate")
                         .HasColumnType("decimal(18,2)");
 
@@ -129,16 +126,13 @@ namespace HR_Management_System.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Position")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
 
                     b.Property<string>("ProfileUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("RegularHoursPerDay")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SalaryPerHour")
@@ -166,7 +160,10 @@ namespace HR_Management_System.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.HasKey("EmployeeId", "ProjectId");
 

@@ -97,7 +97,7 @@ namespace HR_Management_System.Controllers
                         EmployeeId = employee.Employee.Id,
                         EmployeeFirstName = employee.Employee.FirstName,
                         EmployeeLastName = employee.Employee.LastName,
-                        EmployeePosition = employee.Employee.Position
+                        EmployeePosition = employee.Employee.Position.ToString()
                     };
                     employeeDeptDetails.Add(employeeDept);
                 }
@@ -200,7 +200,7 @@ namespace HR_Management_System.Controllers
                         EmployeeId = employee.Employee.Id,
                         EmployeeFirstName = employee.Employee.FirstName,
                         EmployeeLastName = employee.Employee.LastName,
-                        EmployeePosition = employee.Employee.Position
+                        EmployeePosition = employee.Employee.ToString()
                     };
                     employeeDeptDetails.Add(employeeDept);
                 }
@@ -291,7 +291,7 @@ namespace HR_Management_System.Controllers
         // PUT: api/Projects/5 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProject(int id,[FromForm] UpdateProjectDTO projectDTO)
+        public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
         {
             try
             {
@@ -313,7 +313,7 @@ namespace HR_Management_System.Controllers
                     {
 
                         project.Employees.Remove(employeeProject);
-                        await _employeeProjectsService.DeleteAsync(employeeProject.Id);
+                        await _employeeProjectsService.DeleteEmplyeeProjectCustom(employeeProject.ProjectId ,employeeProject.EmployeeId);
                     }
 
                     foreach (var EmployyeId in projectDTO.EmployeesInProjectIds)

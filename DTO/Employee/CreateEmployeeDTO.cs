@@ -35,7 +35,7 @@ namespace HR_Management_System.DTO.Employee
         public string EmployeePassword { get; set; }
 
         [Required(ErrorMessage = "You must enter the position.")]
-        public string EmployeePosition { get; set; }
+        public EmployeePositions EmployeePosition { get; set; }
 
         [Required(ErrorMessage = "You must enter the hiring date.")]
         [DataType(DataType.Date)]

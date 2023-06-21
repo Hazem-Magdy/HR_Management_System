@@ -13,7 +13,7 @@ namespace HR_Management_System.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "You must Enter the name of the project")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contains letters")]
+        //[RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contains letters")]
         public string Name { get; set; }
         public decimal TotalBudget { get; set; }
 

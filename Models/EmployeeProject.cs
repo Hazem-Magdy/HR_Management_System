@@ -6,9 +6,8 @@ namespace HR_Management_System.Models
 {
     public class EmployeeProject : IEntityBase
     {
-        
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
+        [NotMapped]
         public  int Id { get; set; }
 
         [ForeignKey("Employee")]

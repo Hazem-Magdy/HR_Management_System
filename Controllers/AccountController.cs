@@ -120,7 +120,7 @@ namespace HR_Management_System.Controllers
                     List<Claim> userClaims = new List<Claim>();
             
                     userClaims.Add(new Claim("Id", employee.Id.ToString()));
-                    userClaims.Add(new Claim("Position", employee.Position));
+                    userClaims.Add(new Claim("Position", employee.Position.ToString()));
                     userClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
                     
