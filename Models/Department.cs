@@ -9,10 +9,10 @@ namespace HR_Management_System.Models
         public string Name { get; set; }
 
         [ForeignKey("Employee")]
-        [Column(name:"ManagerId")]
-        public int? EmployeeId { get; set; }
+        [Column(name: "ManagerId")]
+        public int? EmployeeId { get; set; } = null;
 
-        public int? NoEmployees { get; set; }
+        public int? NoEmployees { get; set; } = 0;
         public Employee Employee { get; set; }
         public ICollection<Employee>? Employees { get; set; } = new HashSet<Employee>();
     }

@@ -30,28 +30,38 @@ namespace HR_Management_System.Controllers
             try
             {
                 if (IfManagerExistInDepartmentMove == 1)
+
                 {
-                    Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId);
-                    Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
-                    employee.DepartmentId = departmentDTO.ManagerId;
-                    department.EmployeeId = null;
-                    await _employeeService.UpdateAsync(employee.Id, employee);
-                    await _departmentService.UpdateAsync(department.Id, department);
+                    if (departmentDTO.ManagerId != null)
+                    {
+                        Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId.Value);
+                        Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
+                        department.EmployeeId = null;
+                        employee.DepartmentId = departmentDTO.ManagerId;
+                        await _departmentService.UpdateAsync(department.Id, department);
+                        await _employeeService.UpdateAsync(employee.Id, employee);
+                    }
                     return await Create(departmentDTO);
                 }
+
                 else
                 {
-                    var Employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId);
-                    if (Employee.DepartmentId != null)
+                    if (departmentDTO.ManagerId != null)
                     {
-                        return StatusCode(500, "The Manger Exist in another department Enter 1 to complete moving to another Department");
+                        var Employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId.Value);
+                        if (Employee.DepartmentId != null)
+                        {
+                            return StatusCode(500, "The Manger Exist in another department Enter 1 to complete moving to another Department");
+                        }
+                        else
+                        {
+                            return await Create(departmentDTO);
+                        }
                     }
-                    else
-                    {
-                        return await Create(departmentDTO);
-                    }
+                    departmentDTO.ManagerId = null;
+                    await Create(departmentDTO);
+                    return Ok("department added successfully.");
                 }
-
             }
             catch (Exception ex)
             {
@@ -79,16 +89,23 @@ namespace HR_Management_System.Controllers
                     if (employee != null)
                     {
                         department.Employees.Add(employee);
-                        if (employee.Id == departmentDTO.ManagerId) flag = true;
+                        if (departmentDTO.ManagerId != null)
+                        {
+                            if (employee.Id != departmentDTO.ManagerId)
+                            {
+                                flag = true;
+                            }
+                        }
                     }
                 }
                 if (flag)
                 {
-                    department.NoEmployees = department.Employees.Count;
+                    department.NoEmployees = department.Employees.Count + 1;
+
                 }
                 else
                 {
-                    department.NoEmployees = department.Employees.Count+1;
+                    department.NoEmployees = department.Employees.Count;
                 }
             }
 
@@ -113,9 +130,16 @@ namespace HR_Management_System.Controllers
                     {
                         DepartmentId = department.Id,
                         DepartmentName = department.Name,
-                        MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName),
                         NOEmployees = department.NoEmployees.Value
                     };
+                    if (department.EmployeeId != null)
+                    {
+                        dTO.MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName);
+                    }
+                    else
+                    {
+                        dTO.MangerName = "Department has no manager yet.";
+                    }
 
                     dTOs.Add(dTO);
                 }
