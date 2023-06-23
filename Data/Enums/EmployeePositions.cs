@@ -2,7 +2,7 @@
 {
     public enum EmployeePositions
     {
-        Admin = 0, 
+        Admin = 0,
         HR = 1, 
         Employee = 2, 
         Accountant = 3

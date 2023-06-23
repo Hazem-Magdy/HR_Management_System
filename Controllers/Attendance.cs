@@ -2,6 +2,7 @@
 using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,7 @@ namespace HR_Management_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class Attendance : ControllerBase
     {
         private readonly UserManager<User> _userManager;

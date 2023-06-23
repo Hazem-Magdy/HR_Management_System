@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using HR_Management_System.DTO.Department;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.Services.InterfacesServices;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HR_Management_System.Controllers
 {
     [ApiController]
     [Route("api/departments")]
+    [Authorize(Roles = "Admin HR Accountant")]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
@@ -20,6 +22,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost("{IfManagerExistInDepartmentMove}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove = 0)
         {
             if (!ModelState.IsValid)
@@ -116,6 +119,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetAllDepartments()
         {
             try
@@ -153,6 +157,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
@@ -197,6 +202,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDepartment(int id, DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
@@ -247,6 +253,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpDelete("delete/{deletedId}/target/{targetDepartmentId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDepartment(int deletedId, int targetDepartmentId, [FromBody] List<int>? selectedEmployeeIds = null)
         {
             try

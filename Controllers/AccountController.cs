@@ -24,82 +24,6 @@ namespace HR_Management_System.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpPost("Register")]
-        public async Task<ActionResult<CustomResultDTO>> Register(RegisterEmployeeDTO employeeDTO)
-        {
-            CustomResultDTO result = new CustomResultDTO();
-
-
-            if (ModelState.IsValid)
-            {
-                // create Employee
-                Employee newEmployee = new Employee()
-                {
-                    FirstName = employeeDTO.EmployeeFirstName,
-                    LastName = employeeDTO.EmployeeLastName,
-                    Phone = employeeDTO.EmployeePhone,
-                    Email = employeeDTO.EmployeeEmail,
-                    Password = employeeDTO.EmployeePassword,
-                    Position = employeeDTO.EmployeePosition,
-                    HiringDate = employeeDTO.EmployeeHiringDate,
-                    Status = employeeDTO.EmployeeStatus,
-                    OvertimeRate= employeeDTO.OvertimeRate,
-                    RegularHoursPerDay= employeeDTO.RegularHoursPerDay,
-                    SalaryPerHour = employeeDTO.SalaryPerHour,
-                    WorkingDaysPerWeek = employeeDTO.WorkingDaysPerWeek,
-                };
-
-                if(employeeDTO.EmployeeProfileUrl != null )
-                {
-                    newEmployee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
-                }
-
-                // add employee to database
-                await _employeeService.AddAsync(newEmployee);
-
-
-                // create user
-                User user = new User();
-
-                Random random = new Random();
-
-                int randomNumber = random.Next(1, 100000);
-
-                
-                user.UserName = string.Concat(employeeDTO.EmployeeFirstName, employeeDTO.EmployeeLastName, randomNumber.ToString());
-              
-                user.Email = employeeDTO.EmployeeEmail;
-                user.PhoneNumber = employeeDTO.EmployeePhone;
-                try
-                {
-                    User dublicatedUser = await _userManager.FindByEmailAsync(employeeDTO.EmployeeEmail);
-                }
-                catch(Exception)
-                {
-                    result.IsPass = false;
-                    result.Message = "user with the same email already exist.";
-                    return result;
-                }
-
-                
-                IdentityResult createResult = await _userManager.CreateAsync(user, newEmployee.Password);
-
-                if (createResult.Succeeded)
-                {
-                    result.IsPass = true;
-                    result.Message = "account created successfully.";
-                }
-            }
-            else
-            {
-                result.IsPass = false;
-                result.Message = "account created failed.";
-                result.Data = ModelState;
-
-            }
-            return result;
-        }
-
         [HttpPost("Login")]
         public async Task<ActionResult<CustomResultDTO>> Login(LoginUserDTO userDTO)
         {
@@ -131,7 +55,7 @@ namespace HR_Management_System.Controllers
                     JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
                           issuer: "http://localhost:51006",
                           audience: "http://localhost:4200",
-                          expires: DateTime.Now.AddHours(2),
+                          expires: DateTime.Now.AddHours(8),
                           claims: userClaims,
                           signingCredentials: userCredentials
                           );
@@ -142,7 +66,7 @@ namespace HR_Management_System.Controllers
                         token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
                         expiration = jwtSecurityToken.ValidTo
                     };
-                    result.Message = "token created successfully. ";
+                    result.Message = "token created successfully.";
                 }
                 else
                 {

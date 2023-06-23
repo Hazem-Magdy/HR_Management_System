@@ -1,16 +1,17 @@
-﻿using HR_Management_System.Data.Enums;
-using HR_Management_System.DTO.CustomResult;
+﻿using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace HR_Management_System.Controllers
 {
     [ApiController]
     [Route("api/employees")]
+    [Authorize(Roles = "Admin HR Accountant")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -18,13 +19,15 @@ namespace HR_Management_System.Controllers
         private readonly IAttendanceService _attendanceService;
         private readonly IProjectService _projectService;
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public EmployeeController(
             IEmployeeService employeeService,
             UserManager<User> userManager,
             IDepartmentService departmentService,
             IAttendanceService attendanceService,
-            IProjectService projectService
+            IProjectService projectService,
+            RoleManager<IdentityRole> roleManager
             )
         {
             _employeeService = employeeService;
@@ -32,10 +35,12 @@ namespace HR_Management_System.Controllers
             _departmentService = departmentService;
             _projectService = projectService;
             _attendanceService = attendanceService;
+            _roleManager = roleManager;
         }
 
         //create Employee & user 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
@@ -70,8 +75,6 @@ namespace HR_Management_System.Controllers
                     {
                         employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                     }
-
-
                     // create user
                     User user = new User();
 
@@ -84,11 +87,65 @@ namespace HR_Management_System.Controllers
                     user.Email = employeeDTO.EmployeeEmail;
                     user.PhoneNumber = employeeDTO.EmployeePhone;
 
-
                     IdentityResult createResult = await _userManager.CreateAsync(user, employeeDTO.EmployeePassword);
 
                     if (createResult.Succeeded)
                     {
+                        if(employeeDTO.EmployeePosition.ToString() == "Admin")
+                        {
+                            if (await _roleManager.RoleExistsAsync("Admin"))
+                            {
+                                await _userManager.AddToRoleAsync(user, "Admin");
+                            }
+                            else
+                            {
+                                
+                                IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("Admin"));
+
+                                await _userManager.AddToRoleAsync(user, "Admin");
+                            }
+                        }else if (employeeDTO.EmployeePosition.ToString() == "HR")
+                        {
+                            if (await _roleManager.RoleExistsAsync("HR"))
+                            {
+                                await _userManager.AddToRoleAsync(user, "HR");
+                            }
+                            else
+                            {
+
+                                IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("HR"));
+
+                                await _userManager.AddToRoleAsync(user, "HR");
+                            }
+                        }
+                        else if (employeeDTO.EmployeePosition.ToString() == "Employee")
+                        {
+                            if (await _roleManager.RoleExistsAsync("Employee"))
+                            {
+                                await _userManager.AddToRoleAsync(user, "Employee");
+                            }
+                            else
+                            {
+
+                                IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("Employee"));
+
+                                await _userManager.AddToRoleAsync(user, "Employee");
+                            }
+                        }
+                        else
+                        {
+                            if (await _roleManager.RoleExistsAsync("Accountant"))
+                            {
+                                await _userManager.AddToRoleAsync(user, "Accountant");
+                            }
+                            else
+                            {
+
+                                IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("Accountant"));
+
+                                await _userManager.AddToRoleAsync(user, "Accountant");
+                            }
+                        }
                         result.IsPass = true;
                         result.Message = "account created successfully.";
                     }
@@ -104,7 +161,7 @@ namespace HR_Management_System.Controllers
                     {
                         // Save the employee to the database
                         await _employeeService.AddAsync(employee);
-                        return Ok("Employee created successfully.");
+                        return Ok("User created successfully.");
                     }
                     else
                     {
@@ -124,6 +181,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
@@ -161,6 +219,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
@@ -211,6 +270,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             try
@@ -231,6 +291,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
@@ -270,6 +331,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
+        [Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
         {
             var employees = await _employeeService.GetAllAsync(p => p.Attendances);
@@ -286,6 +348,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetEmployeesCostsInProject/{projectId}")]
+        [Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(projectId);

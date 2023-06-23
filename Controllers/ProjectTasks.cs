@@ -4,12 +4,15 @@ using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Models;
 using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace HR_Management_System.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Admin Accountant")]
     public class ProjectTaskController : ControllerBase
     {
         private readonly IProjectTasksService _projectTaskService;
@@ -22,6 +25,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetAllProjectsTasks()
         {
             IEnumerable<ProjectTask> projectsTasks = await _projectTaskService.getAllIncludinProjectAsync();
@@ -56,6 +60,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProjectTask(ProjectTaskDTO projectTaskDTO)
         {
             if (!ModelState.IsValid)
@@ -85,6 +90,7 @@ namespace HR_Management_System.Controllers
 
         // get task With project name by taskId 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
             var projectTask = await _projectTaskService.GetByIdAsync(id, p=>p.Project);
@@ -104,6 +110,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskDTO projectTaskDTO)
         {
             if (!ModelState.IsValid)
@@ -131,6 +138,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProjectTask(int id)
         {
             var projectTask = await _projectTaskService.GetByIdAsync(id);
