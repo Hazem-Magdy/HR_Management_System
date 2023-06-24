@@ -9,9 +9,9 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
+    [Authorize(Roles = "Admin,HR,Accountant")]
     [ApiController]
     [Route("api/employees")]
-    [Authorize(Roles = "Admin HR Accountant")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -181,7 +181,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin HR Accountant")]
+        [Authorize(Roles = "Admin,HR,Accountant")]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
@@ -267,8 +267,6 @@ namespace HR_Management_System.Controllers
             }
         }
 
-
-
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEmployee(int id)
@@ -291,7 +289,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin HR Accountant")]
+        [Authorize(Roles = "Admin,HR,Accountant")]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
@@ -331,7 +329,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
         {
             var employees = await _employeeService.GetAllAsync(p => p.Attendances);
@@ -348,7 +346,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetEmployeesCostsInProject/{projectId}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(projectId);
@@ -375,6 +373,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetEmployeeSalaryAndOverTime/{employeeId}/StartDate/{startDate}/EndDate/{endDate}")]
+        [Authorize(Roles = "Admin,HR,Accountant")]
         public async Task<IActionResult> GetEmployeeSalaryAndOverTime(int employeeId, DateTime startDate, DateTime endDate)
         {
 
@@ -415,5 +414,6 @@ namespace HR_Management_System.Controllers
                 return Ok(dto);
             }
         }
+
     }
 }

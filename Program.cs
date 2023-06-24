@@ -6,6 +6,9 @@ using HR_Management_System.Services.ClassesServices;
 using HR_Management_System.Services.InterfacesServices;
 using Hangfire;
 using HR_Management_System.Data.Helpers.Mappers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace HR_Management_System
 {
@@ -28,6 +31,25 @@ namespace HR_Management_System
             builder.Services.AddScoped<IProjectTasksService, ProjectTasksService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
             builder.Services.AddScoped<IEmployeeProjectsService, EmployeeProjectsService>();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false; //check if the request is https
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = builder.Configuration["JWT:validIssuer"],
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:validAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:secretKey"]))
+                };
+            });
 
             builder.Services.AddAutoMapper(
                             typeof(AttendanceMappingProfile), 
@@ -64,14 +86,15 @@ namespace HR_Management_System
                 app.UseSwaggerUI();
             }
 
+            app.UseCors();
+
             app.UseHttpsRedirection();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
-            app.UseCors();
-
             app.MapControllers();
-
 
             app.Run();
         }

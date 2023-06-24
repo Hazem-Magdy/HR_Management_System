@@ -7,9 +7,9 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
+    [Authorize(Roles = "Admin,Accountant")]
     [ApiController]
     [Route("api/projectphases")]
-    [Authorize(Roles = "Admin Accountant")]
     public class ProjectPhaseController : ControllerBase
     {
         private readonly IProjectPhaseService _projectPhaseService;
@@ -22,7 +22,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetAllProjectsPhases()
         {
             IEnumerable<ProjectPhase> projectsPhases = await _projectPhaseService.getAllIncludeProjectAsync();
@@ -96,7 +96,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetProjectPhaseById(int id)
         {
             try

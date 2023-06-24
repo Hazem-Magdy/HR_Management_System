@@ -13,7 +13,7 @@ namespace HR_Management_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin Accountant")]
+    [Authorize(Roles = "Admin,Accountant")]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
@@ -38,7 +38,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<ActionResult<List<GetAllProjectsDTO>>> GetAllProjects()
         {
 
@@ -129,7 +129,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<ActionResult<ProjectDTO>> GetProjectById(int id)
         {
             var project = await _projectService.GetProjectByIdCustomAsync(id);
@@ -414,7 +414,7 @@ namespace HR_Management_System.Controllers
 
         // get project tasks by projectId
         [HttpGet("/api/GetProjectTasks/{projectId}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetProjectTasksByProjectId(int projectId)
         {
             try
@@ -445,7 +445,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("/api/GetProjectPhases/{projectId}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetProjectPhasesByProjectId(int projectId)
         {
             try
@@ -479,7 +479,7 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         [HttpGet("GetProjectHoursAndTotalCost/{projectId}")]
         public async Task<IActionResult> GetProjectHoursAndTotalCost(int projectId)
         {
@@ -518,7 +518,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetProjectsHoursAndTotalCosts")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetProjectsHoursAndTotalCosts()
         {
             var projects = await _projectService.GetAllProjectsCustomAsync();

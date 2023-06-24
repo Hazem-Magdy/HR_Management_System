@@ -17,11 +17,12 @@ namespace HR_Management_System.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly IEmployeeService _employeeService;
-
-        public AccountController(UserManager<User> userManager,IEmployeeService employeeService)
+        private readonly IConfiguration _configuration;
+        public AccountController(UserManager<User> userManager,IEmployeeService employeeService, IConfiguration configuration)
         {
             _userManager = userManager;
             _employeeService = employeeService;
+            _configuration = configuration;
         }
 
         [HttpPost("Login")]
@@ -47,14 +48,20 @@ namespace HR_Management_System.Controllers
                     userClaims.Add(new Claim("Position", employee.Position.ToString()));
                     userClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
-                    
+                    //get roles 
+                    var roles = await _userManager.GetRolesAsync(userExist);
+                    foreach (var userRole in roles)
+                    {
+                        userClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                    }
+
                     // generate secret key
-                    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("frr656164971316cfrvv6f4v6f7v49fv46ftv6v"));
+                    SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:secretKey"]));
                     SigningCredentials userCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
                     // represent token
                     JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
-                          issuer: "http://localhost:51006",
-                          audience: "http://localhost:4200",
+                          issuer: _configuration["JWT:validIssuer"],
+                          audience: _configuration["JWT:validAudience"],
                           expires: DateTime.Now.AddHours(8),
                           claims: userClaims,
                           signingCredentials: userCredentials

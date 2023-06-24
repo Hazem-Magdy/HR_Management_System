@@ -10,9 +10,9 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
+    [Authorize(Roles = "Admin,Accountant")]
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin Accountant")]
     public class ProjectTaskController : ControllerBase
     {
         private readonly IProjectTasksService _projectTaskService;
@@ -25,7 +25,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetAllProjectsTasks()
         {
             IEnumerable<ProjectTask> projectsTasks = await _projectTaskService.getAllIncludinProjectAsync();
@@ -90,7 +90,7 @@ namespace HR_Management_System.Controllers
 
         // get task With project name by taskId 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> GetProjectTaskById(int id)
         {
             var projectTask = await _projectTaskService.GetByIdAsync(id, p=>p.Project);
@@ -110,7 +110,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin Accountant")]
+        [Authorize(Roles = "Admin,Accountant")]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskDTO projectTaskDTO)
         {
             if (!ModelState.IsValid)
