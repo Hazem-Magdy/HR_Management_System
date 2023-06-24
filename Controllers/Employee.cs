@@ -9,7 +9,7 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
-    [AdminAccountantHR]
+    [AdminAccountantHREmployee]
     [ApiController]
     [Route("api/employees")]
     public class EmployeeController : ControllerBase
@@ -40,7 +40,6 @@ namespace HR_Management_System.Controllers
 
         //create Employee & user 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
         [AdminOnly]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
@@ -183,7 +182,6 @@ namespace HR_Management_System.Controllers
 
         [HttpGet("{id}")]
         [AdminAccountantHREmployee]
-        //[Authorize(Policy = "AdminAccountantHR,ViewEmployeePolicy")]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             try

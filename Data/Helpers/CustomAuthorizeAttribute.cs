@@ -25,14 +25,15 @@ public class AccountantOnlyAttribute : TypeFilterAttribute
 {
     public AccountantOnlyAttribute() : base(typeof(CustomAuthorizeFilter))
     {
-        Arguments = new object[] { new string[] { "Employee" } };
+        Arguments = new object[] { new string[] { "Accountant" } };
     }
 }
+
 public class EmployeeOnlyAttribute : TypeFilterAttribute
 {
     public EmployeeOnlyAttribute() : base(typeof(CustomAuthorizeFilter))
     {
-        Arguments = new object[] { new string[] { "Accountant" } };
+        Arguments = new object[] { new string[] { "Employee" } };
     }
 }
 
@@ -75,6 +76,7 @@ public class AdminAccountantEmployeeAttribute : TypeFilterAttribute
         Arguments = new object[] { new string[] { "Admin", "Accountant", "Employee" } };
     }
 }
+
 public class AdminAccountantHREmployeeAttribute : TypeFilterAttribute
 {
     public AdminAccountantHREmployeeAttribute() : base(typeof(CustomAuthorizeFilter))
@@ -93,8 +95,45 @@ public class CustomAuthorizeFilter : IAuthorizationFilter
     }
 
 
-
     public void OnAuthorization(AuthorizationFilterContext context)
+    {
+        if (!context.HttpContext.User.Identity.IsAuthenticated)
+        {
+            context.Result = new ChallengeResult();
+            return;
+        }
+
+        if (!HasPermission(context.HttpContext.User))
+        {
+            context.Result = new ObjectResult(new { error = "You do not have permission to access this resource." })
+            {
+                StatusCode = (int)HttpStatusCode.Forbidden
+            };
+            return;
+        }
+    }
+
+    private bool HasPermission(ClaimsPrincipal user)
+    {
+        // Check if the authenticated user has permission to access the resource
+        // based on the user's role(s).
+
+        foreach (var role in _roles)
+        {
+            if (user.IsInRole(role))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    
+}
+#region old
+/*
+public void OnAuthorization(AuthorizationFilterContext context)
     {
         if (!context.HttpContext.User.Identity.IsAuthenticated)
         {
@@ -128,50 +167,14 @@ public class CustomAuthorizeFilter : IAuthorizationFilter
         }
 
         // Check if the user meets the requirements of the ViewEmployeePolicy policy.
-        var policyEvaluator = serviceProvider.GetRequiredService<IAuthorizationService>();
-        var authorizationResult = await policyEvaluator.AuthorizeAsync(user, null, "ViewEmployeePolicy");
-        if (authorizationResult.Succeeded)
-        {
-            return true;
-        }
+        //var policyEvaluator = serviceProvider.GetRequiredService<IAuthorizationService>();
+        //var authorizationResult = await policyEvaluator.AuthorizeAsync(user, null, "ViewEmployeePolicy");
+        //if (authorizationResult.Succeeded)
+        //{
+        //    return true;
+        //}
 
         return false;
     }
-}
-#region old
-/*
-public void OnAuthorization(AuthorizationFilterContext context)
-{
-    if (!context.HttpContext.User.Identity.IsAuthenticated)
-    {
-        context.Result = new ChallengeResult();
-        return;
-    }
-
-    if (!HasPermission(context.HttpContext.User))
-    {
-        context.Result = new ObjectResult(new { error = "You do not have permission to access this resource." })
-        {
-            StatusCode = (int)HttpStatusCode.Forbidden
-        };
-        return;
-    }
-}
-
-private bool HasPermission(ClaimsPrincipal user)
-{
-    // Check if the authenticated user has permission to access the resource
-    // based on the user's role(s).
-
-    foreach (var role in _roles)
-    {
-        if (user.IsInRole(role))
-        {
-            return true;
-        }
-    }
-
-    return false;
-} 
 */
 #endregion

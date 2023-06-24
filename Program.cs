@@ -56,16 +56,17 @@ namespace HR_Management_System
                 };
             });
 
-                
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ViewEmployeePolicy", policy =>
-                {
-                    policy.RequireAuthenticatedUser();
-                    policy.RequireRole("Employee");
-                    policy.Requirements.Add(new ViewEmployeeRequirement());
-                });
-            });
+
+            //builder.Services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("ViewEmployeePolicy", policy =>
+            //    {
+            //        policy.RequireAuthenticatedUser();
+            //        policy.RequireRole("Employee");
+            //        policy.Requirements.Add(new ViewEmployeeRequirement());
+            //    });
+            //});
+
 
             builder.Services.AddAutoMapper(
                             typeof(AttendanceMappingProfile), 

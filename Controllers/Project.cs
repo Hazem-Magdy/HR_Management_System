@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HR_Management_System.Controllers
 {
-    [AdminAccountantOnly]
+    [AdminAccountantHREmployee]
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectsController : ControllerBase
