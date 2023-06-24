@@ -9,6 +9,9 @@ using HR_Management_System.Data.Helpers.Mappers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Policy;
+using HR_Management_System.Data.Helpers;
 
 namespace HR_Management_System
 {
@@ -31,7 +34,9 @@ namespace HR_Management_System
             builder.Services.AddScoped<IProjectTasksService, ProjectTasksService>();
             builder.Services.AddScoped<IAttendanceService, AttendanceService>();
             builder.Services.AddScoped<IEmployeeProjectsService, EmployeeProjectsService>();
-
+            
+            //builder.Services.AddTransient<IAuthorizationHandler, ViewEmployeeHandler>();
+            
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,6 +54,17 @@ namespace HR_Management_System
                     ValidAudience = builder.Configuration["JWT:validAudience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:secretKey"]))
                 };
+            });
+
+                
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ViewEmployeePolicy", policy =>
+                {
+                    policy.RequireAuthenticatedUser();
+                    policy.RequireRole("Employee");
+                    policy.Requirements.Add(new ViewEmployeeRequirement());
+                });
             });
 
             builder.Services.AddAutoMapper(

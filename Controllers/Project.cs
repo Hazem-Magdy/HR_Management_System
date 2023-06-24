@@ -11,9 +11,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HR_Management_System.Controllers
 {
+    [AdminAccountantOnly]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin,Accountant")]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectService _projectService;
@@ -38,7 +38,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects
         [HttpGet]
-        [Authorize(Roles = "Admin,Accountant")]
+        [AdminAccountantHREmployee]
         public async Task<ActionResult<List<GetAllProjectsDTO>>> GetAllProjects()
         {
 
@@ -129,7 +129,7 @@ namespace HR_Management_System.Controllers
 
         // GET: api/Projects/5
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin,Accountant")]
+        [AdminAccountantOnly]
         public async Task<ActionResult<ProjectDTO>> GetProjectById(int id)
         {
             var project = await _projectService.GetProjectByIdCustomAsync(id);
@@ -232,7 +232,7 @@ namespace HR_Management_System.Controllers
 
         // POST: api/Projects
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<ActionResult<Project>> CreateProject(CreateProjectDTO projectDTO)
         {
             if (ModelState.IsValid)
@@ -296,7 +296,7 @@ namespace HR_Management_System.Controllers
         // PUT: api/Projects/5 
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
         {
             try
@@ -391,7 +391,7 @@ namespace HR_Management_System.Controllers
 
         // DELETE: api/Projects/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> DeleteProject(int id)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(id);
@@ -414,7 +414,7 @@ namespace HR_Management_System.Controllers
 
         // get project tasks by projectId
         [HttpGet("/api/GetProjectTasks/{projectId}")]
-        [Authorize(Roles = "Admin,Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetProjectTasksByProjectId(int projectId)
         {
             try
@@ -445,7 +445,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("/api/GetProjectPhases/{projectId}")]
-        [Authorize(Roles = "Admin,Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetProjectPhasesByProjectId(int projectId)
         {
             try
@@ -479,8 +479,8 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Accountant")]
         [HttpGet("GetProjectHoursAndTotalCost/{projectId}")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetProjectHoursAndTotalCost(int projectId)
         {
             var project = await _projectService.GetByIdAsync(projectId, p => p.Attendances);
@@ -518,7 +518,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetProjectsHoursAndTotalCosts")]
-        [Authorize(Roles = "Admin,Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetProjectsHoursAndTotalCosts()
         {
             var projects = await _projectService.GetAllProjectsCustomAsync();
