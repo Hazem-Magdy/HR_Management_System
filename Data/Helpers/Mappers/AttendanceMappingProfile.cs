@@ -44,9 +44,9 @@ namespace HR_Management_System.Data.Helpers.Mappers
 
             CreateMap<GetAttendancesInProjectDTO, Attendance>()
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.EmployeeId))
-                .ForMember(dest => dest.Project.Name, opt => opt.MapFrom(src => src.ProjectName))
-                .ForMember(dest => dest.ProjectPhase.Name, opt => opt.MapFrom(src => src.PhaseName))
-                .ForMember(dest => dest.ProjectTask.Name, opt => opt.MapFrom(src => src.TaskName))
+                .ForPath(dest => dest.Project.Name, opt => opt.MapFrom(src => src.ProjectName))
+                .ForPath(dest => dest.ProjectPhase.Name, opt => opt.MapFrom(src => src.PhaseName))
+                .ForPath(dest => dest.ProjectTask.Name, opt => opt.MapFrom(src => src.TaskName))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.HoursSpent, opt => opt.MapFrom(src => src.HoursSpent)); 

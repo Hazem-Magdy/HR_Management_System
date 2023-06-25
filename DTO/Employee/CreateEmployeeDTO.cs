@@ -23,6 +23,8 @@ namespace HR_Management_System.DTO.Employee
         [RegularExpression(@"\.(jpg|png|jpeg)$", ErrorMessage = "Invalid profile URL format.")]
         public string? EmployeeProfileUrl { get; set; }
 
+        //public IFormFile? EmployeeProfileUrl { get; set; }
+
         [Required(ErrorMessage = "You must enter the phone number.")]
         [RegularExpression("^(010|012|011|015)\\d{8}$", ErrorMessage = "Invalid phone number format.")]
         public string EmployeePhone { get; set; }

@@ -4,6 +4,7 @@ using HR_Management_System.DTO.Department;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace HR_Management_System.Controllers
 {
@@ -14,11 +15,13 @@ namespace HR_Management_System.Controllers
     {
         private readonly IDepartmentService _departmentService;
         private readonly IEmployeeService _employeeService;
+        private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentService departmentService, IEmployeeService employeeService)
+        public DepartmentController(IDepartmentService departmentService, IEmployeeService employeeService, IMapper mapper)
         {
             _departmentService = departmentService;
             _employeeService = employeeService;
+            _mapper = mapper;
         }
 
         [HttpPost("{IfManagerExistInDepartmentMove}")]
@@ -76,12 +79,7 @@ namespace HR_Management_System.Controllers
         {
             Boolean flag = false;
             // Map the DTO to the Department entity
-            var department = new Department
-            {
-                Name = departmentDTO.DepartmentName,
-                EmployeeId = departmentDTO.ManagerId
-            };
-
+            Department department = _mapper.Map<DepartmentDTO, Department>(departmentDTO);
             // Set the employee IDs for the department
             if (departmentDTO.EmployessIds.Count > 0)
             {
@@ -124,27 +122,13 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var departments = await _departmentService.GetAllAsync(d => d.Employees);
+                var departments = await _departmentService.GetAllAsync(d => d.Employees, d=>d.Employee);
 
                 List<GetDepartmentsWithMangersNamesDTO> dTOs = new List<GetDepartmentsWithMangersNamesDTO>();
 
                 foreach (var department in departments.ToList())
                 {
-                    GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
-                    {
-                        DepartmentId = department.Id,
-                        DepartmentName = department.Name,
-                        NOEmployees = department.NoEmployees.Value
-                    };
-                    if (department.EmployeeId != null)
-                    {
-                        dTO.MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName);
-                    }
-                    else
-                    {
-                        dTO.MangerName = "Department has no manager yet.";
-                    }
-
+                    GetDepartmentsWithMangersNamesDTO dTO = _mapper.Map<Department, GetDepartmentsWithMangersNamesDTO>(department);
                     dTOs.Add(dTO);
                 }
                 return Ok(dTOs);
@@ -162,7 +146,7 @@ namespace HR_Management_System.Controllers
         {
             try
             {
-                var department = await _departmentService.GetByIdAsync(id, d => d.Employees);
+                var department = await _departmentService.GetByIdAsync(id, d => d.Employees, d=>d.Employee);
                 if (department == null)
                 {
                     return NotFound();
@@ -172,27 +156,12 @@ namespace HR_Management_System.Controllers
 
                 foreach (var employee in department.Employees)
                 {
-
-                    EmployeeDeptDetailsDTO employeeDTO = new EmployeeDeptDetailsDTO()
-                    {
-                        EmployeeId = employee.Id,
-                        EmployeeFirstName = employee.FirstName,
-                        EmployeeLastName = employee.LastName,
-                        EmployeePosition = employee.Position.ToString(),
-                    };
+                    EmployeeDeptDetailsDTO employeeDTO = _mapper.Map<Employee, EmployeeDeptDetailsDTO>(employee);
                     dTos.Add(employeeDTO);
                 }
 
-                var departmentDTO = new GetDepartmentWithEmployessDTO()
-                {
-                    Id = department.Id,
-                    DepartmentName = department.Name,
-                    ManagerName = department.Employee != null ? string.Concat(department.Employee.FirstName, " ", department.Employee.LastName) : string.Empty,
-                    NoEmployees = department.NoEmployees.Value,
-                    Employees = dTos
-                };
-
-
+                GetDepartmentWithEmployessDTO departmentDTO = _mapper.Map<Department, GetDepartmentWithEmployessDTO>(department);
+                departmentDTO.Employees = dTos;
                 return Ok(departmentDTO);
             }
             catch (Exception ex)

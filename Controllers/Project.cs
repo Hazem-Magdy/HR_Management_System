@@ -8,6 +8,8 @@ using HR_Management_System.DTO.Attendance;
 using HR_Management_System.DTO.Employee;
 using System.Data;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using HR_Management_System.DTO.EmployeeProject;
 
 namespace HR_Management_System.Controllers
 {
@@ -20,20 +22,22 @@ namespace HR_Management_System.Controllers
         private readonly IEmployeeService _employeeService;
         private readonly IEmployeeProjectsService _employeeProjectsService;
         private readonly IProjectPhaseService _projectPhaseService;
-
+        private readonly IMapper _mapper;
 
 
         public ProjectsController(
             IProjectService projectService,
             IEmployeeService employeeService,
             IEmployeeProjectsService employeeProjectsService,
-            IProjectPhaseService projectPhaseService
+            IProjectPhaseService projectPhaseService,
+            IMapper mapper
         )
         {
             _projectService = projectService;
             _employeeService = employeeService;
             _employeeProjectsService = employeeProjectsService;
             _projectPhaseService = projectPhaseService;
+            _mapper = mapper;
         }
 
         // GET: api/Projects
@@ -241,29 +245,10 @@ namespace HR_Management_System.Controllers
                 List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
                 foreach (ProjectPhaseWithNoIdDTO projectPhaseDTO in projectDTO.ProjectPhases)
                 {
-                    ProjectPhase projectPhase = new ProjectPhase
-                    {
-                        Name = projectPhaseDTO.PhaseName,
-                        StartPhase = projectPhaseDTO.PhaseStartDate,
-                        EndPhase = projectPhaseDTO.PhaseEndDate,
-                        Milestone = projectPhaseDTO.PhaseMilestone,
-                        HrBudget = projectPhaseDTO.PhaseHrBudget
-                    };
+                    ProjectPhase projectPhase = _mapper.Map<ProjectPhaseWithNoIdDTO, ProjectPhase>(projectPhaseDTO);
                     projectPhases.Add(projectPhase);
                 }
-
-                var project = new Project
-                {
-                    Name = projectDTO.ProjectName,
-                    TotalBudget = projectDTO.ProjectTotalBudget,
-                    HoursBudget = projectDTO.ProjectHours,
-                    ProjectStatus = projectDTO.ProjectStatus,
-                    Location = projectDTO.ProjectLocation,
-                    StartDate = projectDTO.ProjectStartDate,
-                    EndDate = projectDTO.ProjectEndDate,
-                    Description = projectDTO.ProjectDescription,
-                    projectPhases = projectPhases,
-                };
+                Project project = _mapper.Map<CreateProjectDTO,Project>(projectDTO);
 
                 Project createdProject = await _projectService.AddAsync(project);
 
@@ -285,8 +270,6 @@ namespace HR_Management_System.Controllers
                 }
                 project.Employees = employeeProjects;
 
-
-
                 return Ok("project created successfully");
             }
             return BadRequest(ModelState);
@@ -294,7 +277,6 @@ namespace HR_Management_System.Controllers
 
 
         // PUT: api/Projects/5 
-
         [HttpPut("{id}")]
         [AdminOnly]
         public async Task<IActionResult> UpdateProject(int id, UpdateProjectDTO projectDTO)
