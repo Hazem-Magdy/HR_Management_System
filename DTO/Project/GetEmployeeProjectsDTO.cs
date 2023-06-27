@@ -7,9 +7,7 @@ namespace HR_Management_System.DTO.Project
     {
         public int ProjectId { get; set; }
         public string ProjectName { get; set; }
-
-        public List<GetProjectPhasesForProjectDTO>ProjectPhases { get; set; }
-
+        public List<GetProjectPhasesForProjectDTO> ProjectPhases { get; set; }
         public List<GetProjectTasksForProjectDTO> ProjectTaskes { get; set; }
     }
 }

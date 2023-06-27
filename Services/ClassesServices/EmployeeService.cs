@@ -43,6 +43,5 @@ namespace HR_Management_System.Services.ClassesServices
                 throw new Exception($"An error occurred while retrieving the employee: {ex.Message}");
             }
         }
-
     }
 }

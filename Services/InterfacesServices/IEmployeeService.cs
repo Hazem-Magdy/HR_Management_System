@@ -8,7 +8,6 @@ namespace HR_Management_System.Services.InterfacesServices
 
         Task<Employee> GetByEmailAsync(string email);
         Task<Employee> GetEmployeeByIdAsync(int employeeId);
-
     }
 
 }

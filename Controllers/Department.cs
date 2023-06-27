@@ -234,7 +234,7 @@ namespace HR_Management_System.Controllers
         [HttpDelete("delete/{deletedId}")]
         [AdminOnly]
         public async Task<IActionResult> DeleteDepartment(int deletedId, [FromBody] DeleteDepartmentRequestDTO requestDTO)
-{
+        {
             try
             {
                 var department = await _departmentService.GetByIdAsync(deletedId, e => e.Employees);
@@ -279,40 +279,6 @@ namespace HR_Management_System.Controllers
                 return Ok($"Department deleted successfully.");
             }
             catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                Department department = await _departmentService.GetByIdAsync(id, d => d.Employee, d => d.Employees);
-                if (department != null)
-                {
-                    if (department.EmployeeId != null)
-                    {
-                        Employee employee = await _employeeService.GetByIdAsync(department.EmployeeId.Value);
-                        employee.DepartmentId = null;
-                        await _employeeService.UpdateAsync(employee.Id, employee);
-                    }
-                    if (department.Employees.Count > 0)
-                    {
-                        foreach (var emp in department.Employees)
-                        {
-                            Employee employee = await _employeeService.GetByIdAsync(emp.Id);
-                            employee.DepartmentId = null;
-                            await _employeeService.UpdateAsync(employee.Id, employee);
-                        }
-                    }
-                    await _departmentService.DeleteAsync(id);
-                    return Ok("Department Deleted successfuly");
-                }
-                return StatusCode(500, $"Can't find the department");
-            }
-            catch(Exception ex)
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
