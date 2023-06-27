@@ -77,6 +77,14 @@ public class AdminAccountantEmployeeAttribute : TypeFilterAttribute
     }
 }
 
+public class AdminHREmployeeAttribute : TypeFilterAttribute
+{
+    public AdminHREmployeeAttribute() : base(typeof(CustomAuthorizeFilter))
+    {
+        Arguments = new object[] { new string[] { "Admin", "HR", "Employee" } };
+    }
+}
+
 public class AdminAccountantHREmployeeAttribute : TypeFilterAttribute
 {
     public AdminAccountantHREmployeeAttribute() : base(typeof(CustomAuthorizeFilter))

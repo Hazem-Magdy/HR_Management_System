@@ -48,7 +48,7 @@ namespace HR_Management_System.Controllers
 
         //create Employee & user 
         [HttpPost]
-        [AdminOnly]
+        [AdminHROnly]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
@@ -179,7 +179,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [AdminAccountantHREmployee]
+        [AdminHREmployee]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
@@ -243,7 +243,7 @@ namespace HR_Management_System.Controllers
         
         
         [HttpPut("{id}")]
-        [AdminOnly]
+        [AdminHROnly]
         public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
@@ -294,7 +294,7 @@ namespace HR_Management_System.Controllers
 
         
         [HttpDelete("{id}")]
-        [AdminOnly]
+        [AdminHROnly]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             try
@@ -316,7 +316,7 @@ namespace HR_Management_System.Controllers
 
         
         [HttpGet]
-        [AdminAccountantHR]
+        [AdminHREmployee]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
