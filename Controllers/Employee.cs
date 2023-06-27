@@ -1,5 +1,8 @@
 ﻿using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.DTO.Employee;
+using HR_Management_System.DTO.Project;
+using HR_Management_System.DTO.ProjectPhase;
+using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +14,7 @@ namespace HR_Management_System.Controllers
 {
     [ApiController]
     [Route("api/employees")]
-    [Authorize(Roles = "Admin HR Accountant")]
+    //[Authorize(Roles = "Admin HR Accountant")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -40,7 +43,7 @@ namespace HR_Management_System.Controllers
 
         //create Employee & user 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
@@ -181,8 +184,8 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin HR Accountant")]
-        public async Task<IActionResult> GetEmployeeById(int id)
+        //[Authorize(Roles = "Admin HR Accountant")]
+       public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
             {
@@ -219,7 +222,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
@@ -270,7 +273,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             try
@@ -291,7 +294,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin HR Accountant")]
+        //[Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
@@ -331,7 +334,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
-        [Authorize(Roles = "Admin Accountant")]
+        //[Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
         {
             var employees = await _employeeService.GetAllAsync(p => p.Attendances);
@@ -348,7 +351,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("GetEmployeesCostsInProject/{projectId}")]
-        [Authorize(Roles = "Admin Accountant")]
+        //[Authorize(Roles = "Admin Accountant")]
         public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(projectId);
@@ -413,6 +416,73 @@ namespace HR_Management_System.Controllers
                     EmployeeOverTime = overTime
                 };
                 return Ok(dto);
+            }
+        }
+
+        [HttpGet("GetEmployeeProjects/{employeeId}")]
+        public async Task<IActionResult> GetEmployeeProjects(int employeeId)
+        {
+            try
+            {
+
+                var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
+                List<GetEmployeeProjectsDTO> DTOs = new List<GetEmployeeProjectsDTO>();
+                
+
+                if (employee == null)
+                {
+                    return NotFound("employee dosent exist.");
+                }
+
+                if(employee.Projects.Count() > 0)
+                {
+                    foreach (var employeeProject in employee.Projects.ToList())
+                    {
+                        List<GetProjectPhasesForProjectDTO> projectPhaseDTOs = new List<GetProjectPhasesForProjectDTO>();
+                        List<GetProjectTasksForProjectDTO> projectTasksDTOs = new List<GetProjectTasksForProjectDTO>();
+
+                        foreach (var projectPhase in employeeProject.Project.projectPhases.ToList())
+                        {
+                            GetProjectPhasesForProjectDTO projectPhaseDTO = new GetProjectPhasesForProjectDTO()
+                            {
+                                PhaseId = projectPhase.Id,
+                                PhaseName = projectPhase.Name.ToString()
+                            };
+                            projectPhaseDTOs.Add(projectPhaseDTO);
+                        }
+
+                        foreach (var projectTask in employeeProject.Project.projectTasks.ToList())
+                        {
+                            GetProjectTasksForProjectDTO projectTaskDTO = new GetProjectTasksForProjectDTO()
+                            {
+                                TaskId = projectTask.Id,
+                                TaskName = projectTask.Name.ToString()
+                            };
+                            projectTasksDTOs.Add(projectTaskDTO);
+                        }
+
+
+                        GetEmployeeProjectsDTO dTO = new GetEmployeeProjectsDTO()
+                        {
+                            ProjectId = employeeProject.ProjectId,
+                            ProjectName = employeeProject.Project.Name,
+                            ProjectPhases = projectPhaseDTOs,
+                            ProjectTaskes = projectTasksDTOs
+                        };
+                        DTOs.Add(dTO);
+                    }
+                    return Ok(DTOs);
+                }
+                else
+                {
+                    return NotFound("No projects found for the employee.");
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
     }

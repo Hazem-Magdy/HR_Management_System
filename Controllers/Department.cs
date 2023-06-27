@@ -9,7 +9,7 @@ namespace HR_Management_System.Controllers
 {
     [ApiController]
     [Route("api/departments")]
-    [Authorize(Roles = "Admin HR Accountant")]
+    //[Authorize(Roles = "Admin HR Accountant")]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
@@ -22,7 +22,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPost("{IfManagerExistInDepartmentMove}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove = 0)
         {
             if (!ModelState.IsValid)
@@ -119,7 +119,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin HR Accountant")]
+        //[Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetAllDepartments()
         {
             try
@@ -157,7 +157,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin HR Accountant")]
+        //[Authorize(Roles = "Admin HR Accountant")]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
@@ -202,7 +202,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDepartment(int id, DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
@@ -252,9 +252,9 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpDelete("delete/{deletedId}/target/{targetDepartmentId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteDepartment(int deletedId, int targetDepartmentId, [FromBody] List<int>? selectedEmployeeIds = null)
+        [HttpDelete("delete/{deletedId}")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDepartment(int deletedId, [FromBody] DeleteDepartmentRequestDTO requestDTO)
         {
             try
             {
@@ -265,32 +265,37 @@ namespace HR_Management_System.Controllers
                     return NotFound();
                 }
 
-                var targetDepartment = await _departmentService.GetByIdAsync(targetDepartmentId, e => e.Employees);
-
-                if (targetDepartment == null)
+                if (requestDTO.TargetDepartmentId != null)
                 {
-                    return NotFound();
-                }
+                    var targetDepartment = await _departmentService.GetByIdAsync(requestDTO.TargetDepartmentId.Value, e => e.Employees);
 
-                foreach (var employee in department.Employees)
-                {
-                    if (selectedEmployeeIds != null && selectedEmployeeIds.Contains(employee.Id))
+                    if (targetDepartment == null)
                     {
-                        employee.DepartmentId = targetDepartment.Id;
-                        department.Employees.Add(employee);
+                        return NotFound();
                     }
-                    else
+
+                    foreach (var employee in department.Employees.ToList())
                     {
-                        employee.DepartmentId = null;
-                        if (department.EmployeeId == employee.Id)
+                        if (requestDTO.SelectedEmployeeIds != null && requestDTO.SelectedEmployeeIds.Contains(employee.Id))
                         {
-                            department.EmployeeId = null;
+                            employee.DepartmentId = targetDepartment.Id;
+                            targetDepartment.Employees.Add(employee);
                         }
+                        else
+                        {
+                            await _employeeService.DeleteAsync(employee.Id);
+                        }
+                    }
+                    targetDepartment.NoEmployees = targetDepartment.Employees.Count;
+                }
+                else
+                {
+                    foreach (var employee in department.Employees.ToList())
+                    {
                         await _employeeService.DeleteAsync(employee.Id);
                     }
                 }
 
-                targetDepartment.NoEmployees = targetDepartment.Employees.Count;
                 await _departmentService.DeleteAsync(deletedId);
                 return Ok($"Department deleted successfully.");
             }
@@ -299,5 +304,6 @@ namespace HR_Management_System.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
     }
 }

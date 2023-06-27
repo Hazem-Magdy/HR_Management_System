@@ -10,7 +10,7 @@ namespace HR_Management_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class Attendance : ControllerBase
     {
         private readonly UserManager<User> _userManager;

@@ -66,7 +66,7 @@ namespace HR_Management_System
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseCors();
 

@@ -7,7 +7,6 @@ namespace HR_Management_System.DTO.Attendance
     public class AttendanceDTO
     {
         
-
         public int EmployeeId { get; set; }
 
         public int ProjectId { get; set; }
