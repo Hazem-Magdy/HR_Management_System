@@ -1,4 +1,5 @@
-﻿using HR_Management_System.DTO.CustomResult;
+﻿using AutoMapper;
+using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.DTO.Project;
 using HR_Management_System.DTO.ProjectPhase;
@@ -12,9 +13,9 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
+    [AdminAccountantHREmployee]
     [ApiController]
     [Route("api/employees")]
-    //[Authorize(Roles = "Admin HR Accountant")]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -23,6 +24,9 @@ namespace HR_Management_System.Controllers
         private readonly IProjectService _projectService;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
+        private readonly UploadImage _uploadImage;
+
 
         public EmployeeController(
             IEmployeeService employeeService,
@@ -30,7 +34,9 @@ namespace HR_Management_System.Controllers
             IDepartmentService departmentService,
             IAttendanceService attendanceService,
             IProjectService projectService,
-            RoleManager<IdentityRole> roleManager
+            RoleManager<IdentityRole> roleManager,
+            IMapper mapper,
+            UploadImage uploadImage
             )
         {
             _employeeService = employeeService;
@@ -39,11 +45,13 @@ namespace HR_Management_System.Controllers
             _projectService = projectService;
             _attendanceService = attendanceService;
             _roleManager = roleManager;
+            _mapper = mapper;
+            _uploadImage = uploadImage;
         }
 
         //create Employee & user 
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [AdminHROnly]
         public async Task<IActionResult> CreateEmployee(CreateEmployeeDTO employeeDTO)
         {
             CustomResultDTO result = new CustomResultDTO();
@@ -58,25 +66,14 @@ namespace HR_Management_System.Controllers
                 if (employeeExist == null)
                 {
                     // Map the DTO to the Employee entity
-                    var employee = new Employee
+                    Employee employee = _mapper.Map<CreateEmployeeDTO, Employee>(employeeDTO);
+                    
+                    // employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
+                    if (employeeDTO.EmployeeProfileUrl!=null)
                     {
-                        FirstName = employeeDTO.EmployeeFirstName,
-                        LastName = employeeDTO.EmployeeLastName,
-                        SalaryPerHour = employeeDTO.EmployeeSalaryPerHour,
-                        WorkingDaysPerWeek = employeeDTO.EmployeeWorkingDaysPerWeek,
-                        RegularHoursPerDay = employeeDTO.EmployeeRegularHoursPerDay,
-                        OvertimeRate = employeeDTO.EmployeeOvertimeRate,
-                        Phone = employeeDTO.EmployeePhone,
-                        Email = employeeDTO.EmployeeEmail,
-                        Password = employeeDTO.EmployeePassword,
-                        Position = employeeDTO.EmployeePosition,
-                        HiringDate = employeeDTO.EmployeeHiringDate,
-                        Status = employeeDTO.EmployeeStatus,
-                    };
-
-                    if (employeeDTO.EmployeeProfileUrl != null)
-                    {
-                        employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
+                        //List<IFormFile> images = new List<IFormFile>();
+                        //images.Add(employeeDTO.EmployeeProfileUrl);
+                        //await _uploadImage.UploadToCloud(images);
                     }
                     // create user
                     User user = new User();
@@ -94,7 +91,7 @@ namespace HR_Management_System.Controllers
 
                     if (createResult.Succeeded)
                     {
-                        if(employeeDTO.EmployeePosition.ToString() == "Admin")
+                        if (employeeDTO.EmployeePosition.ToString() == "Admin")
                         {
                             if (await _roleManager.RoleExistsAsync("Admin"))
                             {
@@ -102,12 +99,13 @@ namespace HR_Management_System.Controllers
                             }
                             else
                             {
-                                
+
                                 IdentityResult roleUser = await _roleManager.CreateAsync(new IdentityRole("Admin"));
 
                                 await _userManager.AddToRoleAsync(user, "Admin");
                             }
-                        }else if (employeeDTO.EmployeePosition.ToString() == "HR")
+                        }
+                        else if (employeeDTO.EmployeePosition.ToString() == "HR")
                         {
                             if (await _roleManager.RoleExistsAsync("HR"))
                             {
@@ -184,8 +182,8 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin HR Accountant")]
-       public async Task<IActionResult> GetEmployeeById(int id)
+        [AdminHREmployee]
+        public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
             {
@@ -194,21 +192,8 @@ namespace HR_Management_System.Controllers
                 {
                     return NotFound();
                 }
-                var employeeDTO = new GetEmployeeByIdDTO
-                {
-                    EmployeeFirstName = employee.FirstName,
-                    EmployeeLastName = employee.LastName,
-                    EmployeeSalaryPerHour = employee.SalaryPerHour,
-                    EmployeeHiringDate = employee.HiringDate,
-                    EmployeeOvertimeRate = employee.OvertimeRate,
-                    EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
-                    EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
-                    EmployeePhone = employee.Phone,
-                    EmployeeEmail = employee.Email,
-                    EmployeePosition = employee.Position.ToString(),
-                    EmployeeStatus = employee.Status.ToString(),
-                    DepartmentId = employee.DepartmentId
-                };
+                GetEmployeeByIdDTO employeeDTO = _mapper.Map<Employee, GetEmployeeByIdDTO>(employee);
+                
                 if (employee.ProfileUrl != null)
                 {
                     employeeDTO.EmployeeProfileUrl = employee.ProfileUrl;
@@ -220,9 +205,48 @@ namespace HR_Management_System.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+        /*
+         * Backend
+            // Get the JWT token from the request headers
+            string token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
+            // Create a new instance of JwtSecurityTokenHandler
+            var handler = new JwtSecurityTokenHandler();
+
+            // Parse the JWT token
+            var decodedToken = handler.ReadJwtToken(token);
+
+            // Get the ID claim from the token
+            var idClaim = decodedToken.Claims.FirstOrDefault(c => c.Type == "id");
+
+            // Check if the employee is authorized to access the resource
+            if (idClaim.Value != id.ToString())
+            {
+                // Employee is not authorized to access the resource
+                return Unauthorized();
+            }
+         * frontend 
+         // Retrieve the JWT token from session storage
+            const token = sessionStorage.getItem('jwtToken');
+
+            // Send a request to the backend with the token in the headers
+            const headers = new HttpHeaders({
+              'Authorization': `Bearer ${token}`
+            });
+
+            this.http.get<Employee>(`/api/employee/${id}`, { headers }).subscribe(
+              employee => {
+                // ...
+              },
+              error => {
+                // ...
+              }
+            );
+         */
+        
+        
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminHROnly]
         public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
@@ -247,6 +271,7 @@ namespace HR_Management_System.Controllers
                     await _departmentService.UpdateAsync(id, departmentDTO);
                 }
                 // Update the employee properties
+                //employee = _mapper.Map<UpdateEmployeeDTO, Employee>(employeeDTO);
                 employee.FirstName = employeeDTO.EmployeeFirstName;
                 employee.LastName = employeeDTO.EmployeeLastName;
                 employee.SalaryPerHour = employeeDTO.EmployeeSalaryPerHour;
@@ -260,7 +285,7 @@ namespace HR_Management_System.Controllers
                 employee.HiringDate = employeeDTO.EmployeeHiringDate;
                 employee.Status = employeeDTO.EmployeeStatus;
                 employee.DepartmentId = employeeDTO.DepartmentId;
-              
+
                 await _employeeService.UpdateAsync(id, employee);
                 return Ok("Employee updated successfully.");
             }
@@ -270,10 +295,9 @@ namespace HR_Management_System.Controllers
             }
         }
 
-
-
+        
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminHROnly]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             try
@@ -293,8 +317,9 @@ namespace HR_Management_System.Controllers
             }
         }
 
+        
         [HttpGet]
-        //[Authorize(Roles = "Admin HR Accountant")]
+        [AdminHREmployee]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
@@ -304,23 +329,7 @@ namespace HR_Management_System.Controllers
 
                 foreach (var employee in employees)
                 {
-                    var employeeDto = new GetAllEmployeesDTO
-                    {
-                        EmplyeeId = employee.Id,
-                        EmployeeFirstName = employee.FirstName,
-                        EmployeeLastName = employee.LastName,
-                        EmployeeSalaryPerHour = employee.SalaryPerHour,
-                        EmployeeOvertimeRate = employee.OvertimeRate,
-                        EmployeeRegularHoursPerDay = employee.RegularHoursPerDay,
-                        EmployeeWorkingDaysPerWeek = employee.WorkingDaysPerWeek,
-                        EmployeeHiringDate = employee.HiringDate,
-                        EmployeePhone = employee.Phone,
-                        EmployeeEmail = employee.Email,
-                        EmployeePosition = employee.Position.ToString(),
-                        EmployeeStatus = employee.Status.ToString(),
-                        DepartmentId = employee.DepartmentId,
-                        EmployeeProfileUrl = employee.ProfileUrl
-                    };
+                    GetAllEmployeesDTO employeeDto = _mapper.Map<Employee, GetAllEmployeesDTO>(employee);
 
                     employeeDTOs.Add(employeeDto);
                 }
@@ -334,7 +343,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("GetEmployeesHoursAndTotoalCostInAllProjects")]
-        //[Authorize(Roles = "Admin Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetEmployeesHoursAndTotoalCostInAllProjects()
         {
             var employees = await _employeeService.GetAllAsync(p => p.Attendances);
@@ -350,8 +359,9 @@ namespace HR_Management_System.Controllers
             return Ok(employeeHours);
         }
 
+        
         [HttpGet("GetEmployeesCostsInProject/{projectId}")]
-        //[Authorize(Roles = "Admin Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetEmployeesCostsInProject(int projectId)
         {
             var project = await _projectService.GetProjectByIdCustom2Async(projectId);
@@ -377,7 +387,9 @@ namespace HR_Management_System.Controllers
             return Ok(employeeCosts);
         }
 
+        
         [HttpGet("GetEmployeeSalaryAndOverTime/{employeeId}/StartDate/{startDate}/EndDate/{endDate}")]
+        [AdminAccountantHR]
         public async Task<IActionResult> GetEmployeeSalaryAndOverTime(int employeeId, DateTime startDate, DateTime endDate)
         {
 
@@ -419,71 +431,6 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpGet("GetEmployeeProjects/{employeeId}")]
-        public async Task<IActionResult> GetEmployeeProjects(int employeeId)
-        {
-            try
-            {
 
-                var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
-                List<GetEmployeeProjectsDTO> DTOs = new List<GetEmployeeProjectsDTO>();
-                
-
-                if (employee == null)
-                {
-                    return NotFound("employee dosent exist.");
-                }
-
-                if(employee.Projects.Count() > 0)
-                {
-                    foreach (var employeeProject in employee.Projects.ToList())
-                    {
-                        List<GetProjectPhasesForProjectDTO> projectPhaseDTOs = new List<GetProjectPhasesForProjectDTO>();
-                        List<GetProjectTasksForProjectDTO> projectTasksDTOs = new List<GetProjectTasksForProjectDTO>();
-
-                        foreach (var projectPhase in employeeProject.Project.projectPhases.ToList())
-                        {
-                            GetProjectPhasesForProjectDTO projectPhaseDTO = new GetProjectPhasesForProjectDTO()
-                            {
-                                PhaseId = projectPhase.Id,
-                                PhaseName = projectPhase.Name.ToString()
-                            };
-                            projectPhaseDTOs.Add(projectPhaseDTO);
-                        }
-
-                        foreach (var projectTask in employeeProject.Project.projectTasks.ToList())
-                        {
-                            GetProjectTasksForProjectDTO projectTaskDTO = new GetProjectTasksForProjectDTO()
-                            {
-                                TaskId = projectTask.Id,
-                                TaskName = projectTask.Name.ToString()
-                            };
-                            projectTasksDTOs.Add(projectTaskDTO);
-                        }
-
-
-                        GetEmployeeProjectsDTO dTO = new GetEmployeeProjectsDTO()
-                        {
-                            ProjectId = employeeProject.ProjectId,
-                            ProjectName = employeeProject.Project.Name,
-                            ProjectPhases = projectPhaseDTOs,
-                            ProjectTaskes = projectTasksDTOs
-                        };
-                        DTOs.Add(dTO);
-                    }
-                    return Ok(DTOs);
-                }
-                else
-                {
-                    return NotFound("No projects found for the employee.");
-                }
-                
-
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
-        }
     }
 }

@@ -26,7 +26,7 @@ namespace HR_Management_System.Data.Helpers.Mappers
 
             #region GetDepartmentWithManagerName
             CreateMap<Department, GetDepartmentsWithMangerNameDTO>()
-                    .ForMember(dest => dest.MangerName, opt => opt.MapFrom(src => src.Employee != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : ""))
+                    .ForMember(dest => dest.MangerName, opt => opt.MapFrom(src => src.EmployeeId != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : ""))
                     .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
                     .ForMember(dest => dest.EmployeeUnderWork, opt => opt.MapFrom(src => src.NoEmployees.HasValue ? src.NoEmployees.Value : 0));
 
@@ -38,7 +38,7 @@ namespace HR_Management_System.Data.Helpers.Mappers
             #region GetDepartmentsWithMangersNamesDTO
             CreateMap<Department, GetDepartmentsWithMangersNamesDTO>()
                     .ForMember(dest => dest.DepartmentId, opt => opt.MapFrom(src => src.Id))
-                    .ForMember(dest => dest.MangerName, opt => opt.MapFrom(src => src.Employee != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : ""))
+                    .ForMember(dest => dest.MangerName, opt => opt.MapFrom(src => src.EmployeeId != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : "Department has no manager yet."))
                     .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
                     .ForMember(dest => dest.NOEmployees, opt => opt.MapFrom(src => src.NoEmployees.HasValue ? src.NoEmployees.Value : 0));
 
@@ -52,7 +52,7 @@ namespace HR_Management_System.Data.Helpers.Mappers
             CreateMap<Department, GetDepartmentWithEmployessDTO>()
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                     .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Name))
-                    .ForMember(dest => dest.ManagerName, opt => opt.MapFrom(src => src.Employee != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : ""))
+                    .ForMember(dest => dest.ManagerName, opt => opt.MapFrom(src => src.EmployeeId != null ? $"{src.Employee.FirstName} {src.Employee.LastName}" : "Department has no manager yet."))
                     .ForMember(dest => dest.NoEmployees, opt => opt.MapFrom(src => src.NoEmployees))
                     .ForMember(dest => dest.Employees, opt => opt.Ignore());
             CreateMap<GetDepartmentWithEmployessDTO, Department>()

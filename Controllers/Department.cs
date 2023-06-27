@@ -4,25 +4,30 @@ using HR_Management_System.DTO.Department;
 using HR_Management_System.DTO.Employee;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using System.Threading.Tasks;
+using System;
 
 namespace HR_Management_System.Controllers
 {
+    [AdminAccountantHR]
     [ApiController]
     [Route("api/departments")]
-    //[Authorize(Roles = "Admin HR Accountant")]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
         private readonly IEmployeeService _employeeService;
+        private readonly IMapper _mapper;
 
-        public DepartmentController(IDepartmentService departmentService, IEmployeeService employeeService)
+        public DepartmentController(IDepartmentService departmentService, IEmployeeService employeeService, IMapper mapper)
         {
             _departmentService = departmentService;
             _employeeService = employeeService;
+            _mapper = mapper;
         }
 
         [HttpPost("{IfManagerExistInDepartmentMove}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> CreateDepartment(DepartmentDTO departmentDTO, int IfManagerExistInDepartmentMove = 0)
         {
             if (!ModelState.IsValid)
@@ -38,11 +43,14 @@ namespace HR_Management_System.Controllers
                     if (departmentDTO.ManagerId != null)
                     {
                         Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId.Value);
-                        Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
-                        department.EmployeeId = null;
-                        employee.DepartmentId = departmentDTO.ManagerId;
-                        await _departmentService.UpdateAsync(department.Id, department);
-                        await _employeeService.UpdateAsync(employee.Id, employee);
+                        if (employee.DepartmentId != null)
+                        {
+                            Department department = await _departmentService.GetByIdAsync(employee.DepartmentId.Value);
+                            department.EmployeeId = null;
+                            await _departmentService.UpdateAsync(department.Id, department);
+                        }
+                        //employee.DepartmentId = departmentDTO.ManagerId;
+                        //await _employeeService.UpdateAsync(employee.Id, employee);
                     }
                     return await Create(departmentDTO);
                 }
@@ -76,12 +84,7 @@ namespace HR_Management_System.Controllers
         {
             Boolean flag = false;
             // Map the DTO to the Department entity
-            var department = new Department
-            {
-                Name = departmentDTO.DepartmentName,
-                EmployeeId = departmentDTO.ManagerId
-            };
-
+            Department department = _mapper.Map<DepartmentDTO, Department>(departmentDTO);
             // Set the employee IDs for the department
             if (departmentDTO.EmployessIds.Count > 0)
             {
@@ -114,37 +117,28 @@ namespace HR_Management_System.Controllers
 
             // Save the department to the database
             await _departmentService.AddAsync(department);
-
+            if (departmentDTO.ManagerId != null)
+            {
+                Employee employee = await _employeeService.GetByIdAsync(departmentDTO.ManagerId.Value);
+                employee.DepartmentId = department.Id;
+                await _employeeService.UpdateAsync(employee.Id, employee);
+            }
             return Ok("Department created successfully.");
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin HR Accountant")]
+        [AdminAccountantHR]
         public async Task<IActionResult> GetAllDepartments()
         {
             try
             {
-                var departments = await _departmentService.GetAllAsync(d => d.Employees);
+                var departments = await _departmentService.GetAllAsync(d => d.Employees, d=>d.Employee);
 
                 List<GetDepartmentsWithMangersNamesDTO> dTOs = new List<GetDepartmentsWithMangersNamesDTO>();
 
                 foreach (var department in departments.ToList())
                 {
-                    GetDepartmentsWithMangersNamesDTO dTO = new GetDepartmentsWithMangersNamesDTO()
-                    {
-                        DepartmentId = department.Id,
-                        DepartmentName = department.Name,
-                        NOEmployees = department.NoEmployees.Value
-                    };
-                    if (department.EmployeeId != null)
-                    {
-                        dTO.MangerName = string.Concat(department.Employee.FirstName, " ", department.Employee.LastName);
-                    }
-                    else
-                    {
-                        dTO.MangerName = "Department has no manager yet.";
-                    }
-
+                    GetDepartmentsWithMangersNamesDTO dTO = _mapper.Map<Department, GetDepartmentsWithMangersNamesDTO>(department);
                     dTOs.Add(dTO);
                 }
                 return Ok(dTOs);
@@ -157,12 +151,12 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin HR Accountant")]
+        [AdminAccountantHR]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
             {
-                var department = await _departmentService.GetByIdAsync(id, d => d.Employees);
+                var department = await _departmentService.GetByIdAsync(id, d => d.Employees, d=>d.Employee);
                 if (department == null)
                 {
                     return NotFound();
@@ -172,27 +166,12 @@ namespace HR_Management_System.Controllers
 
                 foreach (var employee in department.Employees)
                 {
-
-                    EmployeeDeptDetailsDTO employeeDTO = new EmployeeDeptDetailsDTO()
-                    {
-                        EmployeeId = employee.Id,
-                        EmployeeFirstName = employee.FirstName,
-                        EmployeeLastName = employee.LastName,
-                        EmployeePosition = employee.Position.ToString(),
-                    };
+                    EmployeeDeptDetailsDTO employeeDTO = _mapper.Map<Employee, EmployeeDeptDetailsDTO>(employee);
                     dTos.Add(employeeDTO);
                 }
 
-                var departmentDTO = new GetDepartmentWithEmployessDTO()
-                {
-                    Id = department.Id,
-                    DepartmentName = department.Name,
-                    ManagerName = department.Employee != null ? string.Concat(department.Employee.FirstName, " ", department.Employee.LastName) : string.Empty,
-                    NoEmployees = department.NoEmployees.Value,
-                    Employees = dTos
-                };
-
-
+                GetDepartmentWithEmployessDTO departmentDTO = _mapper.Map<Department, GetDepartmentWithEmployessDTO>(department);
+                departmentDTO.Employees = dTos;
                 return Ok(departmentDTO);
             }
             catch (Exception ex)
@@ -202,7 +181,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> UpdateDepartment(int id, DepartmentDTO departmentDTO)
         {
             if (!ModelState.IsValid)
@@ -253,9 +232,9 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpDelete("delete/{deletedId}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> DeleteDepartment(int deletedId, [FromBody] DeleteDepartmentRequestDTO requestDTO)
-        {
+{
             try
             {
                 var department = await _departmentService.GetByIdAsync(deletedId, e => e.Employees);
@@ -305,5 +284,38 @@ namespace HR_Management_System.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                Department department = await _departmentService.GetByIdAsync(id, d => d.Employee, d => d.Employees);
+                if (department != null)
+                {
+                    if (department.EmployeeId != null)
+                    {
+                        Employee employee = await _employeeService.GetByIdAsync(department.EmployeeId.Value);
+                        employee.DepartmentId = null;
+                        await _employeeService.UpdateAsync(employee.Id, employee);
+                    }
+                    if (department.Employees.Count > 0)
+                    {
+                        foreach (var emp in department.Employees)
+                        {
+                            Employee employee = await _employeeService.GetByIdAsync(emp.Id);
+                            employee.DepartmentId = null;
+                            await _employeeService.UpdateAsync(employee.Id, employee);
+                        }
+                    }
+                    await _departmentService.DeleteAsync(id);
+                    return Ok("Department Deleted successfuly");
+                }
+                return StatusCode(500, $"Can't find the department");
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
     }
 }

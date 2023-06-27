@@ -16,13 +16,13 @@ namespace HR_Management_System.Data.Helpers.Mappers
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.EmployeeFirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.EmployeeLastName))
                 .ForMember(dest => dest.SalaryPerHour, opt => opt.MapFrom(src => src.EmployeeSalaryPerHour))
-                .ForMember(dest => dest.ProfileUrl, opt => opt.MapFrom(src => src.EmployeeProfileUrl))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.EmployeePhone))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmployeeEmail))
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.EmployeePassword))
                 .ForMember(dest => dest.Position, opt => opt.MapFrom(src => src.EmployeePosition))
                 .ForMember(dest => dest.HiringDate, opt => opt.MapFrom(src => src.EmployeeHiringDate))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EmployeeStatus));
+                //.ForMember(dest => dest.ProfileUrl, opt => opt.MapFrom(src => src.EmployeeProfileUrl))
 
             // covert from Employee to createEmployeeDTo  
             CreateMap<Employee, CreateEmployeeDTO>()
@@ -52,7 +52,7 @@ namespace HR_Management_System.Data.Helpers.Mappers
                 .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.EmployeeFirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.EmployeeLastName, opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest => dest.EmployeePosition, opt => opt.MapFrom(src => src.Position));
+                .ForMember(dest => dest.EmployeePosition, opt => opt.MapFrom(src => src.Position.ToString()));
 
             #endregion
 

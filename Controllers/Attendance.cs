@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HR_Management_System.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class Attendance : ControllerBase
     {
         private readonly UserManager<User> _userManager;

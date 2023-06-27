@@ -7,9 +7,9 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
+    [AdminAccountantOnly]
     [ApiController]
     [Route("api/projectphases")]
-    //[Authorize(Roles = "Admin Accountant")]
     public class ProjectPhaseController : ControllerBase
     {
         private readonly IProjectPhaseService _projectPhaseService;
@@ -22,7 +22,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetAllProjectsPhases()
         {
             IEnumerable<ProjectPhase> projectsPhases = await _projectPhaseService.getAllIncludeProjectAsync();
@@ -59,7 +59,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpPost("{projectId}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> CreateProjectPhase(int projectId, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             Project project = await _projectService.GetByIdAsync(projectId);
@@ -96,7 +96,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet("{id}")]
-        //[Authorize(Roles = "Admin Accountant")]
+        [AdminAccountantOnly]
         public async Task<IActionResult> GetProjectPhaseById(int id)
         {
             try
@@ -124,7 +124,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> UpdateProjectPhase(int id, CreateUpdateProjectPhaseDTO projectPhaseDTO)
         {
             if (!ModelState.IsValid)
@@ -157,7 +157,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
+        [AdminOnly]
         public async Task<IActionResult> DeleteProjectPhase(int id)
         {
             try
