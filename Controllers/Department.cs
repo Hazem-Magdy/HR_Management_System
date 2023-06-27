@@ -229,9 +229,9 @@ namespace HR_Management_System.Controllers
             }
         }
 
-        [HttpDelete("delete/{deletedId}/target/{targetDepartmentId}")]
+        [HttpDelete("delete/{deletedId}")]
         [AdminOnly]
-        public async Task<IActionResult> DeleteDepartment(int deletedId, int targetDepartmentId, [FromBody] List<int>? selectedEmployeeIds = null)
+        public async Task<IActionResult> DeleteDepartment(int deletedId, [FromBody] DeleteDepartmentRequestDTO requestDTO)
         {
             try
             {
@@ -242,70 +242,41 @@ namespace HR_Management_System.Controllers
                     return NotFound();
                 }
 
-                var targetDepartment = await _departmentService.GetByIdAsync(targetDepartmentId, e => e.Employees);
-
-                if (targetDepartment == null)
+                if (requestDTO.TargetDepartmentId != null)
                 {
-                    return NotFound();
-                }
+                    var targetDepartment = await _departmentService.GetByIdAsync(requestDTO.TargetDepartmentId.Value, e => e.Employees);
 
-                foreach (var employee in department.Employees)
-                {
-                    if (selectedEmployeeIds != null && selectedEmployeeIds.Contains(employee.Id))
+                    if (targetDepartment == null)
                     {
-                        employee.DepartmentId = targetDepartment.Id;
-                        department.Employees.Add(employee);
+                        return NotFound();
                     }
-                    else
+
+                    foreach (var employee in department.Employees.ToList())
                     {
-                        employee.DepartmentId = null;
-                        if (department.EmployeeId == employee.Id)
+                        if (requestDTO.SelectedEmployeeIds != null && requestDTO.SelectedEmployeeIds.Contains(employee.Id))
                         {
-                            department.EmployeeId = null;
+                            employee.DepartmentId = targetDepartment.Id;
+                            targetDepartment.Employees.Add(employee);
                         }
+                        else
+                        {
+                            await _employeeService.DeleteAsync(employee.Id);
+                        }
+                    }
+                    targetDepartment.NoEmployees = targetDepartment.Employees.Count;
+                }
+                else
+                {
+                    foreach (var employee in department.Employees.ToList())
+                    {
                         await _employeeService.DeleteAsync(employee.Id);
                     }
                 }
 
-                targetDepartment.NoEmployees = targetDepartment.Employees.Count;
                 await _departmentService.DeleteAsync(deletedId);
                 return Ok($"Department deleted successfully.");
             }
             catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            try
-            {
-                Department department = await _departmentService.GetByIdAsync(id, d => d.Employee, d => d.Employees);
-                if (department != null)
-                {
-                    if (department.EmployeeId != null)
-                    {
-                        Employee employee = await _employeeService.GetByIdAsync(department.EmployeeId.Value);
-                        employee.DepartmentId = null;
-                        await _employeeService.UpdateAsync(employee.Id, employee);
-                    }
-                    if (department.Employees.Count > 0)
-                    {
-                        foreach (var emp in department.Employees)
-                        {
-                            Employee employee = await _employeeService.GetByIdAsync(emp.Id);
-                            employee.DepartmentId = null;
-                            await _employeeService.UpdateAsync(employee.Id, employee);
-                        }
-                    }
-                    await _departmentService.DeleteAsync(id);
-                    return Ok("Department Deleted successfuly");
-                }
-                return StatusCode(500, $"Can't find the department");
-            }
-            catch(Exception ex)
             {
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }

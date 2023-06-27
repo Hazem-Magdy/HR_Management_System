@@ -23,5 +23,25 @@ namespace HR_Management_System.Services.ClassesServices
             db.SaveChanges();
             return existEmployee;
         }
+
+        public async Task<Employee> GetEmployeeByIdAsync(int employeeId)
+        {
+            try
+            {
+                return await db.Employees
+                    .Include(e => e.Projects)
+                        .ThenInclude(p => p.Project)
+                            .ThenInclude(pp => pp.projectTasks)
+                    .Include(e => e.Projects)
+                        .ThenInclude(p => p.Project)
+                            .ThenInclude(pp => pp.projectPhases)
+                    .FirstOrDefaultAsync(e => e.Id == employeeId);
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions
+                throw new Exception($"An error occurred while retrieving the employee: {ex.Message}");
+            }
+        }
     }
 }
