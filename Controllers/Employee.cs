@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using HR_Management_System.DTO.CustomResult;
 using HR_Management_System.DTO.Employee;
+using HR_Management_System.DTO.Project;
+using HR_Management_System.DTO.ProjectPhase;
+using HR_Management_System.DTO.ProjectTask;
 using HR_Management_System.Models;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Authorization;

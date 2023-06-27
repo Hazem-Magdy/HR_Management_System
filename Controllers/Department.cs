@@ -5,6 +5,8 @@ using HR_Management_System.DTO.Employee;
 using HR_Management_System.Services.InterfacesServices;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using System.Threading.Tasks;
+using System;
 
 namespace HR_Management_System.Controllers
 {
