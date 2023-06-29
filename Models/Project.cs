@@ -13,7 +13,7 @@ namespace HR_Management_System.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "You must Enter the name of the project")]
-        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "combination of uppercase and lowercase letters, numbers, and spaces")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "You can use combination of uppercase and lowercase letters, numbers, and spaces")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "You must Enter the total budget")]

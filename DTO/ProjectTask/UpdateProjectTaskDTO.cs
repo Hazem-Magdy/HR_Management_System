@@ -5,7 +5,7 @@ namespace HR_Management_System.DTO.ProjectTask
     public class UpdateProjectTaskDTO
     {
         [Required(ErrorMessage = "You must enter the name of the task.")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters.")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "Name should only contain letters.")]
         public string TaskName { get; set; }
 
         [Required(ErrorMessage = "You must enter the description.")]

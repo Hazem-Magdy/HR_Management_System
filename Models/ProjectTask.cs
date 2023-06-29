@@ -7,7 +7,7 @@ namespace HR_Management_System.Models
     {
         public int Id { get; set; }
         [Required(ErrorMessage = "You must Enter the name of the task")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contains letters")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "Name should only contains letters")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "You must Enter the name of the description")]
