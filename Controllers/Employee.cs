@@ -71,6 +71,7 @@ namespace HR_Management_System.Controllers
                     // employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                     if (employeeDTO.EmployeeProfileUrl!=null)
                     {
+                        employee.ProfileUrl = employeeDTO.EmployeeProfileUrl;
                         //List<IFormFile> images = new List<IFormFile>();
                         //images.Add(employeeDTO.EmployeeProfileUrl);
                         //await _uploadImage.UploadToCloud(images);
@@ -190,7 +191,7 @@ namespace HR_Management_System.Controllers
                 var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
-                    return NotFound();
+                    return NotFound("Employee no longer exist.");
                 }
                 GetEmployeeByIdDTO employeeDTO = _mapper.Map<Employee, GetEmployeeByIdDTO>(employee);
                 
@@ -259,7 +260,7 @@ namespace HR_Management_System.Controllers
                 var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
-                    return NotFound();
+                    return NotFound("Employee no longer exist.");
                 }
                 if (employee.DepartmentId != employeeDTO.DepartmentId)
                 {
@@ -305,7 +306,7 @@ namespace HR_Management_System.Controllers
                 var employee = await _employeeService.GetByIdAsync(id);
                 if (employee == null)
                 {
-                    return NotFound();
+                    return NotFound("Employee no longer exist.");
                 }
 
                 await _employeeService.DeleteAsync(id);

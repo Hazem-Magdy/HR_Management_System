@@ -30,7 +30,7 @@ namespace HR_Management_System.Controllers
 
             if (projectsPhases == null)
             {
-                return NotFound();
+                return NotFound("Project Phase no longer exist.");
             }
 
             try
@@ -104,7 +104,7 @@ namespace HR_Management_System.Controllers
                 var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
-                    return NotFound();
+                    return NotFound("Project Phase no longer exist.");
                 }
                 ProjectPhaseDTO projectPhaseDTO = new ProjectPhaseDTO
                 {
@@ -137,7 +137,7 @@ namespace HR_Management_System.Controllers
                 var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
-                    return NotFound();
+                    return NotFound("Project Phase no longer exist.");
                 }
 
                 // Update the project phase properties
@@ -165,7 +165,7 @@ namespace HR_Management_System.Controllers
                 var projectPhase = await _projectPhaseService.GetByIdAsync(id);
                 if (projectPhase == null)
                 {
-                    return NotFound();
+                    return NotFound("Project Phase no longer exist.");
                 }
 
                 await _projectPhaseService.DeleteAsync(id);

@@ -159,7 +159,7 @@ namespace HR_Management_System.Controllers
                 var department = await _departmentService.GetByIdAsync(id, d => d.Employees, d=>d.Employee);
                 if (department == null)
                 {
-                    return NotFound();
+                    return NotFound("Department no longer exist.");
                 }
 
                 List<EmployeeDeptDetailsDTO> dTos = new List<EmployeeDeptDetailsDTO>();
@@ -194,7 +194,7 @@ namespace HR_Management_System.Controllers
                 var department = await _departmentService.GetByIdAsync(id);
                 if (department == null)
                 {
-                    return NotFound();
+                    return NotFound("Department no longer exist.");
                 }
 
                 // Update the department properties
@@ -241,7 +241,7 @@ namespace HR_Management_System.Controllers
 
                 if (department == null)
                 {
-                    return NotFound();
+                    return NotFound("Department no longer exist.");
                 }
 
                 if (requestDTO.TargetDepartmentId != null)
@@ -250,7 +250,7 @@ namespace HR_Management_System.Controllers
 
                     if (targetDepartment == null)
                     {
-                        return NotFound();
+                        return NotFound("Department no longer exist.");
                     }
 
                     foreach (var employee in department.Employees.ToList())

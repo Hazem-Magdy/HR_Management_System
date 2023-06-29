@@ -33,7 +33,7 @@ namespace HR_Management_System.Controllers
 
             if (projectsTasks == null)
             {
-                return NotFound();
+                return NotFound("Project Task no longer exist.");
             }
 
             try
@@ -96,7 +96,7 @@ namespace HR_Management_System.Controllers
             var projectTask = await _projectTaskService.GetByIdAsync(id, p=>p.Project);
 
             if (projectTask== null)
-                return NotFound();
+                return NotFound("Project Task no longer exist.");
             var TaskWhithProjectNameDTO = new TaskWhithProjectNameDTO()
             {
                 
@@ -119,7 +119,7 @@ namespace HR_Management_System.Controllers
             var projectTask = await _projectTaskService.GetByIdAsync(id);
 
             if (projectTask == null)
-                return NotFound();
+                return NotFound("Project Task no longer exist.");
 
             // Update the project task properties
             projectTask.Name = projectTaskDTO.TaskName;
@@ -144,7 +144,7 @@ namespace HR_Management_System.Controllers
             var projectTask = await _projectTaskService.GetByIdAsync(id);
 
             if (projectTask == null)
-                return NotFound();
+                return NotFound("Project Task no longer exist.");
 
             try
             {
