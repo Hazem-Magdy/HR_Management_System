@@ -127,7 +127,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpGet]
-        [AdminAccountantHR]
+        [AdminHROnly]
         public async Task<IActionResult> GetAllDepartments()
         {
             try
@@ -151,7 +151,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [AdminAccountantHR]
+        [AdminHROnly]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
