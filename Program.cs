@@ -60,6 +60,17 @@ namespace HR_Management_System
             });
 
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             //builder.Services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("ViewEmployeePolicy", policy =>
@@ -69,7 +80,9 @@ namespace HR_Management_System
             //        policy.Requirements.Add(new ViewEmployeeRequirement());
             //    });
             //});
-          
+
+
+
             #region automapper 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             #endregion
