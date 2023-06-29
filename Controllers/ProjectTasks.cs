@@ -110,7 +110,7 @@ namespace HR_Management_System.Controllers
         }
 
         [HttpPut("{id}")]
-        [AdminAccountantOnly]
+        [AdminHROnly]
         public async Task<IActionResult> UpdateProjectTask(int id, UpdateProjectTaskDTO projectTaskDTO)
         {
             if (!ModelState.IsValid)
