@@ -14,6 +14,8 @@ namespace HR_Management_System.Models
         [RegularExpression("^(?=.*[a-zA-Z])(?=.*\\d).+$", ErrorMessage = "Name should only contains letters")]
         public string Description { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the total hours per task")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Total hours per task budget should only contains numbers")]
         public int ToltalHoursPerTask { get; set; }
 
         public int ProjectId { get; set; }

@@ -20,8 +20,12 @@ namespace HR_Management_System.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EndPhase { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the HR budget")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "HR budget should only contains numbers")]
         public int HrBudget { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the name of the milestone")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "you can use combination of uppercase and lowercase letters, numbers, and spaces")]
         public string Milestone { get; set; }
 
 

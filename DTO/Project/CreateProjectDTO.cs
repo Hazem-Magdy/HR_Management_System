@@ -7,16 +7,25 @@ namespace HR_Management_System.DTO.Project
 {
     public class CreateProjectDTO
     {
-        [Required(ErrorMessage = "You must enter the name of the project")]
-        [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "Name should only contain letters")]
+        [Required(ErrorMessage = "You must Enter the name of the project")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "combination of uppercase and lowercase letters, numbers, and spaces")]
         public string ProjectName { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the total budget")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Total budget should only contains numbers")]
         public decimal ProjectTotalBudget { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the hours budget")]
+        [RegularExpression("^[0-9]+$", ErrorMessage = "Hours budget should only contains numbers")]
         public int ProjectHours { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the project status")]
+        [EnumDataType(typeof(ProjectStatus))]
         public ProjectStatus ProjectStatus { get; set; }
 
+
+        [Required(ErrorMessage = "You must Enter the name of the location")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "you can use combination of uppercase and lowercase letters, numbers, and spaces")]
         public string ProjectLocation { get; set; }
 
         [DataType(DataType.Date)]
@@ -27,6 +36,8 @@ namespace HR_Management_System.DTO.Project
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime ProjectEndDate { get; set; }
 
+        [Required(ErrorMessage = "You must Enter the name of the description")]
+        [RegularExpression("^[a-zA-Z0-9\\s]*$", ErrorMessage = "you can use combination of uppercase and lowercase letters, numbers, and spaces")]
         public string ProjectDescription { get; set; }
 
         public ICollection<ProjectPhaseWithNoIdDTO> ProjectPhases { get; set; }
