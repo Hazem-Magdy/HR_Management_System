@@ -139,7 +139,7 @@ namespace HR_Management_System.Controllers
             var project = await _projectService.GetProjectByIdCustomAsync(id);
             if (project == null)
             {
-                return NotFound();
+                return NotFound("Project no longer exist.");
             }
 
             List<ProjectPhaseDTO> projectPhaseDTOs = new List<ProjectPhaseDTO>();
@@ -289,7 +289,7 @@ namespace HR_Management_System.Controllers
                 var project = await _projectService.GetByIdAsync(id, p => p.projectPhases, e => e.Employees);
 
                 if (project == null)
-                    return NotFound();
+                    return NotFound("Project no longer exist.");
 
                 List<EmployeeProject> employeeProjects = new List<EmployeeProject>();
 
@@ -379,7 +379,7 @@ namespace HR_Management_System.Controllers
             var project = await _projectService.GetProjectByIdCustom2Async(id);
             if (project == null)
             {
-                return NotFound();
+                return NotFound("Project no longer exist.");
             }
 
             try
@@ -404,7 +404,7 @@ namespace HR_Management_System.Controllers
                 var project = await _projectService.GetByIdAsync(projectId, t => t.projectTasks);
 
                 if (project == null)
-                    return NotFound();
+                    return NotFound("Project no longer exist.");
                 List<GetProjectTasksByProjectIdDTO> dTOs = new List<GetProjectTasksByProjectIdDTO>();
 
                 foreach (var projectTask in project.projectTasks.ToList())
@@ -435,7 +435,7 @@ namespace HR_Management_System.Controllers
                 var project = await _projectService.GetByIdAsync(projectId, p => p.projectPhases);
 
                 if (project == null)
-                    return NotFound();
+                    return NotFound("Project no longer exist.");
 
                 List<GetProjectPhasesByProjectIdDTO> dTOs = new List<GetProjectPhasesByProjectIdDTO>();
 
