@@ -102,7 +102,7 @@ namespace HR_Management_System.Controllers
                         }
                     }
                 }
-                if (flag)
+                if (flag && department.EmployeeId!=null)
                 {
                     department.NoEmployees = department.Employees.Count + 1;
 
