@@ -13,7 +13,7 @@ using System.Data;
 
 namespace HR_Management_System.Controllers
 {
-    [AdminAccountantHREmployee]
+    //[AdminAccountantHREmployee]
     [ApiController]
     [Route("api/employees")]
     public class EmployeeController : ControllerBase
@@ -183,7 +183,7 @@ namespace HR_Management_System.Controllers
 
 
         [HttpGet("{id}")]
-        [AdminHREmployee]
+        [AdminAccountantHREmployee]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             try
@@ -284,6 +284,7 @@ namespace HR_Management_System.Controllers
                 employee.Email = employeeDTO.EmployeeEmail;
                 employee.Position = employeeDTO.EmployeePosition;
                 employee.HiringDate = employeeDTO.EmployeeHiringDate;
+                employee.Password = employeeDTO.EmployeePassword;
                 employee.Status = employeeDTO.EmployeeStatus;
                 employee.DepartmentId = employeeDTO.DepartmentId;
 
@@ -320,7 +321,7 @@ namespace HR_Management_System.Controllers
 
         
         [HttpGet]
-        [AdminHREmployee]
+        [AdminAccountantHREmployee]
         public async Task<IActionResult> GetAllEmployees()
         {
             try
@@ -432,6 +433,52 @@ namespace HR_Management_System.Controllers
             }
         }
 
+        [HttpGet("GetEmployeeProjects/{employeeId}")]
+        public async Task<IActionResult> GetEmployeeProjects(int employeeId)
+        {
+            var employee = await _employeeService.GetEmployeeByIdAsync(employeeId);
 
+            List<GetEmployeeProjectsDTO> dTOs = new List<GetEmployeeProjectsDTO>();
+
+            if (employee == null)
+            {
+                return NotFound("Employee no longer exist.");
+            }
+
+            foreach (var project in employee.Projects.ToList())
+            {
+                var projectPhasesDTOs = new List<GetProjectPhasesForProjectDTO>();
+                var projectTasksDTOs = new List<GetProjectTasksForProjectDTO>();
+                foreach (var projectPhase in project.Project.projectPhases.ToList())
+                {
+                    var projectPahseDTO = new GetProjectPhasesForProjectDTO()
+                    {
+                        PhaseId = projectPhase.Id,
+                        PhaseName = projectPhase.Name.ToString()
+                    };
+                    projectPhasesDTOs.Add(projectPahseDTO);
+                }
+
+                foreach (var projectTask in project.Project.projectTasks.ToList())
+                {
+                    var projectTaskDTO = new GetProjectTasksForProjectDTO()
+                    {
+                        TaskId = projectTask.Id,
+                        TaskName = projectTask.Name.ToString()
+                    };
+                    projectTasksDTOs.Add(projectTaskDTO);
+                }
+
+                var dto = new GetEmployeeProjectsDTO()
+                {
+                    ProjectId = project.ProjectId,
+                    ProjectName = project.Project.Name,
+                    ProjectPhases = projectPhasesDTOs,
+                    ProjectTaskes = projectTasksDTOs
+                };
+                dTOs.Add(dto);
+            }
+            return Ok(dTOs);
+        }
     }
 }

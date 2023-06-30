@@ -10,6 +10,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using HR_Management_System.DTO.EmployeeProject;
+using HR_Management_System.Data.Enums;
 
 namespace HR_Management_System.Controllers
 {

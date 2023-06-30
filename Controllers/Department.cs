@@ -10,7 +10,7 @@ using System;
 
 namespace HR_Management_System.Controllers
 {
-    [AdminAccountantHR]
+    [AdminHROnly]
     [ApiController]
     [Route("api/departments")]
     public class DepartmentController : ControllerBase
